@@ -16,7 +16,7 @@
     </properties>
 
     <dependencies>
-        <!-- Jakarta Servlet API for Controllers -->
+        <!-- Jakarta Servlet API — provided by the app server (Tomcat 10+) -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
@@ -24,15 +24,38 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- JSTL for Logic inside JSP files -->
+        <!-- Jakarta JSP API — provided by the app server -->
+        <dependency>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
+            <version>3.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- JSTL 2.0 (Jakarta namespace) for JSP tag libraries -->
         <dependency>
             <groupId>org.glassfish.web</groupId>
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+
+        <!-- JSTL API (needed alongside the implementation) -->
+        <dependency>
+            <groupId>jakarta.servlet.jsp.jstl</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
             <version>2.0.0</version>
         </dependency>
     </dependencies>
 
     <build>
         <finalName>ManagementSystem</finalName>
+        <plugins>
+            <!-- Maven WAR plugin — ensures proper WAR packaging -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+            </plugin>
+        </plugins>
     </build>
 </project>
