@@ -1,0 +1,83 @@
+package com.inventory.model;
+
+/**OOP Concept: ENCAPSULATION
+ * All fields are private. Public getters/setters control access.
+ * Item represents a single inventory product stored in items.txt.
+ * CSV Format: id,name,category,quantity,price,expiryDate
+ */
+public class Item {
+
+    //Private variables
+    private String id;
+    private String name;
+    private String category;
+    private int    quantity;
+    private double price;
+    private String expiryDate; // Format: YYYY-MM-DD
+
+    // --- Constructors ---
+    public Item() {}
+
+    public Item(String id, String name, String category,
+                int quantity, double price, String expiryDate) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.quantity = quantity;
+        this.price = price;
+        this.expiryDate = expiryDate;
+    }
+
+    // --- Getters & Setters ---
+    public String getId()                    { return id; }
+    public void   setId(String id)           { this.id = id; }
+
+    public String getName()                  { return name; }
+    public void   setName(String name)       { this.name = name; }
+
+    public String getCategory()              { return category; }
+    public void   setCategory(String c)      { this.category = c; }
+
+    public int    getQuantity()              { return quantity; }
+    public void   setQuantity(int q)         { this.quantity = q; }
+
+    public double getPrice()                 { return price; }
+    public void   setPrice(double p)         { this.price = p; }
+
+    public String getExpiryDate()            { return expiryDate; }
+    public void   setExpiryDate(String d)    { this.expiryDate = d; }
+
+    /**
+     * Serializes the Item to a CSV line for file storage.
+     * Format: id,name,category,quantity,price,expiryDate
+     */
+    public String toCsv() {
+        return id + "," + name + "," + category + ","
+                + quantity + "," + price + "," + expiryDate;
+    }
+
+    /**
+     * Deserializes a CSV line back into an Item object.
+     */
+    public static Item fromCsv(String csv) {
+        String[] parts = csv.split(",", -1);
+        if (parts.length < 6) return null;
+        try {
+            return new Item(
+                    parts[0].trim(),
+                    parts[1].trim(),
+                    parts[2].trim(),
+                    Integer.parseInt(parts[3].trim()),
+                    Double.parseDouble(parts[4].trim()),
+                    parts[5].trim()
+            );
+        } catch (NumberFormatException e) {
+            return null; // Skip malformed lines
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Item{id='" + id + "', name='" + name + "', qty=" + quantity + "}";
+    }
+}
