@@ -1,0 +1,96 @@
+package com.inventory.servlet;
+
+import com.inventory.model.Item;
+import com.inventory.service.InventoryService;
+import com.inventory.util.FileHandler;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * EditStockServlet — handles editing an existing inventory item.
+ *
+ * GET  /editStock?id=XXX → loads the item and shows the edit form.
+ * POST /editStock         → validates and saves the updated item
+ *                           using the Read-Modify-Overwrite pattern.
+ *
+ * OOP Concept: ABSTRACTION
+ * File update logic is hidden inside InventoryService → FileHandler.
+ */
+@WebServlet("/editStock")
+public class EditStockServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("loggedInUser") == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+
+        String itemId    = req.getParameter("id");
+        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        InventoryService service = new InventoryService(itemsPath);
+
+        List<Item> items = service.getAllItems();
+        Item target = null;
+        for (Item item : items) {
+            if (item.getId().equals(itemId)) {
+                target = item;
+                break;
+            }
+        }
+
+        if (target == null) {
+            resp.sendRedirect(req.getContextPath() + "/viewInventory");
+            return;
+        }
+
+        req.setAttribute("item", target);
+        req.getRequestDispatcher("/views/inventory/editStock.jsp").forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        HttpSession session = req.getSession(false);
+        if (session == null || session.getAttribute("loggedInUser") == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
+
+        String id         = req.getParameter("id");
+        String name       = req.getParameter("name");
+        String category   = req.getParameter("category");
+        String qtyStr     = req.getParameter("quantity");
+        String priceStr   = req.getParameter("price");
+        String expiryDate = req.getParameter("expiryDate");
+
+        int    quantity;
+        double price;
+        try {
+            quantity = Integer.parseInt(qtyStr.trim());
+            price    = Double.parseDouble(priceStr.trim());
+        } catch (NumberFormatException e) {
+            req.setAttribute("error", "Quantity and Price must be valid numbers.");
+            doGet(req, resp);
+            return;
+        }
+
+        Item updated = new Item(id, name.trim(), category.trim(),
+                quantity, price, expiryDate.trim());
+
+        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        InventoryService service = new InventoryService(itemsPath);
+        service.updateItem(updated); // Read-Modify-Overwrite inside FileHandler
+
+        session.setAttribute("successMsg", "Item updated successfully.");
+        resp.sendRedirect(req.getContextPath() + "/viewInventory");
+    }
+}
