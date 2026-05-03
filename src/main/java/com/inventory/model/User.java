@@ -22,6 +22,7 @@ public class User {
         this.password = password;
         this.role     = role;
     }
+
     // --- Getters & Setters ---
     public String getUsername()              { return username; }
     public void   setUsername(String u)      { this.username = u; }

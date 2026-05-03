@@ -40,6 +40,7 @@ public class Admin extends User {
     /**
      * Deserialises a CSV line into an Admin object.
      */
+
     public static Admin fromCsv(String csv) {
         String[] parts = csv.split(",", -1);
         if (parts.length < 4) return null;
