@@ -1,8 +1,8 @@
 package com.inventory.servlet;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 
 import java.io.IOException;
 
@@ -22,4 +22,3 @@ public class LogoutServlet extends HttpServlet {
         resp.sendRedirect(req.getContextPath() + "/login");
     }
 }
-

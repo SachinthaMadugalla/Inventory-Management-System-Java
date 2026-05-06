@@ -3,9 +3,9 @@ package com.inventory.servlet;
 import com.inventory.model.User;
 import com.inventory.service.UserService;
 import com.inventory.util.FileHandler;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 
 import java.io.IOException;
 
