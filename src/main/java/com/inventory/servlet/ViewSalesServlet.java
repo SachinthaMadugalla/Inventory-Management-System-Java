@@ -10,9 +10,6 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * ViewSalesServlet — displays all sales records.
- */
 @WebServlet("/viewSales")
 public class ViewSalesServlet extends HttpServlet {
 
