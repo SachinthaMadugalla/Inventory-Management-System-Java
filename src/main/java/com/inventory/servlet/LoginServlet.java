@@ -34,6 +34,10 @@ public class LoginServlet extends HttpServlet {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
+        // Trim the inputs to avoid trailing space issues (common with autocomplete)
+        if (username != null) username = username.trim();
+        if (password != null) password = password.trim();
+
         // Resolve the absolute path to users.txt at runtime
         String usersPath = FileHandler.USERS_FILE;
 
