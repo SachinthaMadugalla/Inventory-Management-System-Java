@@ -27,7 +27,7 @@ public class SalesServlet extends HttpServlet {
             return;
         }
 
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService inventoryService = new InventoryService(itemsPath);
         List<Item> items = inventoryService.getAllItems();
 
@@ -48,8 +48,8 @@ public class SalesServlet extends HttpServlet {
         String itemId  = req.getParameter("itemId");
         String qtyStr  = req.getParameter("quantity");
 
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
-        String salesPath = getServletContext().getRealPath(FileHandler.SALES_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
+        String salesPath = FileHandler.SALES_FILE;
 
         InventoryService inventoryService = new InventoryService(itemsPath);
         SalesService salesService = new SalesService(salesPath, itemsPath);

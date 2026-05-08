@@ -23,8 +23,8 @@ public class ViewSalesServlet extends HttpServlet {
             return;
         }
 
-        String salesPath = getServletContext().getRealPath(FileHandler.SALES_FILE);
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String salesPath = FileHandler.SALES_FILE;
+        String itemsPath = FileHandler.ITEMS_FILE;
         SalesService salesService = new SalesService(salesPath, itemsPath);
 
         List<Sale> sales = salesService.getAllSales();

@@ -40,7 +40,7 @@ public class ExpiryServlet extends HttpServlet {
             return;
         }
 
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService service = new InventoryService(itemsPath);
 
         // MergeSort — O(n log n), soonest-to-expire first
@@ -64,6 +64,6 @@ public class ExpiryServlet extends HttpServlet {
         req.setAttribute("expiringSoon",  expiringSoon);
         req.setAttribute("expired",       expired);
 
-        req.getRequestDispatcher("/views/inventory/expiryManagement.jsp").forward(req, resp);
+        req.getRequestDispatcher("/views/expiry/expiryManagment.jsp").forward(req, resp);
     }
 }

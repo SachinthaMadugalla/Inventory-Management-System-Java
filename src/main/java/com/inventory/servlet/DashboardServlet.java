@@ -31,8 +31,8 @@ public class DashboardServlet extends HttpServlet {
             return;
         }
 
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
-        String salesPath = getServletContext().getRealPath(FileHandler.SALES_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
+        String salesPath = FileHandler.SALES_FILE;
 
         InventoryService inventoryService = new InventoryService(itemsPath);
         SalesService salesService = new SalesService(salesPath, itemsPath);

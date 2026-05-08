@@ -38,7 +38,7 @@ public class DeleteStockServlet extends HttpServlet {
             return;
         }
 
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService service = new InventoryService(itemsPath);
 
         String mode   = req.getParameter("mode");   // "last" or "byId"

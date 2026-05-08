@@ -3,9 +3,9 @@ package com.inventory.servlet;
 import com.inventory.model.Sale;
 import com.inventory.service.SalesService;
 import com.inventory.util.FileHandler;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -35,8 +35,8 @@ public class EditTransactionServlet extends HttpServlet {
         }
 
         String saleId    = req.getParameter("id");
-        String salesPath = getServletContext().getRealPath(FileHandler.SALES_FILE);
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String salesPath = FileHandler.SALES_FILE;
+        String itemsPath = FileHandler.ITEMS_FILE;
         SalesService service = new SalesService(salesPath, itemsPath);
 
         Sale target = null;
@@ -84,8 +84,8 @@ public class EditTransactionServlet extends HttpServlet {
             return;
         }
 
-        String salesPath = getServletContext().getRealPath(FileHandler.SALES_FILE);
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String salesPath = FileHandler.SALES_FILE;
+        String itemsPath = FileHandler.ITEMS_FILE;
         SalesService service = new SalesService(salesPath, itemsPath);
 
         // Read-Modify-Overwrite
@@ -113,4 +113,3 @@ public class EditTransactionServlet extends HttpServlet {
         resp.sendRedirect(req.getContextPath() + "/viewSales");
     }
 }
-

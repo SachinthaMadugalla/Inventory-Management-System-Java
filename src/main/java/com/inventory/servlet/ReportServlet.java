@@ -30,9 +30,9 @@ public class ReportServlet extends HttpServlet {
             return;
         }
 
-        String reportsPath = getServletContext().getRealPath(FileHandler.REPORTS_FILE);
-        String salesPath   = getServletContext().getRealPath(FileHandler.SALES_FILE);
-        String itemsPath   = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String reportsPath = FileHandler.REPORTS_FILE;
+        String salesPath   = FileHandler.SALES_FILE;
+        String itemsPath   = FileHandler.ITEMS_FILE;
 
         SalesService salesService   = new SalesService(salesPath, itemsPath);
         ReportService reportService = new ReportService(reportsPath, salesService);
@@ -60,9 +60,9 @@ public class ReportServlet extends HttpServlet {
             return;
         }
 
-        String reportsPath = getServletContext().getRealPath(FileHandler.REPORTS_FILE);
-        String salesPath   = getServletContext().getRealPath(FileHandler.SALES_FILE);
-        String itemsPath   = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String reportsPath = FileHandler.REPORTS_FILE;
+        String salesPath   = FileHandler.SALES_FILE;
+        String itemsPath   = FileHandler.ITEMS_FILE;
 
         SalesService salesService   = new SalesService(salesPath, itemsPath);
         ReportService reportService = new ReportService(reportsPath, salesService);

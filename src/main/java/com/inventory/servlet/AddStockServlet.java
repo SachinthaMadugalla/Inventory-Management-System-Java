@@ -39,7 +39,7 @@ public class AddStockServlet extends HttpServlet {
             return;
         }
 
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService service = new InventoryService(itemsPath);
 
         // Pass the top-of-stack item so the UI can show "next to be deleted"
@@ -92,7 +92,7 @@ public class AddStockServlet extends HttpServlet {
                 quantity, price, expiryDate.trim());
 
         // --- Persist via service (which also calls stack.push()) ---
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService service = new InventoryService(itemsPath);
         service.addItem(newItem); // ← stack.push() happens inside here
 

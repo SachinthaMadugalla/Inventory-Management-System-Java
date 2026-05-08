@@ -34,7 +34,7 @@ public class EditStockServlet extends HttpServlet {
         }
 
         String itemId    = req.getParameter("id");
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService service = new InventoryService(itemsPath);
 
         List<Item> items = service.getAllItems();
@@ -86,7 +86,7 @@ public class EditStockServlet extends HttpServlet {
         Item updated = new Item(id, name.trim(), category.trim(),
                 quantity, price, expiryDate.trim());
 
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService service = new InventoryService(itemsPath);
         service.updateItem(updated); // Read-Modify-Overwrite inside FileHandler
 

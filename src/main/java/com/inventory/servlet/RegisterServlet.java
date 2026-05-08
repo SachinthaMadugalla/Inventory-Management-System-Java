@@ -46,7 +46,7 @@ public class RegisterServlet extends HttpServlet {
 
         User newUser = new User(username.trim(), password.trim(), role.toLowerCase());
 
-        String usersPath = getServletContext().getRealPath(FileHandler.USERS_FILE);
+        String usersPath = FileHandler.USERS_FILE;
         UserService userService = new UserService(usersPath);
 
         boolean success = userService.register(newUser);

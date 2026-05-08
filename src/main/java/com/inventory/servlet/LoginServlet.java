@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
         String password = req.getParameter("password");
 
         // Resolve the absolute path to users.txt at runtime
-        String usersPath = getServletContext().getRealPath(FileHandler.USERS_FILE);
+        String usersPath = FileHandler.USERS_FILE;
 
         // OOP: delegate authentication to the service layer (Abstraction)
         UserService userService = new UserService(usersPath);

@@ -27,13 +27,16 @@ public class FileHandler {
 
     // -----------------------------------------------------------------------
     // Path resolution — files live in the "data/" folder at the project root.
-    // ServletContext.getRealPath() is used at runtime; these constants are the
-    // relative names passed in from servlets.
+    // Instead of relying on getServletContext().getRealPath() which maps to a
+    // temporary Tomcat folder, we use absolute paths to the project directory
+    // so data is preserved across server restarts.
     // -----------------------------------------------------------------------
-    public static final String ITEMS_FILE   = "data/items.txt";
-    public static final String SALES_FILE   = "data/sales.txt";
-    public static final String USERS_FILE   = "data/users.txt";
-    public static final String REPORTS_FILE = "data/reports.txt";
+    private static final String PROJECT_DIR = "C:/Users/USER/Desktop/OOP Project/Inventory-Management-System-Java/";
+    
+    public static final String ITEMS_FILE   = PROJECT_DIR + "data/items.txt";
+    public static final String SALES_FILE   = PROJECT_DIR + "data/sales.txt";
+    public static final String USERS_FILE   = PROJECT_DIR + "data/users.txt";
+    public static final String REPORTS_FILE = PROJECT_DIR + "data/reports.txt";
 
     // -----------------------------------------------------------------------
     // Generic low-level helpers
