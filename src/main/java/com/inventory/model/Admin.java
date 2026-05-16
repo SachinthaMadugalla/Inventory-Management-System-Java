@@ -1,19 +1,11 @@
 package com.inventory.model;
 
-/**
- * OOP Concept: INHERITANCE
- * Admin IS-A User. It inherits all User fields (username, password, role)
- * and adds an admin-specific field: adminCode.
- *
- * OOP Concept: ENCAPSULATION
- * The adminCode field is private with a public getter/setter.
- */
 public class Admin extends User {
 
-    // --- Private field specific to Admin (Encapsulation) ---
+    //Private field specific to Admin (Encapsulation)
     private String adminCode;
 
-    // --- Constructors ---
+    //Constructors
     public Admin() {
         super();
         setRole("admin"); // Admins always have role = "admin"
@@ -24,22 +16,15 @@ public class Admin extends User {
         this.adminCode = adminCode;
     }
 
-    // --- Getter & Setter ---
+    //Getter & Setter
     public String getAdminCode()             { return adminCode; }
     public void   setAdminCode(String code)  { this.adminCode = code; }
 
-    /**
-     * Overrides toCsv to include the adminCode.
-     * Format: username,password,role,adminCode
-     */
     @Override
     public String toCsv() {
         return super.toCsv() + "," + adminCode;
     }
 
-    /**
-     * Deserialises a CSV line into an Admin object.
-     */
 
     public static Admin fromCsv(String csv) {
         String[] parts = csv.split(",", -1);
