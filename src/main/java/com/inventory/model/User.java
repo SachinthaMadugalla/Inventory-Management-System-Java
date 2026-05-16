@@ -5,7 +5,7 @@ public class User {
     //Private fields (Encapsulation)
     private String username;
     private String password;
-    private String role; // "admin" or "user"
+    private String role;  //admin or user
 
     //Constructors
     public User() {}
@@ -26,17 +26,12 @@ public class User {
     public String getRole()                  { return role; }
     public void   setRole(String r)          { this.role = r; }
 
-    /**
-     * Serialises the object to a CSV line for file storage.
-     * Format: username,password,role
-     */
+
     public String toCsv() {
         return username + "," + password + "," + role;
     }
 
-    /**
-     * Deserialises a CSV line back into a User object.
-     */
+
     public static User fromCsv(String csv) {
         String[] parts = csv.split(",", -1);
         if (parts.length < 3) return null;
