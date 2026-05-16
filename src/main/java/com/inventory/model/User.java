@@ -1,20 +1,13 @@
 package com.inventory.model;
 
-/**
- * OOP Concept: ENCAPSULATION
- * All fields are private; access is controlled through public getters/setters.
- *
- * OOP Concept: INHERITANCE
- * User is the base class. Admin extends User to inherit these fields.
- */
 public class User {
 
-    // --- Private fields (Encapsulation) ---
+    //Private fields (Encapsulation)
     private String username;
     private String password;
     private String role; // "admin" or "user"
 
-    // --- Constructors ---
+    //Constructors
     public User() {}
 
     public User(String username, String password, String role) {
@@ -23,7 +16,7 @@ public class User {
         this.role     = role;
     }
 
-    // --- Getters & Setters ---
+    //Getters & Setters
     public String getUsername()              { return username; }
     public void   setUsername(String u)      { this.username = u; }
 
@@ -33,10 +26,7 @@ public class User {
     public String getRole()                  { return role; }
     public void   setRole(String r)          { this.role = r; }
 
-    /**
-     * Serialises the object to a CSV line for file storage.
-     * Format: username,password,role
-     */
+
     public String toCsv() {
         return username + "," + password + "," + role;
     }
