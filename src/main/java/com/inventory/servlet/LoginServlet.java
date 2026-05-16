@@ -9,24 +9,17 @@ import javax.servlet.http.*;
 
 import java.io.IOException;
 
-/**
- * LoginServlet — handles GET (show form) and POST (process login).
- *
- * OOP Concept: ABSTRACTION
- * Delegates credential checking to UserService; this servlet only handles
- * HTTP request/response concerns.
- */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
-    /** Displays the login page. */
+    //Displays the login page
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         req.getRequestDispatcher("/views/user/login.jsp").forward(req, resp);
     }
 
-    /** Processes the submitted login form. */
+    //Processes the submitted login form
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -34,14 +27,14 @@ public class LoginServlet extends HttpServlet {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
-        // Trim the inputs to avoid trailing space issues (common with autocomplete)
+        //Trim the inputs to avoid trailing space issues (common with autocomplete)
         if (username != null) username = username.trim();
         if (password != null) password = password.trim();
 
-        // Resolve the absolute path to users.txt at runtime
+        //Resolve the absolute path to users.txt at runtime
         String usersPath = FileHandler.USERS_FILE;
 
-        // OOP: delegate authentication to the service layer (Abstraction)
+        //OOP: delegate authentication to the service layer (Abstraction)
         UserService userService = new UserService(usersPath);
         User user = userService.authenticate(username, password);
 
@@ -52,7 +45,7 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("username", user.getUsername());
             session.setAttribute("role", user.getRole());
 
-            // Redirect based on role
+            //Redirect based on role
             if ("admin".equalsIgnoreCase(user.getRole())) {
                 resp.sendRedirect(req.getContextPath() + "/dashboard");
             } else {
