@@ -3,23 +3,30 @@ package com.inventory.servlet;
 import com.inventory.model.User;
 import com.inventory.service.UserService;
 import com.inventory.util.FileHandler;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 
 import java.io.IOException;
 
+/**
+ * LoginServlet — handles GET (show form) and POST (process login).
+ *
+ * OOP Concept: ABSTRACTION
+ * Delegates credential checking to UserService; this servlet only handles
+ * HTTP request/response concerns.
+ */
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
 
-    //Displays the login page
+    /** Displays the login page. */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         req.getRequestDispatcher("/views/user/login.jsp").forward(req, resp);
     }
 
-    //Processes the submitted login form
+    /** Processes the submitted login form. */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -27,8 +34,12 @@ public class LoginServlet extends HttpServlet {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
+        // Trim the inputs to avoid trailing space issues (common with autocomplete)
+        if (username != null) username = username.trim();
+        if (password != null) password = password.trim();
+
         // Resolve the absolute path to users.txt at runtime
-        String usersPath = getServletContext().getRealPath(FileHandler.USERS_FILE);
+        String usersPath = FileHandler.USERS_FILE;
 
         // OOP: delegate authentication to the service layer (Abstraction)
         UserService userService = new UserService(usersPath);
