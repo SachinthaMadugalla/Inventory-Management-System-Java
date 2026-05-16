@@ -26,7 +26,10 @@ public class User {
     public String getRole()                  { return role; }
     public void   setRole(String r)          { this.role = r; }
 
-
+    /**
+     * Serialises the object to a CSV line for file storage.
+     * Format: username,password,role
+     */
     public String toCsv() {
         return username + "," + password + "," + role;
     }
