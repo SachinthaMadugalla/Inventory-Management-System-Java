@@ -16,21 +16,32 @@ public class User {
         this.role     = role;
     }
 
+
     //Getters & Setters
-    public String getUsername()              { return username; }
-    public void   setUsername(String u)      { this.username = u; }
+    public String getUsername() {
+        return username;
+    }
+    public void   setUsername(String u) {
+        this.username = u;
+    }
 
-    public String getPassword()              { return password; }
-    public void   setPassword(String p)      { this.password = p; }
+    public String getPassword() {
+        return password;
+    }
+    public void   setPassword(String p) {
+        this.password = p;
+    }
 
-    public String getRole()                  { return role; }
-    public void   setRole(String r)          { this.role = r; }
-
+    public String getRole() {
+        return role;
+    }
+    public void   setRole(String r) {
+        this.role = r;
+    }
 
     public String toCsv() {
         return username + "," + password + "," + role;
     }
-
 
     public static User fromCsv(String csv) {
         String[] parts = csv.split(",", -1);
