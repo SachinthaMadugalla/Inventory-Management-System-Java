@@ -8,7 +8,7 @@ public class Admin extends User {
     //Constructors
     public Admin() {
         super();
-        setRole("admin"); // Admins always have role = "admin"
+        setRole("admin"); //Admins always have role = "admin"
     }
 
     public Admin(String username, String password, String adminCode) {
@@ -17,8 +17,12 @@ public class Admin extends User {
     }
 
     //Getter & Setter
-    public String getAdminCode()             { return adminCode; }
-    public void   setAdminCode(String code)  { this.adminCode = code; }
+    public String getAdminCode(){
+        return adminCode;
+    }
+    public void   setAdminCode(String code){
+        this.adminCode = code;
+    }
 
     @Override
     public String toCsv() {
