@@ -1,15 +1,15 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="activePage" value="expiry" scope="request"/>
+<c:set var="activePage" value="addSale" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expired Items — Lumenara</title>
+    <title>New Sale — Lumenara</title>
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!--suppress HtmlUnknownTarget -->
@@ -585,6 +585,8 @@
             height:1px; border:none; margin:18px 0;
             background:linear-gradient(90deg,transparent,var(--bdg),transparent);
         }
+        #totalPreview{font-family:'Syne',sans-serif;font-size:30px;font-weight:800;letter-spacing:-1px;color:var(--green);}
+        .total-box{background:var(--g-dim);border:1px solid var(--bdg);border-radius:14px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
 
     </style>
 </head>
@@ -596,8 +598,8 @@
 
         <div class="topbar">
             <div>
-                <h2>Expired Items</h2>
-                <p class="topbar-sub">Component 02 — Items past their expiry date requiring immediate action.</p>
+                <h2>New Sale</h2>
+                <p class="topbar-sub">Select an item and quantity to process a sale transaction.</p>
             </div>
             <div class="topbar-actions">
                 <div class="user-pill">
@@ -610,88 +612,61 @@
             </div>
         </div>
 
-        <c:if test="${not empty successMsg}">
-            <div class="alert alert-success alert-dismissible fade show">
-                <i class="bi bi-check-circle-fill me-2"></i>${successMsg}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>${error}</div>
         </c:if>
 
-        <%-- Summary Banner --%>
-        <div class="card mb-4" style="background:var(--r-dim)!important;border-color:rgba(248,113,113,.2)!important;animation-delay:.05s">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--red);">${expired.size()} Expired Item(s)</div>
-                    <div class="small" style="color:var(--tx2);">These items are past their expiry date and should be removed</div>
-                </div>
-                <i class="bi bi-exclamation-triangle-fill" style="font-size:2.8rem;color:var(--red);opacity:.6;"></i>
+        <div class="card" style="max-width:680px;animation-delay:.05s">
+            <div class="card-header"><span><i class="bi bi-cart-plus me-2"></i>Process Sale</span></div>
+            <div class="card-body">
+                <form action="${pageContext.request.contextPath}/processSale" method="post" id="saleForm">
+                    <div class="mb-3">
+                        <label for="itemId" class="form-label">Select Item <span style="color:var(--red)">*</span></label>
+                        <select class="form-select" id="itemId" name="itemId" required onchange="updatePreview()">
+                            <option value="" disabled selected>-- Choose an item --</option>
+                            <c:forEach var="item" items="${items}">
+                                <option value="${item.id}"
+                                        data-price="${item.price}"
+                                        data-stock="${item.quantity}">
+                                        ${item.name} (Stock: ${item.quantity}) — $<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/>
+                                </option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Quantity <span style="color:var(--red)">*</span></label>
+                        <input type="number" class="form-control" id="quantity" name="quantity"
+                               min="1" placeholder="Enter quantity" required oninput="updatePreview()">
+                        <div class="form-text" id="stockHint"></div>
+                    </div>
+                    <%-- Live total preview --%>
+                    <div class="mb-4 total-box">
+                        <span style="color:var(--tx2);font-size:14px;">Estimated Total</span>
+                        <span id="totalPreview">$0.00</span>
+                    </div>
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="bi bi-check-circle me-2"></i>Confirm Sale
+                    </button>
+                    <a href="${pageContext.request.contextPath}/viewSales"
+                       class="btn btn-outline-secondary ms-2">Cancel</a>
+                </form>
             </div>
         </div>
-
-        <%-- Expired Items Table --%>
-        <div class="card" style="animation-delay:.10s">
-            <div class="card-header">
-                <span><i class="bi bi-calendar-x me-2" style="color:var(--red);"></i>Expired Stock</span>
-                <a href="${pageContext.request.contextPath}/expiryManagement"
-                   class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-arrow-left me-1"></i>Back to Expiry Management
-                </a>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-dark"><tr>
-                            <th>ID</th><th>Name</th><th>Category</th>
-                            <th>Quantity</th><th>Unit Price</th><th>Expiry Date</th>
-                            <c:if test="${sessionScope.role == 'admin'}">
-                                <th class="text-center">Action</th>
-                            </c:if>
-                        </tr></thead>
-                        <tbody>
-                        <c:forEach var="item" items="${expired}">
-                            <tr class="table-danger">
-                                <td><code>${item.id}</code></td>
-                                <td class="fw-semibold">${item.name}</td>
-                                <td><span class="badge bg-secondary">${item.category}</span></td>
-                                <td>${item.quantity}</td>
-                                <td>$<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
-                                <td><span class="badge bg-danger"><i class="bi bi-calendar-x me-1"></i>${item.expiryDate}</span></td>
-                                <c:if test="${sessionScope.role == 'admin'}">
-                                    <td class="text-center">
-                                        <form action="${pageContext.request.contextPath}/deleteStock"
-                                              method="post" class="d-inline"
-                                              onsubmit="return confirm('Permanently remove expired item: ${item.name}?');">
-                                            <input type="hidden" name="mode"   value="byId">
-                                            <input type="hidden" name="itemId" value="${item.id}">
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                <i class="bi bi-trash me-1"></i>Remove
-                                            </button>
-                                        </form>
-                                    </td>
-                                </c:if>
-                            </tr>
-                        </c:forEach>
-                        <c:if test="${empty expired}">
-                            <tr>
-                                <td colspan="7" class="text-center py-5" style="color:var(--tx3);">
-                                    <i class="bi bi-check-circle fs-2 d-block mb-2" style="color:var(--green);"></i>
-                                    No expired items found. All stock is within expiry date.
-                                </td>
-                            </tr>
-                        </c:if>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="alert alert-info mt-4">
-            <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>OOP Concepts in Action</h6>
-            <ul class="mb-0 small">
-                <li><strong>Encapsulation:</strong> Expiry date is private inside Item class; accessed via getExpiryDate().</li>
-                <li><strong>Abstraction:</strong> ExpiryServlet uses MergeSort via InventoryService to sort and filter items.</li>
-            </ul>
-        </div>
+        <script>
+            function updatePreview(){
+                const sel=document.getElementById('itemId');
+                const qty=document.getElementById('quantity');
+                const tot=document.getElementById('totalPreview');
+                const hint=document.getElementById('stockHint');
+                const opt=sel.options[sel.selectedIndex];
+                if(!opt||!opt.dataset.price){tot.textContent='$0.00';return;}
+                const price=parseFloat(opt.dataset.price)||0;
+                const stock=parseInt(opt.dataset.stock)||0;
+                const q=parseInt(qty.value)||0;
+                hint.textContent='Available stock: '+stock;
+                tot.textContent='$'+(price*q).toFixed(2);
+            }
+        </script>
     </div>
 </div>
 <!--suppress HtmlUnknownTarget -->

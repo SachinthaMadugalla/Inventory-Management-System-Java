@@ -1,20 +1,13 @@
 package com.inventory.model;
 
-/**
- * OOP Concept: ENCAPSULATION
- * All fields are private; access is controlled through public getters/setters.
- *
- * OOP Concept: INHERITANCE
- * User is the base class. Admin extends User to inherit these fields.
- */
 public class User {
 
-    // --- Private fields (Encapsulation) ---
+    //Private fields (Encapsulation)
     private String username;
     private String password;
-    private String role; // "admin" or "user"
+    private String role;  //admin or user
 
-    // --- Constructors ---
+    //Constructors
     public User() {}
 
     public User(String username, String password, String role) {
@@ -22,27 +15,34 @@ public class User {
         this.password = password;
         this.role     = role;
     }
-    // --- Getters & Setters ---
-    public String getUsername()              { return username; }
-    public void   setUsername(String u)      { this.username = u; }
 
-    public String getPassword()              { return password; }
-    public void   setPassword(String p)      { this.password = p; }
 
-    public String getRole()                  { return role; }
-    public void   setRole(String r)          { this.role = r; }
+    //Getters & Setters
+    public String getUsername() {
+        return username;
+    }
+    public void   setUsername(String u) {
+        this.username = u;
+    }
 
-    /**
-     * Serialises the object to a CSV line for file storage.
-     * Format: username,password,role
-     */
+    public String getPassword() {
+        return password;
+    }
+    public void   setPassword(String p) {
+        this.password = p;
+    }
+
+    public String getRole() {
+        return role;
+    }
+    public void   setRole(String r) {
+        this.role = r;
+    }
+
     public String toCsv() {
         return username + "," + password + "," + role;
     }
 
-    /**
-     * Deserialises a CSV line back into a User object.
-     */
     public static User fromCsv(String csv) {
         String[] parts = csv.split(",", -1);
         if (parts.length < 3) return null;

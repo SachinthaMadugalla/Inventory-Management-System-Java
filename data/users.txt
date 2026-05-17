@@ -1,0 +1,3 @@
+admin,admin123,admin
+john,john123,user
+sachintha,sachintha123,user

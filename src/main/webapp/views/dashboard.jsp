@@ -2,14 +2,13 @@
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<c:set var="activePage" value="expiry" scope="request"/>
+<c:set var="activePage" value="dashboard" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expired Items — Lumenara</title>
+    <title>Dashboard — Lumenara</title>
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!--suppress HtmlUnknownTarget -->
@@ -590,16 +589,25 @@
 </head>
 <body>
 <div class="d-flex">
+    <%-- Sidebar --%>
     <jsp:include page="/views/common/sidebar.jsp"/>
 
+    <%-- Main Content --%>
     <div class="main-content flex-grow-1">
 
+        <%-- Topbar --%>
         <div class="topbar">
             <div>
-                <h2>Expired Items</h2>
-                <p class="topbar-sub">Component 02 — Items past their expiry date requiring immediate action.</p>
+                <h2>Dashboard</h2>
+                <p class="topbar-sub">Welcome back, <strong>${sessionScope.username}</strong></p>
             </div>
             <div class="topbar-actions">
+                <a href="${pageContext.request.contextPath}/addStock" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Add Stock
+                </a>
+                <a href="${pageContext.request.contextPath}/processSale" class="btn btn-outline-secondary">
+                    <i class="bi bi-cart-plus me-1"></i>New Sale
+                </a>
                 <div class="user-pill">
                     <span class="user-pill-avatar">${fn:toUpperCase(fn:substring(sessionScope.username, 0, 1))}</span>
                     <div>
@@ -610,87 +618,100 @@
             </div>
         </div>
 
-        <c:if test="${not empty successMsg}">
-            <div class="alert alert-success alert-dismissible fade show">
-                <i class="bi bi-check-circle-fill me-2"></i>${successMsg}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </c:if>
-
-        <%-- Summary Banner --%>
-        <div class="card mb-4" style="background:var(--r-dim)!important;border-color:rgba(248,113,113,.2)!important;animation-delay:.05s">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--red);">${expired.size()} Expired Item(s)</div>
-                    <div class="small" style="color:var(--tx2);">These items are past their expiry date and should be removed</div>
+        <%-- Stat Cards --%>
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card stat-card is-green p-3" style="animation-delay:.05s">
+                    <div class="stat-icon-badge"><i class="bi bi-boxes"></i></div>
+                    <div class="stat-number" data-count="${totalItems}">0</div>
+                    <div class="stat-label">Total Items</div>
+                    <span class="stat-chip"><i class="bi bi-graph-up-arrow"></i> All stock</span>
                 </div>
-                <i class="bi bi-exclamation-triangle-fill" style="font-size:2.8rem;color:var(--red);opacity:.6;"></i>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card is-violet p-3" style="animation-delay:.10s">
+                    <div class="stat-icon-badge"><i class="bi bi-receipt"></i></div>
+                    <div class="stat-number" data-count="${totalSales}">0</div>
+                    <div class="stat-label">Total Sales</div>
+                    <span class="stat-chip" style="background:var(--v-dim);color:var(--violet);"><i class="bi bi-cart-check"></i> Transactions</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card is-blue p-3" style="animation-delay:.15s">
+                    <div class="stat-icon-badge"><i class="bi bi-currency-dollar"></i></div>
+                    <div class="stat-number" data-count="${totalRevenue}" data-prefix="$">$0</div>
+                    <div class="stat-label">Total Revenue</div>
+                    <span class="stat-chip" style="background:var(--b-dim);color:var(--blue);"><i class="bi bi-bank"></i> Earnings</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card is-amber p-3" style="animation-delay:.20s">
+                    <div class="stat-icon-badge"><i class="bi bi-exclamation-triangle"></i></div>
+                    <div class="stat-number" data-count="${lowStockCount}">0</div>
+                    <div class="stat-label">Low Stock Items</div>
+                    <span class="stat-chip" style="background:var(--a-dim);color:var(--amber);"><i class="bi bi-arrow-down-circle"></i> Needs restock</span>
+                </div>
             </div>
         </div>
 
-        <%-- Expired Items Table --%>
-        <div class="card" style="animation-delay:.10s">
+        <%-- Quick Actions --%>
+        <div class="card mb-4" style="animation-delay:.22s">
+            <div class="card-header"><span><i class="bi bi-lightning-charge me-2"></i>Quick Actions</span></div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="${pageContext.request.contextPath}/addStock" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Add Stock
+                    </a>
+                    <a href="${pageContext.request.contextPath}/processSale" class="btn btn-success">
+                        <i class="bi bi-cart-plus me-2"></i>New Sale
+                    </a>
+                    <a href="${pageContext.request.contextPath}/expiryManagement" class="btn btn-warning">
+                        <i class="bi bi-calendar-x me-2"></i>Expiry Check
+                    </a>
+                    <a href="${pageContext.request.contextPath}/reports" class="btn btn-info text-white">
+                        <i class="bi bi-bar-chart-line me-2"></i>Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <%-- Recent Items Table --%>
+        <div class="card" style="animation-delay:.28s">
             <div class="card-header">
-                <span><i class="bi bi-calendar-x me-2" style="color:var(--red);"></i>Expired Stock</span>
-                <a href="${pageContext.request.contextPath}/expiryManagement"
-                   class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-arrow-left me-1"></i>Back to Expiry Management
-                </a>
+                <span><i class="bi bi-clock-history me-2"></i>Recently Added Items</span>
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-dark"><tr>
-                            <th>ID</th><th>Name</th><th>Category</th>
-                            <th>Quantity</th><th>Unit Price</th><th>Expiry Date</th>
-                            <c:if test="${sessionScope.role == 'admin'}">
-                                <th class="text-center">Action</th>
-                            </c:if>
-                        </tr></thead>
-                        <tbody>
-                        <c:forEach var="item" items="${expired}">
-                            <tr class="table-danger">
-                                <td><code>${item.id}</code></td>
-                                <td class="fw-semibold">${item.name}</td>
-                                <td><span class="badge bg-secondary">${item.category}</span></td>
-                                <td>${item.quantity}</td>
-                                <td>$<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
-                                <td><span class="badge bg-danger"><i class="bi bi-calendar-x me-1"></i>${item.expiryDate}</span></td>
-                                <c:if test="${sessionScope.role == 'admin'}">
-                                    <td class="text-center">
-                                        <form action="${pageContext.request.contextPath}/deleteStock"
-                                              method="post" class="d-inline"
-                                              onsubmit="return confirm('Permanently remove expired item: ${item.name}?');">
-                                            <input type="hidden" name="mode"   value="byId">
-                                            <input type="hidden" name="itemId" value="${item.id}">
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                <i class="bi bi-trash me-1"></i>Remove
-                                            </button>
-                                        </form>
-                                    </td>
-                                </c:if>
-                            </tr>
-                        </c:forEach>
-                        <c:if test="${empty expired}">
-                            <tr>
-                                <td colspan="7" class="text-center py-5" style="color:var(--tx3);">
-                                    <i class="bi bi-check-circle fs-2 d-block mb-2" style="color:var(--green);"></i>
-                                    No expired items found. All stock is within expiry date.
-                                </td>
-                            </tr>
-                        </c:if>
-                        </tbody>
-                    </table>
-                </div>
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th>ID</th><th>Name</th><th>Category</th>
+                        <th>Qty</th><th>Price</th><th>Expiry</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach var="item" items="${recentItems}">
+                        <tr>
+                            <td><code>${item.id}</code></td>
+                            <td class="fw-semibold">${item.name}</td>
+                            <td><span class="badge bg-secondary">${item.category}</span></td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${item.quantity < 10}">
+                                        <span class="badge bg-danger">${item.quantity}</span>
+                                    </c:when>
+                                    <c:otherwise>${item.quantity}</c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>$<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
+                            <td>${item.expiryDate}</td>
+                        </tr>
+                    </c:forEach>
+                    <c:if test="${empty recentItems}">
+                        <tr><td colspan="6" class="text-center py-4" style="color:var(--tx3);">No items in inventory yet.</td></tr>
+                    </c:if>
+                    </tbody>
+                </table>
             </div>
-        </div>
-
-        <div class="alert alert-info mt-4">
-            <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>OOP Concepts in Action</h6>
-            <ul class="mb-0 small">
-                <li><strong>Encapsulation:</strong> Expiry date is private inside Item class; accessed via getExpiryDate().</li>
-                <li><strong>Abstraction:</strong> ExpiryServlet uses MergeSort via InventoryService to sort and filter items.</li>
-            </ul>
         </div>
     </div>
 </div>

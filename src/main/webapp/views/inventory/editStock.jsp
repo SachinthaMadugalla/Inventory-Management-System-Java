@@ -1,15 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%--@elvariable id="item"  type="com.inventory.model.Item"--%>
+<%--@elvariable id="error" type="java.lang.String"--%>
 
-<c:set var="activePage" value="expiry" scope="request"/>
+<c:set var="activePage" value="inventory" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expired Items — Lumenara</title>
+    <title>Edit Item — Lumenara</title>
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!--suppress HtmlUnknownTarget -->
@@ -596,8 +597,8 @@
 
         <div class="topbar">
             <div>
-                <h2>Expired Items</h2>
-                <p class="topbar-sub">Component 02 — Items past their expiry date requiring immediate action.</p>
+                <h2>Edit Item</h2>
+                <p class="topbar-sub">Modifying: <strong>${item.name}</strong> — uses Read-Modify-Overwrite pattern.</p>
             </div>
             <div class="topbar-actions">
                 <div class="user-pill">
@@ -610,87 +611,60 @@
             </div>
         </div>
 
-        <c:if test="${not empty successMsg}">
-            <div class="alert alert-success alert-dismissible fade show">
-                <i class="bi bi-check-circle-fill me-2"></i>${successMsg}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+        <c:if test="${not empty error}">
+            <div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>${error}</div>
         </c:if>
 
-        <%-- Summary Banner --%>
-        <div class="card mb-4" style="background:var(--r-dim)!important;border-color:rgba(248,113,113,.2)!important;animation-delay:.05s">
-            <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                    <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--red);">${expired.size()} Expired Item(s)</div>
-                    <div class="small" style="color:var(--tx2);">These items are past their expiry date and should be removed</div>
-                </div>
-                <i class="bi bi-exclamation-triangle-fill" style="font-size:2.8rem;color:var(--red);opacity:.6;"></i>
+        <div class="card" style="max-width:760px;animation-delay:.05s">
+            <div class="card-header"><span><i class="bi bi-pencil-square me-2"></i>Update Item Details</span></div>
+            <div class="card-body">
+                <form action="${pageContext.request.contextPath}/editStock" method="post">
+                    <input type="hidden" name="id" value="${item.id}">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="name" class="form-label">Item Name</label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   value="${item.name}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category" required>
+                                <c:forEach var="cat" items="${['Medicine','Food','Electronics','Clothing','Beverages','Other']}">
+                                    <option value="${cat}" ${item.category == cat ? 'selected' : ''}>${cat}</option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity"
+                                   value="${item.quantity}" min="0" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="price" class="form-label">Unit Price ($)</label>
+                            <input type="number" class="form-control" id="price" name="price"
+                                   value="${item.price}" step="0.01" min="0" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="expiryDate" class="form-label">Expiry Date</label>
+                            <input type="date" class="form-control" id="expiryDate" name="expiryDate"
+                                   value="${item.expiryDate}" required>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-save me-2"></i>Save Changes
+                            </button>
+                            <a href="${pageContext.request.contextPath}/viewInventory"
+                               class="btn btn-outline-secondary ms-2">Cancel</a>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 
-        <%-- Expired Items Table --%>
-        <div class="card" style="animation-delay:.10s">
-            <div class="card-header">
-                <span><i class="bi bi-calendar-x me-2" style="color:var(--red);"></i>Expired Stock</span>
-                <a href="${pageContext.request.contextPath}/expiryManagement"
-                   class="btn btn-sm btn-outline-secondary">
-                    <i class="bi bi-arrow-left me-1"></i>Back to Expiry Management
-                </a>
-            </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-dark"><tr>
-                            <th>ID</th><th>Name</th><th>Category</th>
-                            <th>Quantity</th><th>Unit Price</th><th>Expiry Date</th>
-                            <c:if test="${sessionScope.role == 'admin'}">
-                                <th class="text-center">Action</th>
-                            </c:if>
-                        </tr></thead>
-                        <tbody>
-                        <c:forEach var="item" items="${expired}">
-                            <tr class="table-danger">
-                                <td><code>${item.id}</code></td>
-                                <td class="fw-semibold">${item.name}</td>
-                                <td><span class="badge bg-secondary">${item.category}</span></td>
-                                <td>${item.quantity}</td>
-                                <td>$<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
-                                <td><span class="badge bg-danger"><i class="bi bi-calendar-x me-1"></i>${item.expiryDate}</span></td>
-                                <c:if test="${sessionScope.role == 'admin'}">
-                                    <td class="text-center">
-                                        <form action="${pageContext.request.contextPath}/deleteStock"
-                                              method="post" class="d-inline"
-                                              onsubmit="return confirm('Permanently remove expired item: ${item.name}?');">
-                                            <input type="hidden" name="mode"   value="byId">
-                                            <input type="hidden" name="itemId" value="${item.id}">
-                                            <button type="submit" class="btn btn-sm btn-danger">
-                                                <i class="bi bi-trash me-1"></i>Remove
-                                            </button>
-                                        </form>
-                                    </td>
-                                </c:if>
-                            </tr>
-                        </c:forEach>
-                        <c:if test="${empty expired}">
-                            <tr>
-                                <td colspan="7" class="text-center py-5" style="color:var(--tx3);">
-                                    <i class="bi bi-check-circle fs-2 d-block mb-2" style="color:var(--green);"></i>
-                                    No expired items found. All stock is within expiry date.
-                                </td>
-                            </tr>
-                        </c:if>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="alert alert-info mt-4">
-            <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>OOP Concepts in Action</h6>
-            <ul class="mb-0 small">
-                <li><strong>Encapsulation:</strong> Expiry date is private inside Item class; accessed via getExpiryDate().</li>
-                <li><strong>Abstraction:</strong> ExpiryServlet uses MergeSort via InventoryService to sort and filter items.</li>
-            </ul>
+        <div class="alert alert-info mt-4" style="max-width:760px;">
+            <strong><i class="bi bi-info-circle me-2"></i>File Integrity:</strong>
+            The update reads the entire <code>items.txt</code> into memory, replaces this item's record,
+            then overwrites the file — ensuring no data corruption (Read-Modify-Overwrite pattern).
         </div>
     </div>
 </div>
