@@ -5,11 +5,6 @@ import com.inventory.util.FileHandler;
 
 import java.util.List;
 
-/**
- * OOP Concept: ABSTRACTION (Service Layer)
- * UserService handles all user authentication and management logic.
- * Servlets delegate to this class rather than calling FileHandler directly.
- */
 public class UserService {
 
     private final String filePath;
@@ -18,10 +13,6 @@ public class UserService {
         this.filePath = filePath;
     }
 
-    /**
-     * Authenticates a user by matching username and password.
-     * Returns the matching User object, or null if credentials are invalid.
-     */
     public User authenticate(String username, String password) {
         List<User> users = FileHandler.readUsers(filePath);
         for (User user : users) {
@@ -33,10 +24,6 @@ public class UserService {
         return null; // Authentication failed
     }
 
-    /**
-     * Registers a new user if the username is not already taken.
-     * Returns true on success, false if the username already exists.
-     */
     public boolean register(User newUser) {
         List<User> users = FileHandler.readUsers(filePath);
         for (User u : users) {
@@ -48,16 +35,10 @@ public class UserService {
         return true;
     }
 
-    /**
-     * Returns all registered users.
-     */
     public List<User> getAllUsers() {
         return FileHandler.readUsers(filePath);
     }
 
-    /**
-     * Deletes a user by username (Read-Modify-Overwrite).
-     */
     public boolean deleteUser(String username) {
         List<User> users = FileHandler.readUsers(filePath);
         boolean removed = users.removeIf(u -> u.getUsername().equals(username));
