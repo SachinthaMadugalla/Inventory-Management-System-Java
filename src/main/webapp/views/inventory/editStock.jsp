@@ -1,14 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%--@elvariable id="item"  type="com.inventory.model.Item"--%>
+<%--@elvariable id="error" type="java.lang.String"--%>
 
-<c:set var="activePage" value="viewSales" scope="request"/>
+<c:set var="activePage" value="inventory" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Transaction — Lumenara</title>
+    <title>Edit Item — Lumenara</title>
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!--suppress HtmlUnknownTarget -->
@@ -595,8 +597,8 @@
 
         <div class="topbar">
             <div>
-                <h2>Edit Transaction</h2>
-                <p class="topbar-sub">Component 03 — Correct an erroneous transaction record.</p>
+                <h2>Edit Item</h2>
+                <p class="topbar-sub">Modifying: <strong>${item.name}</strong> — uses Read-Modify-Overwrite pattern.</p>
             </div>
             <div class="topbar-actions">
                 <div class="user-pill">
@@ -610,47 +612,48 @@
         </div>
 
         <c:if test="${not empty error}">
-            <div class="alert alert-danger mb-4"><i class="bi bi-exclamation-triangle-fill me-2"></i>${error}</div>
+            <div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>${error}</div>
         </c:if>
 
         <div class="card" style="max-width:760px;animation-delay:.05s">
-            <div class="card-header">
-                <span><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Sale Record — <code class="ms-1">${sale.saleId}</code></span>
-            </div>
+            <div class="card-header"><span><i class="bi bi-pencil-square me-2"></i>Update Item Details</span></div>
             <div class="card-body">
-                <form action="${pageContext.request.contextPath}/editTransaction" method="post">
-                    <input type="hidden" name="saleId" value="${sale.saleId}">
+                <form action="${pageContext.request.contextPath}/editStock" method="post">
+                    <input type="hidden" name="id" value="${item.id}">
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label for="itemId" class="form-label">Item ID</label>
-                            <input type="text" class="form-control" id="itemId" name="itemId"
-                                   value="${sale.itemId}" required>
+                            <label for="name" class="form-label">Item Name</label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   value="${item.name}" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="itemName" class="form-label">Item Name</label>
-                            <input type="text" class="form-control" id="itemName" name="itemName"
-                                   value="${sale.itemName}" required>
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category" required>
+                                <c:forEach var="cat" items="${['Medicine','Food','Electronics','Clothing','Beverages','Other']}">
+                                    <option value="${cat}" ${item.category == cat ? 'selected' : ''}>${cat}</option>
+                                </c:forEach>
+                            </select>
                         </div>
                         <div class="col-md-4">
-                            <label for="quantitySold" class="form-label">Quantity Sold</label>
-                            <input type="number" class="form-control" id="quantitySold" name="quantitySold"
-                                   value="${sale.quantitySold}" min="1" required>
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" name="quantity"
+                                   value="${item.quantity}" min="0" required>
                         </div>
                         <div class="col-md-4">
-                            <label for="totalPrice" class="form-label">Total Price ($)</label>
-                            <input type="number" class="form-control" id="totalPrice" name="totalPrice"
-                                   value="${sale.totalPrice}" step="0.01" min="0" required>
+                            <label for="price" class="form-label">Unit Price ($)</label>
+                            <input type="number" class="form-control" id="price" name="price"
+                                   value="${item.price}" step="0.01" min="0" required>
                         </div>
                         <div class="col-md-4">
-                            <label for="saleDate" class="form-label">Sale Date</label>
-                            <input type="date" class="form-control" id="saleDate" name="saleDate"
-                                   value="${sale.saleDate}" required>
+                            <label for="expiryDate" class="form-label">Expiry Date</label>
+                            <input type="date" class="form-control" id="expiryDate" name="expiryDate"
+                                   value="${item.expiryDate}" required>
                         </div>
                         <div class="col-12 mt-3">
                             <button type="submit" class="btn btn-primary px-4">
                                 <i class="bi bi-save me-2"></i>Save Changes
                             </button>
-                            <a href="${pageContext.request.contextPath}/viewSales"
+                            <a href="${pageContext.request.contextPath}/viewInventory"
                                class="btn btn-outline-secondary ms-2">Cancel</a>
                         </div>
                     </div>
@@ -658,12 +661,10 @@
             </div>
         </div>
 
-        <div class="alert alert-info mt-4" style="max-width:760px;animation-delay:.10s;">
-            <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>OOP Concepts in Action</h6>
-            <ul class="mb-0 small">
-                <li><strong>Encapsulation:</strong> Sale fields are private; modified only through setters.</li>
-                <li><strong>Abstraction:</strong> File update uses Read-Modify-Overwrite pattern inside FileHandler.</li>
-            </ul>
+        <div class="alert alert-info mt-4" style="max-width:760px;">
+            <strong><i class="bi bi-info-circle me-2"></i>File Integrity:</strong>
+            The update reads the entire <code>items.txt</code> into memory, replaces this item's record,
+            then overwrites the file — ensuring no data corruption (Read-Modify-Overwrite pattern).
         </div>
     </div>
 </div>

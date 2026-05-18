@@ -1,14 +1,17 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
+<%--@elvariable id="successMsg" type="java.lang.String"--%>
+<%--@elvariable id="reports"    type="java.util.List"--%>
 
-<c:set var="activePage" value="viewSales" scope="request"/>
+<c:set var="activePage" value="reports" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Transaction — Lumenara</title>
+    <title>Reports — Lumenara</title>
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!--suppress HtmlUnknownTarget -->
@@ -595,10 +598,15 @@
 
         <div class="topbar">
             <div>
-                <h2>Edit Transaction</h2>
-                <p class="topbar-sub">Component 03 — Correct an erroneous transaction record.</p>
+                <h2>Reports</h2>
+                <p class="topbar-sub">Generate and view sales summary reports.</p>
             </div>
             <div class="topbar-actions">
+                <form action="${pageContext.request.contextPath}/reports" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-info text-white">
+                        <i class="bi bi-file-earmark-bar-graph me-2"></i>Generate New Report
+                    </button>
+                </form>
                 <div class="user-pill">
                     <span class="user-pill-avatar">${fn:toUpperCase(fn:substring(sessionScope.username, 0, 1))}</span>
                     <div>
@@ -609,61 +617,47 @@
             </div>
         </div>
 
-        <c:if test="${not empty error}">
-            <div class="alert alert-danger mb-4"><i class="bi bi-exclamation-triangle-fill me-2"></i>${error}</div>
+        <c:if test="${not empty successMsg}">
+            <div class="alert alert-success alert-dismissible fade show">
+                <i class="bi bi-check-circle-fill me-2"></i>${successMsg}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
         </c:if>
 
-        <div class="card" style="max-width:760px;animation-delay:.05s">
+        <%-- Reports Table --%>
+        <div class="card" style="animation-delay:.05s">
             <div class="card-header">
-                <span><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Sale Record — <code class="ms-1">${sale.saleId}</code></span>
+                <span><i class="bi bi-bar-chart-line me-2"></i>Generated Reports (${reports.size()} total)</span>
             </div>
-            <div class="card-body">
-                <form action="${pageContext.request.contextPath}/editTransaction" method="post">
-                    <input type="hidden" name="saleId" value="${sale.saleId}">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="itemId" class="form-label">Item ID</label>
-                            <input type="text" class="form-control" id="itemId" name="itemId"
-                                   value="${sale.itemId}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="itemName" class="form-label">Item Name</label>
-                            <input type="text" class="form-control" id="itemName" name="itemName"
-                                   value="${sale.itemName}" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="quantitySold" class="form-label">Quantity Sold</label>
-                            <input type="number" class="form-control" id="quantitySold" name="quantitySold"
-                                   value="${sale.quantitySold}" min="1" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="totalPrice" class="form-label">Total Price ($)</label>
-                            <input type="number" class="form-control" id="totalPrice" name="totalPrice"
-                                   value="${sale.totalPrice}" step="0.01" min="0" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="saleDate" class="form-label">Sale Date</label>
-                            <input type="date" class="form-control" id="saleDate" name="saleDate"
-                                   value="${sale.saleDate}" required>
-                        </div>
-                        <div class="col-12 mt-3">
-                            <button type="submit" class="btn btn-primary px-4">
-                                <i class="bi bi-save me-2"></i>Save Changes
-                            </button>
-                            <a href="${pageContext.request.contextPath}/viewSales"
-                               class="btn btn-outline-secondary ms-2">Cancel</a>
-                        </div>
-                    </div>
-                </form>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark"><tr>
+                            <th>Report ID</th><th>Generated Date</th>
+                            <th>Total Sales</th><th>Total Revenue</th><th>Top Item</th>
+                        </tr></thead>
+                        <tbody>
+                        <c:forEach var="report" items="${reports}">
+                            <tr>
+                                <td><code>${report.reportId}</code></td>
+                                <td>${report.generatedDate}</td>
+                                <td><span class="badge bg-primary">${report.totalSales}</span></td>
+                                <td style="color:var(--green);font-weight:600;">$<fmt:formatNumber value="${report.totalRevenue}" maxFractionDigits="2"/></td>
+                                <td><span class="badge bg-warning text-dark"><i class="bi bi-trophy me-1"></i>${report.topItemName}</span></td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${empty reports}">
+                            <tr>
+                                <td colspan="5" class="text-center py-5" style="color:var(--tx3);">
+                                    <i class="bi bi-file-earmark-x fs-2 d-block mb-2"></i>
+                                    No reports generated yet. Click "Generate New Report" above.
+                                </td>
+                            </tr>
+                        </c:if>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-
-        <div class="alert alert-info mt-4" style="max-width:760px;animation-delay:.10s;">
-            <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>OOP Concepts in Action</h6>
-            <ul class="mb-0 small">
-                <li><strong>Encapsulation:</strong> Sale fields are private; modified only through setters.</li>
-                <li><strong>Abstraction:</strong> File update uses Read-Modify-Overwrite pattern inside FileHandler.</li>
-            </ul>
         </div>
     </div>
 </div>

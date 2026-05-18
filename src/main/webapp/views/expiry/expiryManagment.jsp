@@ -1,14 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="activePage" value="viewSales" scope="request"/>
+<c:set var="activePage" value="expiry" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Transaction — Lumenara</title>
+    <title>Expiry Management — Lumenara</title>
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!--suppress HtmlUnknownTarget -->
@@ -511,79 +512,12 @@
         .table > :not(caption) > * > .table-danger {
             background:var(--r-dim) !important; color:var(--tx1) !important;
         }
-
-        /* ===========================  FORMS  =========================== */
-        .form-control, .form-select {
-            font-family:'Outfit',sans-serif !important;
-            background:rgba(255,255,255,.04) !important;
-            border:1px solid var(--bd2) !important;
-            border-radius:12px !important;
-            padding:11px 14px !important;
-            font-size:14px !important; color:var(--tx1) !important;
-            transition:border-color .2s, box-shadow .2s !important;
-        }
-        .form-control::placeholder { color:var(--tx3) !important; }
-        .form-control:focus, .form-select:focus {
-            background:rgba(0,232,150,.04) !important;
-            border-color:var(--green) !important;
-            box-shadow:0 0 0 3px var(--g-dim), 0 0 22px rgba(0,232,150,.06) !important;
-            color:var(--tx1) !important;
-        }
-        .form-select option { background:var(--bg-1); color:var(--tx1); }
-        .form-label {
-            font-family:'Outfit',sans-serif !important;
-            font-weight:600 !important; font-size:11px !important;
-            text-transform:uppercase; letter-spacing:.7px;
-            color:var(--tx2) !important; margin-bottom:7px;
-        }
-        .form-text { font-size:12px; color:var(--tx3); }
-        .input-group-text {
-            background:rgba(255,255,255,.04) !important;
-            border:1px solid var(--bd2) !important;
-            color:var(--tx2) !important; border-radius:12px !important;
-        }
-
-        /* ===========================  ALERTS  =========================== */
-        .alert {
-            border-radius:14px !important;
-            padding:14px 18px !important; font-size:13.5px;
-            border:1px solid transparent !important;
-            backdrop-filter:blur(8px);
-        }
-        .alert-info    { background:var(--b-dim) !important; color:var(--blue)   !important; border-color:rgba(56,189,248,.2) !important; }
-        .alert-success { background:var(--g-dim) !important; color:var(--green)  !important; border-color:var(--bdg) !important; }
-        .alert-danger  { background:var(--r-dim) !important; color:var(--red)    !important; border-color:rgba(248,113,113,.2) !important; }
-        .alert-primary { background:var(--g-dim) !important; color:var(--green)  !important; border-color:var(--bdg) !important; }
-        .alert-warning { background:var(--a-dim) !important; color:var(--amber)  !important; border-color:rgba(251,191,36,.2) !important; }
-        .btn-close { filter:invert(1) !important; opacity:.55 !important; }
-        .btn-close:hover { opacity:1 !important; }
-
-        /* ===========================  MISC  =========================== */
-        code {
-            font-family:'JetBrains Mono',monospace;
-            background:rgba(0,232,150,.08); color:var(--green);
-            padding:2px 8px; border-radius:6px; font-size:11.5px;
-            border:1px solid var(--bdg);
-        }
-        .text-muted   { color:var(--tx2) !important; }
-        .text-primary { color:var(--green) !important; }
-        .text-success { color:var(--green) !important; }
-        .text-danger  { color:var(--red) !important; }
-        .text-warning { color:var(--amber) !important; }
-        .text-info    { color:var(--blue) !important; }
-        hr { border-color:var(--bd) !important; opacity:1; }
-        h1,h2,h3,h4,h5,h6 { font-family:'Syne',sans-serif; letter-spacing:-.3px; color:var(--tx1); }
-        .fw-bold, .fw-semibold { font-family:'Syne',sans-serif !important; }
-
-        .gradient-text {
-            background:linear-gradient(120deg,var(--tx1) 40%,var(--green));
-            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-            background-clip:text;
-        }
-        .glow-divider {
-            height:1px; border:none; margin:18px 0;
-            background:linear-gradient(90deg,transparent,var(--bdg),transparent);
-        }
+        .expired-row{background:var(--r-dim)!important;}
+        .warning-row{background:var(--a-dim)!important;}
+        .summary-pill{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(255,255,255,.03);border:1px solid var(--bd2);border-radius:999px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;}
+        .summary-pill.is-red{color:var(--red);border-color:rgba(248,113,113,.3);}
+        .summary-pill.is-amber{color:var(--amber);border-color:rgba(251,191,36,.3);}
+        .summary-pill.is-green{color:var(--green);border-color:var(--bdg);}
 
     </style>
 </head>
@@ -595,8 +529,8 @@
 
         <div class="topbar">
             <div>
-                <h2>Edit Transaction</h2>
-                <p class="topbar-sub">Component 03 — Correct an erroneous transaction record.</p>
+                <h2>Expiry Management</h2>
+                <p class="topbar-sub">Component 02 — Items sorted by expiry date using custom <strong>MergeSort O(n log n)</strong>.</p>
             </div>
             <div class="topbar-actions">
                 <div class="user-pill">
@@ -609,61 +543,82 @@
             </div>
         </div>
 
-        <c:if test="${not empty error}">
-            <div class="alert alert-danger mb-4"><i class="bi bi-exclamation-triangle-fill me-2"></i>${error}</div>
-        </c:if>
-
-        <div class="card" style="max-width:760px;animation-delay:.05s">
-            <div class="card-header">
-                <span><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Sale Record — <code class="ms-1">${sale.saleId}</code></span>
-            </div>
-            <div class="card-body">
-                <form action="${pageContext.request.contextPath}/editTransaction" method="post">
-                    <input type="hidden" name="saleId" value="${sale.saleId}">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="itemId" class="form-label">Item ID</label>
-                            <input type="text" class="form-control" id="itemId" name="itemId"
-                                   value="${sale.itemId}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="itemName" class="form-label">Item Name</label>
-                            <input type="text" class="form-control" id="itemName" name="itemName"
-                                   value="${sale.itemName}" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="quantitySold" class="form-label">Quantity Sold</label>
-                            <input type="number" class="form-control" id="quantitySold" name="quantitySold"
-                                   value="${sale.quantitySold}" min="1" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="totalPrice" class="form-label">Total Price ($)</label>
-                            <input type="number" class="form-control" id="totalPrice" name="totalPrice"
-                                   value="${sale.totalPrice}" step="0.01" min="0" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="saleDate" class="form-label">Sale Date</label>
-                            <input type="date" class="form-control" id="saleDate" name="saleDate"
-                                   value="${sale.saleDate}" required>
-                        </div>
-                        <div class="col-12 mt-3">
-                            <button type="submit" class="btn btn-primary px-4">
-                                <i class="bi bi-save me-2"></i>Save Changes
-                            </button>
-                            <a href="${pageContext.request.contextPath}/viewSales"
-                               class="btn btn-outline-secondary ms-2">Cancel</a>
-                        </div>
-                    </div>
-                </form>
-            </div>
+        <%-- Algorithm Info --%>
+        <div class="alert alert-primary mb-4">
+            <h6 class="fw-bold"><i class="bi bi-sort-numeric-up me-2"></i>MergeSort Algorithm Active</h6>
+            <p class="mb-0 small">
+                Items below are sorted by <code>expiryDate</code> (YYYY-MM-DD) in ascending order using a
+                hand-written divide-and-conquer Merge Sort — <strong>NOT</strong> <code>Collections.sort()</code>.
+                Time complexity: <strong>O(n log n)</strong> guaranteed.
+            </p>
         </div>
 
-        <div class="alert alert-info mt-4" style="max-width:760px;animation-delay:.10s;">
-            <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>OOP Concepts in Action</h6>
-            <ul class="mb-0 small">
-                <li><strong>Encapsulation:</strong> Sale fields are private; modified only through setters.</li>
-                <li><strong>Abstraction:</strong> File update uses Read-Modify-Overwrite pattern inside FileHandler.</li>
-            </ul>
+        <%-- Summary Badges --%>
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            <span class="summary-pill is-red"><i class="bi bi-x-circle"></i>Expired: ${expired.size()}</span>
+            <span class="summary-pill is-amber"><i class="bi bi-exclamation-triangle"></i>Expiring Soon (&#8804;30 days): ${expiringSoon.size()}</span>
+            <span class="summary-pill is-green"><i class="bi bi-check-circle"></i>Total Sorted: ${sortedItems.size()}</span>
+        </div>
+
+        <%-- Sorted Items Table --%>
+        <div class="card" style="animation-delay:.10s">
+            <div class="card-header"><span><i class="bi bi-table me-2"></i>All Items — Sorted by Expiry Date (Ascending)</span></div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark"><tr>
+                            <th>#</th><th>ID</th><th>Name</th><th>Category</th>
+                            <th>Quantity</th><th>Expiry Date</th><th>Status</th>
+                        </tr></thead>
+                        <tbody>
+                        <c:set var="rank" value="1"/>
+                        <c:forEach var="item" items="${sortedItems}">
+                            <%-- Determine row class based on expiry status --%>
+                            <c:set var="rowClass" value=""/>
+                            <c:forEach var="exp" items="${expired}">
+                                <c:if test="${exp.id == item.id}"><c:set var="rowClass" value="expired-row"/></c:if>
+                            </c:forEach>
+                            <c:forEach var="soon" items="${expiringSoon}">
+                                <c:if test="${soon.id == item.id && empty rowClass}"><c:set var="rowClass" value="warning-row"/></c:if>
+                            </c:forEach>
+                            <tr class="${rowClass}">
+                                <td class="small" style="color:var(--tx3);">${rank}</td>
+                                <td><code>${item.id}</code></td>
+                                <td class="fw-semibold">${item.name}</td>
+                                <td><span class="badge bg-secondary">${item.category}</span></td>
+                                <td>${item.quantity}</td>
+                                <td><strong>${item.expiryDate}</strong></td>
+                                <td>
+                                    <c:set var="isExpired" value="false"/>
+                                    <c:forEach var="exp" items="${expired}">
+                                        <c:if test="${exp.id == item.id}"><c:set var="isExpired" value="true"/></c:if>
+                                    </c:forEach>
+                                    <c:set var="isSoon" value="false"/>
+                                    <c:forEach var="soon" items="${expiringSoon}">
+                                        <c:if test="${soon.id == item.id}"><c:set var="isSoon" value="true"/></c:if>
+                                    </c:forEach>
+                                    <c:choose>
+                                        <c:when test="${isExpired}">
+                                            <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Expired</span>
+                                        </c:when>
+                                        <c:when test="${isSoon}">
+                                            <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle me-1"></i>Expiring Soon</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Good</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                            <c:set var="rank" value="${rank + 1}"/>
+                        </c:forEach>
+                        <c:if test="${empty sortedItems}">
+                            <tr><td colspan="7" class="text-center py-5" style="color:var(--tx3);"><i class="bi bi-inbox fs-2 d-block mb-2"></i>No items to display.</td></tr>
+                        </c:if>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>

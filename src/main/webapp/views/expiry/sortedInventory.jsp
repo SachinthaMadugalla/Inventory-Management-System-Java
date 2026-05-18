@@ -1,14 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 
-<c:set var="activePage" value="viewSales" scope="request"/>
+<c:set var="activePage" value="expiry" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Transaction — Lumenara</title>
+    <title>Sorted Inventory — Lumenara</title>
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!--suppress HtmlUnknownTarget -->
@@ -595,8 +596,8 @@
 
         <div class="topbar">
             <div>
-                <h2>Edit Transaction</h2>
-                <p class="topbar-sub">Component 03 — Correct an erroneous transaction record.</p>
+                <h2>Sorted Inventory View</h2>
+                <p class="topbar-sub">Component 02 — All items sorted by expiry date using Merge Sort (O(n log n))</p>
             </div>
             <div class="topbar-actions">
                 <div class="user-pill">
@@ -609,60 +610,75 @@
             </div>
         </div>
 
-        <c:if test="${not empty error}">
-            <div class="alert alert-danger mb-4"><i class="bi bi-exclamation-triangle-fill me-2"></i>${error}</div>
-        </c:if>
-
-        <div class="card" style="max-width:760px;animation-delay:.05s">
-            <div class="card-header">
-                <span><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Sale Record — <code class="ms-1">${sale.saleId}</code></span>
-            </div>
+        <%-- Algorithm Info Card --%>
+        <div class="card mb-4" style="border-left:3px solid var(--green)!important;animation-delay:.05s">
             <div class="card-body">
-                <form action="${pageContext.request.contextPath}/editTransaction" method="post">
-                    <input type="hidden" name="saleId" value="${sale.saleId}">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="itemId" class="form-label">Item ID</label>
-                            <input type="text" class="form-control" id="itemId" name="itemId"
-                                   value="${sale.itemId}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="itemName" class="form-label">Item Name</label>
-                            <input type="text" class="form-control" id="itemName" name="itemName"
-                                   value="${sale.itemName}" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="quantitySold" class="form-label">Quantity Sold</label>
-                            <input type="number" class="form-control" id="quantitySold" name="quantitySold"
-                                   value="${sale.quantitySold}" min="1" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="totalPrice" class="form-label">Total Price ($)</label>
-                            <input type="number" class="form-control" id="totalPrice" name="totalPrice"
-                                   value="${sale.totalPrice}" step="0.01" min="0" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="saleDate" class="form-label">Sale Date</label>
-                            <input type="date" class="form-control" id="saleDate" name="saleDate"
-                                   value="${sale.saleDate}" required>
-                        </div>
-                        <div class="col-12 mt-3">
-                            <button type="submit" class="btn btn-primary px-4">
-                                <i class="bi bi-save me-2"></i>Save Changes
-                            </button>
-                            <a href="${pageContext.request.contextPath}/viewSales"
-                               class="btn btn-outline-secondary ms-2">Cancel</a>
-                        </div>
-                    </div>
-                </form>
+                <h6 class="fw-semibold mb-2" style="color:var(--green);font-family:'Syne',sans-serif;"><i class="bi bi-sort-numeric-up me-2"></i>Merge Sort Applied</h6>
+                <p class="mb-0 small" style="color:var(--tx2);">
+                    Items below are sorted by expiry date in <strong style="color:var(--tx1);">ascending order</strong>
+                    (soonest to expire first) using a custom <code>MergeSort.sortByExpiryDate()</code>
+                    implementation — O(n log n) divide-and-conquer algorithm.
+                    <strong style="color:var(--tx1);">Collections.sort() is NOT used.</strong>
+                </p>
             </div>
         </div>
 
-        <div class="alert alert-info mt-4" style="max-width:760px;animation-delay:.10s;">
+        <%-- Sorted Items Table --%>
+        <div class="card" style="animation-delay:.10s">
+            <div class="card-header">
+                <span><i class="bi bi-sort-up me-2"></i>Inventory Sorted by Expiry Date (${sortedItems.size()} items)</span>
+                <a href="${pageContext.request.contextPath}/expiryManagement"
+                   class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Back
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark"><tr>
+                            <th>#</th><th>ID</th><th>Name</th><th>Category</th>
+                            <th>Quantity</th><th>Unit Price</th><th>Expiry Date</th><th>Status</th>
+                        </tr></thead>
+                        <tbody>
+                        <c:forEach var="item" items="${sortedItems}" varStatus="loop">
+                            <tr>
+                                <td class="small" style="color:var(--tx3);">${loop.index + 1}</td>
+                                <td><code>${item.id}</code></td>
+                                <td class="fw-semibold">${item.name}</td>
+                                <td><span class="badge bg-secondary">${item.category}</span></td>
+                                <td>${item.quantity}</td>
+                                <td>$<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
+                                <td>${item.expiryDate}</td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${item.expiryDate lt today}">
+                                            <span class="badge bg-danger">Expired</span>
+                                        </c:when>
+                                        <c:when test="${item.expiryDate le today30}">
+                                            <span class="badge bg-warning text-dark">Expiring Soon</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge bg-success">Valid</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${empty sortedItems}">
+                            <tr><td colspan="8" class="text-center py-5" style="color:var(--tx3);"><i class="bi bi-inbox fs-2 d-block mb-2"></i>No items in inventory.</td></tr>
+                        </c:if>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info mt-4">
             <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>OOP Concepts in Action</h6>
             <ul class="mb-0 small">
-                <li><strong>Encapsulation:</strong> Sale fields are private; modified only through setters.</li>
-                <li><strong>Abstraction:</strong> File update uses Read-Modify-Overwrite pattern inside FileHandler.</li>
+                <li><strong>Abstraction:</strong> MergeSort logic is fully encapsulated in the MergeSort class.</li>
+                <li><strong>Encapsulation:</strong> Expiry date is private in Item; accessed via getExpiryDate().</li>
+                <li><strong>Algorithm:</strong> Merge Sort O(n log n) — divide list in half, sort each half, merge back.</li>
             </ul>
         </div>
     </div>

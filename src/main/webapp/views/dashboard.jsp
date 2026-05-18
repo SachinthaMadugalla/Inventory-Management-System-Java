@@ -1,14 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
-<c:set var="activePage" value="viewSales" scope="request"/>
+<%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:set var="activePage" value="dashboard" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Transaction — Lumenara</title>
+    <title>Dashboard — Lumenara</title>
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!--suppress HtmlUnknownTarget -->
@@ -589,16 +589,25 @@
 </head>
 <body>
 <div class="d-flex">
+    <%-- Sidebar --%>
     <jsp:include page="/views/common/sidebar.jsp"/>
 
+    <%-- Main Content --%>
     <div class="main-content flex-grow-1">
 
+        <%-- Topbar --%>
         <div class="topbar">
             <div>
-                <h2>Edit Transaction</h2>
-                <p class="topbar-sub">Component 03 — Correct an erroneous transaction record.</p>
+                <h2>Dashboard</h2>
+                <p class="topbar-sub">Welcome back, <strong>${sessionScope.username}</strong></p>
             </div>
             <div class="topbar-actions">
+                <a href="${pageContext.request.contextPath}/addStock" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Add Stock
+                </a>
+                <a href="${pageContext.request.contextPath}/processSale" class="btn btn-outline-secondary">
+                    <i class="bi bi-cart-plus me-1"></i>New Sale
+                </a>
                 <div class="user-pill">
                     <span class="user-pill-avatar">${fn:toUpperCase(fn:substring(sessionScope.username, 0, 1))}</span>
                     <div>
@@ -609,61 +618,100 @@
             </div>
         </div>
 
-        <c:if test="${not empty error}">
-            <div class="alert alert-danger mb-4"><i class="bi bi-exclamation-triangle-fill me-2"></i>${error}</div>
-        </c:if>
-
-        <div class="card" style="max-width:760px;animation-delay:.05s">
-            <div class="card-header">
-                <span><i class="bi bi-pencil-square me-2 text-primary"></i>Edit Sale Record — <code class="ms-1">${sale.saleId}</code></span>
+        <%-- Stat Cards --%>
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card stat-card is-green p-3" style="animation-delay:.05s">
+                    <div class="stat-icon-badge"><i class="bi bi-boxes"></i></div>
+                    <div class="stat-number" data-count="${totalItems}">0</div>
+                    <div class="stat-label">Total Items</div>
+                    <span class="stat-chip"><i class="bi bi-graph-up-arrow"></i> All stock</span>
+                </div>
             </div>
-            <div class="card-body">
-                <form action="${pageContext.request.contextPath}/editTransaction" method="post">
-                    <input type="hidden" name="saleId" value="${sale.saleId}">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label for="itemId" class="form-label">Item ID</label>
-                            <input type="text" class="form-control" id="itemId" name="itemId"
-                                   value="${sale.itemId}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="itemName" class="form-label">Item Name</label>
-                            <input type="text" class="form-control" id="itemName" name="itemName"
-                                   value="${sale.itemName}" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="quantitySold" class="form-label">Quantity Sold</label>
-                            <input type="number" class="form-control" id="quantitySold" name="quantitySold"
-                                   value="${sale.quantitySold}" min="1" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="totalPrice" class="form-label">Total Price ($)</label>
-                            <input type="number" class="form-control" id="totalPrice" name="totalPrice"
-                                   value="${sale.totalPrice}" step="0.01" min="0" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="saleDate" class="form-label">Sale Date</label>
-                            <input type="date" class="form-control" id="saleDate" name="saleDate"
-                                   value="${sale.saleDate}" required>
-                        </div>
-                        <div class="col-12 mt-3">
-                            <button type="submit" class="btn btn-primary px-4">
-                                <i class="bi bi-save me-2"></i>Save Changes
-                            </button>
-                            <a href="${pageContext.request.contextPath}/viewSales"
-                               class="btn btn-outline-secondary ms-2">Cancel</a>
-                        </div>
-                    </div>
-                </form>
+            <div class="col-md-3">
+                <div class="card stat-card is-violet p-3" style="animation-delay:.10s">
+                    <div class="stat-icon-badge"><i class="bi bi-receipt"></i></div>
+                    <div class="stat-number" data-count="${totalSales}">0</div>
+                    <div class="stat-label">Total Sales</div>
+                    <span class="stat-chip" style="background:var(--v-dim);color:var(--violet);"><i class="bi bi-cart-check"></i> Transactions</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card is-blue p-3" style="animation-delay:.15s">
+                    <div class="stat-icon-badge"><i class="bi bi-currency-dollar"></i></div>
+                    <div class="stat-number" data-count="${totalRevenue}" data-prefix="$">$0</div>
+                    <div class="stat-label">Total Revenue</div>
+                    <span class="stat-chip" style="background:var(--b-dim);color:var(--blue);"><i class="bi bi-bank"></i> Earnings</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card is-amber p-3" style="animation-delay:.20s">
+                    <div class="stat-icon-badge"><i class="bi bi-exclamation-triangle"></i></div>
+                    <div class="stat-number" data-count="${lowStockCount}">0</div>
+                    <div class="stat-label">Low Stock Items</div>
+                    <span class="stat-chip" style="background:var(--a-dim);color:var(--amber);"><i class="bi bi-arrow-down-circle"></i> Needs restock</span>
+                </div>
             </div>
         </div>
 
-        <div class="alert alert-info mt-4" style="max-width:760px;animation-delay:.10s;">
-            <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>OOP Concepts in Action</h6>
-            <ul class="mb-0 small">
-                <li><strong>Encapsulation:</strong> Sale fields are private; modified only through setters.</li>
-                <li><strong>Abstraction:</strong> File update uses Read-Modify-Overwrite pattern inside FileHandler.</li>
-            </ul>
+        <%-- Quick Actions --%>
+        <div class="card mb-4" style="animation-delay:.22s">
+            <div class="card-header"><span><i class="bi bi-lightning-charge me-2"></i>Quick Actions</span></div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="${pageContext.request.contextPath}/addStock" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Add Stock
+                    </a>
+                    <a href="${pageContext.request.contextPath}/processSale" class="btn btn-success">
+                        <i class="bi bi-cart-plus me-2"></i>New Sale
+                    </a>
+                    <a href="${pageContext.request.contextPath}/expiryManagement" class="btn btn-warning">
+                        <i class="bi bi-calendar-x me-2"></i>Expiry Check
+                    </a>
+                    <a href="${pageContext.request.contextPath}/reports" class="btn btn-info text-white">
+                        <i class="bi bi-bar-chart-line me-2"></i>Reports
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <%-- Recent Items Table --%>
+        <div class="card" style="animation-delay:.28s">
+            <div class="card-header">
+                <span><i class="bi bi-clock-history me-2"></i>Recently Added Items</span>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th>ID</th><th>Name</th><th>Category</th>
+                        <th>Qty</th><th>Price</th><th>Expiry</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <c:forEach var="item" items="${recentItems}">
+                        <tr>
+                            <td><code>${item.id}</code></td>
+                            <td class="fw-semibold">${item.name}</td>
+                            <td><span class="badge bg-secondary">${item.category}</span></td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${item.quantity < 10}">
+                                        <span class="badge bg-danger">${item.quantity}</span>
+                                    </c:when>
+                                    <c:otherwise>${item.quantity}</c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>$<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
+                            <td>${item.expiryDate}</td>
+                        </tr>
+                    </c:forEach>
+                    <c:if test="${empty recentItems}">
+                        <tr><td colspan="6" class="text-center py-4" style="color:var(--tx3);">No items in inventory yet.</td></tr>
+                    </c:if>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

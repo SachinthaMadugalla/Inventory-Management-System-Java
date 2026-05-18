@@ -54,7 +54,7 @@ public class Sale {
      */
     public String toCsv() {
         return saleId + "," + itemId + "," + itemName + ","
-                + quantitySold + "," + totalPrice + "," + saleDate;
+             + quantitySold + "," + totalPrice + "," + saleDate;
     }
 
     /**
@@ -65,12 +65,12 @@ public class Sale {
         if (parts.length < 6) return null;
         try {
             return new Sale(
-                    parts[0].trim(),
-                    parts[1].trim(),
-                    parts[2].trim(),
-                    Integer.parseInt(parts[3].trim()),
-                    Double.parseDouble(parts[4].trim()),
-                    parts[5].trim()
+                parts[0].trim(),
+                parts[1].trim(),
+                parts[2].trim(),
+                Integer.parseInt(parts[3].trim()),
+                Double.parseDouble(parts[4].trim()),
+                parts[5].trim()
             );
         } catch (NumberFormatException e) {
             return null;
@@ -80,6 +80,6 @@ public class Sale {
     @Override
     public String toString() {
         return "Sale{saleId='" + saleId + "', itemName='" + itemName
-                + "', qty=" + quantitySold + ", total=" + totalPrice + "}";
+             + "', qty=" + quantitySold + ", total=" + totalPrice + "}";
     }
 }
