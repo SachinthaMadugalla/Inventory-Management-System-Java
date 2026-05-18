@@ -14,6 +14,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * SalesServlet — handles the sales form (GET) and sale processing (POST).
+ *
+ * OOP Concept: ABSTRACTION
+ * Business logic (stock decrement, sale recording) is in SalesService.
+ */
 @WebServlet("/processSale")
 public class SalesServlet extends HttpServlet {
 
