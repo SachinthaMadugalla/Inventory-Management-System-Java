@@ -32,6 +32,22 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- JavaMail API — used by EmailService to send OTP emails via Gmail SMTP -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+
+        <!-- JSTL 1.2 for Java EE -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <!-- Provide the actual JSTL implementation for runtime -->
+        <dependency>
         <!-- JSTL 1.2 for Java EE -->
         <dependency>
             <groupId>javax.servlet</groupId>
