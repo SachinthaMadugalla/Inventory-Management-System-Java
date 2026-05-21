@@ -342,11 +342,12 @@
     <%-- Login form --%>
     <form action="${pageContext.request.contextPath}/login" method="post" novalidate>
 
-        <label for="username" class="field-label">Username</label>
+        <label for="usernameOrEmail" class="field-label">Email or Username</label>
         <div class="input-wrap">
             <i class="bi bi-person input-icon"></i>
-            <input type="text" class="input-field" id="username" name="username"
-                   placeholder="Enter your username" maxlength="50"
+            <input type="text" class="input-field" id="usernameOrEmail" name="usernameOrEmail"
+                   placeholder="Enter your email or username" maxlength="150"
+                   value="${not empty prevInput ? prevInput : ''}"
                    required autofocus autocomplete="username">
         </div>
 
@@ -360,6 +361,23 @@
                     aria-label="Toggle password visibility">
                 <i class="bi bi-eye" id="pw-icon"></i>
             </button>
+        </div>
+
+        <%-- Remember Me + Forgot Password row --%>
+        <div style="display:flex; align-items:center; justify-content:space-between;
+                    margin-bottom:14px; margin-top:-4px;">
+            <label style="display:flex; align-items:center; gap:7px; cursor:pointer;
+                           font-size:12.5px; color:var(--tx2); user-select:none;">
+                <input type="checkbox" name="rememberMe" id="rememberMe"
+                       style="width:14px; height:14px; accent-color:var(--violet); cursor:pointer;">
+                Remember me
+            </label>
+            <a href="${pageContext.request.contextPath}/forgotPassword"
+               style="font-size:12px; color:var(--tx2); text-decoration:none; transition:color .15s;"
+               onmouseover="this.style.color='var(--violet)'"
+               onmouseout="this.style.color='var(--tx2)'">
+                <i class="bi bi-question-circle" style="margin-right:3px;"></i>Forgot password?
+            </a>
         </div>
 
         <button type="submit" class="btn-login" id="btn-login">
