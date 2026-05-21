@@ -3,9 +3,9 @@ package com.inventory.servlet;
 import com.inventory.model.User;
 import com.inventory.service.UserService;
 import com.inventory.util.FileHandler;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 
 import java.io.IOException;
 
@@ -46,7 +46,7 @@ public class RegisterServlet extends HttpServlet {
 
         User newUser = new User(username.trim(), password.trim(), role.toLowerCase());
 
-        String usersPath = getServletContext().getRealPath(FileHandler.USERS_FILE);
+        String usersPath = FileHandler.USERS_FILE;
         UserService userService = new UserService(usersPath);
 
         boolean success = userService.register(newUser);

@@ -4,9 +4,9 @@ import com.inventory.model.Item;
 import com.inventory.service.InventoryService;
 import com.inventory.service.SalesService;
 import com.inventory.util.FileHandler;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,8 +31,8 @@ public class DashboardServlet extends HttpServlet {
             return;
         }
 
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
-        String salesPath = getServletContext().getRealPath(FileHandler.SALES_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
+        String salesPath = FileHandler.SALES_FILE;
 
         InventoryService inventoryService = new InventoryService(itemsPath);
         SalesService salesService = new SalesService(salesPath, itemsPath);

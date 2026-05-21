@@ -1,17 +1,15 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
-<%--@elvariable id="successMsg" type="java.lang.String"--%>
-<%--@elvariable id="reports"    type="java.util.List"--%>
 
-<c:set var="activePage" value="reports" scope="request"/>
+<c:set var="activePage" value="expiry" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports — Lumenara</title>
+    <title>Expired Items — Lumenara</title>
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!--suppress HtmlUnknownTarget -->
@@ -598,15 +596,10 @@
 
         <div class="topbar">
             <div>
-                <h2>Reports</h2>
-                <p class="topbar-sub">Generate and view sales summary reports.</p>
+                <h2>Expired Items</h2>
+                <p class="topbar-sub">Component 02 — Items past their expiry date requiring immediate action.</p>
             </div>
             <div class="topbar-actions">
-                <form action="${pageContext.request.contextPath}/reports" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-info text-white">
-                        <i class="bi bi-file-earmark-bar-graph me-2"></i>Generate New Report
-                    </button>
-                </form>
                 <div class="user-pill">
                     <span class="user-pill-avatar">${fn:toUpperCase(fn:substring(sessionScope.username, 0, 1))}</span>
                     <div>
@@ -624,33 +617,65 @@
             </div>
         </c:if>
 
-        <%-- Reports Table --%>
-        <div class="card" style="animation-delay:.05s">
+        <%-- Summary Banner --%>
+        <div class="card mb-4" style="background:var(--r-dim)!important;border-color:rgba(248,113,113,.2)!important;animation-delay:.05s">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--red);">${expired.size()} Expired Item(s)</div>
+                    <div class="small" style="color:var(--tx2);">These items are past their expiry date and should be removed</div>
+                </div>
+                <i class="bi bi-exclamation-triangle-fill" style="font-size:2.8rem;color:var(--red);opacity:.6;"></i>
+            </div>
+        </div>
+
+        <%-- Expired Items Table --%>
+        <div class="card" style="animation-delay:.10s">
             <div class="card-header">
-                <span><i class="bi bi-bar-chart-line me-2"></i>Generated Reports (${reports.size()} total)</span>
+                <span><i class="bi bi-calendar-x me-2" style="color:var(--red);"></i>Expired Stock</span>
+                <a href="${pageContext.request.contextPath}/expiryManagement"
+                   class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Expiry Management
+                </a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-dark"><tr>
-                            <th>Report ID</th><th>Generated Date</th>
-                            <th>Total Sales</th><th>Total Revenue</th><th>Top Item</th>
+                            <th>ID</th><th>Name</th><th>Category</th>
+                            <th>Quantity</th><th>Unit Price</th><th>Expiry Date</th>
+                            <c:if test="${sessionScope.role == 'admin'}">
+                                <th class="text-center">Action</th>
+                            </c:if>
                         </tr></thead>
                         <tbody>
-                        <c:forEach var="report" items="${reports}">
-                            <tr>
-                                <td><code>${report.reportId}</code></td>
-                                <td>${report.generatedDate}</td>
-                                <td><span class="badge bg-primary">${report.totalSales}</span></td>
-                                <td style="color:var(--green);font-weight:600;">$<fmt:formatNumber value="${report.totalRevenue}" maxFractionDigits="2"/></td>
-                                <td><span class="badge bg-warning text-dark"><i class="bi bi-trophy me-1"></i>${report.topItemName}</span></td>
+                        <c:forEach var="item" items="${expired}">
+                            <tr class="table-danger">
+                                <td><code>${item.id}</code></td>
+                                <td class="fw-semibold">${item.name}</td>
+                                <td><span class="badge bg-secondary">${item.category}</span></td>
+                                <td>${item.quantity}</td>
+                                <td>$<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
+                                <td><span class="badge bg-danger"><i class="bi bi-calendar-x me-1"></i>${item.expiryDate}</span></td>
+                                <c:if test="${sessionScope.role == 'admin'}">
+                                    <td class="text-center">
+                                        <form action="${pageContext.request.contextPath}/deleteStock"
+                                              method="post" class="d-inline"
+                                              onsubmit="return confirm('Permanently remove expired item: ${item.name}?');">
+                                            <input type="hidden" name="mode"   value="byId">
+                                            <input type="hidden" name="itemId" value="${item.id}">
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="bi bi-trash me-1"></i>Remove
+                                            </button>
+                                        </form>
+                                    </td>
+                                </c:if>
                             </tr>
                         </c:forEach>
-                        <c:if test="${empty reports}">
+                        <c:if test="${empty expired}">
                             <tr>
-                                <td colspan="5" class="text-center py-5" style="color:var(--tx3);">
-                                    <i class="bi bi-file-earmark-x fs-2 d-block mb-2"></i>
-                                    No reports generated yet. Click "Generate New Report" above.
+                                <td colspan="7" class="text-center py-5" style="color:var(--tx3);">
+                                    <i class="bi bi-check-circle fs-2 d-block mb-2" style="color:var(--green);"></i>
+                                    No expired items found. All stock is within expiry date.
                                 </td>
                             </tr>
                         </c:if>
@@ -658,6 +683,14 @@
                     </table>
                 </div>
             </div>
+        </div>
+
+        <div class="alert alert-info mt-4">
+            <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>OOP Concepts in Action</h6>
+            <ul class="mb-0 small">
+                <li><strong>Encapsulation:</strong> Expiry date is private inside Item class; accessed via getExpiryDate().</li>
+                <li><strong>Abstraction:</strong> ExpiryServlet uses MergeSort via InventoryService to sort and filter items.</li>
+            </ul>
         </div>
     </div>
 </div>

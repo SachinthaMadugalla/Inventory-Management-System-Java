@@ -3,20 +3,16 @@ package com.inventory.servlet;
 import com.inventory.model.Item;
 import com.inventory.service.InventoryService;
 import com.inventory.util.FileHandler;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 
 import java.io.IOException;
 import java.util.List;
 
-/**
+/*
  * ViewInventoryServlet — Component 01: View Inventory
- *
- * GET /viewInventory → loads all items and forwards to the inventory list JSP.
- *
  * OOP Concept: ABSTRACTION
- * Delegates data retrieval to InventoryService.
  */
 @WebServlet("/viewInventory")
 public class ViewInventoryServlet extends HttpServlet {
@@ -32,7 +28,7 @@ public class ViewInventoryServlet extends HttpServlet {
             return;
         }
 
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService service = new InventoryService(itemsPath);
 
         List<Item> items = service.getAllItems();

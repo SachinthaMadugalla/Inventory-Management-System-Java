@@ -3,27 +3,16 @@ package com.inventory.servlet;
 import com.inventory.model.Item;
 import com.inventory.service.InventoryService;
 import com.inventory.util.FileHandler;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 
 import java.io.IOException;
 import java.util.UUID;
 
-/**
+/*
  * AddStockServlet — Component 01: Add Stock
- *
- * GET  /addStock  → shows the "Add Item" form.
- * POST /addStock  → validates input, creates an Item, pushes it onto the
- *                   Stack (LIFO), and persists it via InventoryService.
- *
- * OOP Concept: ABSTRACTION
- * All Stack and file operations are hidden inside InventoryService.
- *
- * KEY VIVA POINT — Stack.push():
- * When a new item is saved, InventoryService.addItem() calls stack.push(item).
- * This means the Stack always knows the insertion order, enabling true LIFO
- * deletion via the "Delete Last Added" button.
+ * OOP Concept: ABSTRACTION.
  */
 @WebServlet("/addStock")
 public class AddStockServlet extends HttpServlet {
@@ -39,7 +28,7 @@ public class AddStockServlet extends HttpServlet {
             return;
         }
 
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService service = new InventoryService(itemsPath);
 
         // Pass the top-of-stack item so the UI can show "next to be deleted"
@@ -92,7 +81,7 @@ public class AddStockServlet extends HttpServlet {
                 quantity, price, expiryDate.trim());
 
         // --- Persist via service (which also calls stack.push()) ---
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService service = new InventoryService(itemsPath);
         service.addItem(newItem); // ← stack.push() happens inside here
 

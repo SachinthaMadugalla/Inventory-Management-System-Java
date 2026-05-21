@@ -3,9 +3,9 @@ package com.inventory.servlet;
 import com.inventory.model.Item;
 import com.inventory.service.InventoryService;
 import com.inventory.util.FileHandler;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -40,7 +40,7 @@ public class ExpiryServlet extends HttpServlet {
             return;
         }
 
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService service = new InventoryService(itemsPath);
 
         // MergeSort — O(n log n), soonest-to-expire first
@@ -64,6 +64,6 @@ public class ExpiryServlet extends HttpServlet {
         req.setAttribute("expiringSoon",  expiringSoon);
         req.setAttribute("expired",       expired);
 
-        req.getRequestDispatcher("/views/inventory/expiryManagement.jsp").forward(req, resp);
+        req.getRequestDispatcher("/views/expiry/expiryManagment.jsp").forward(req, resp);
     }
 }

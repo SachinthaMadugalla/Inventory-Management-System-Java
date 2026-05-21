@@ -2,16 +2,17 @@
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
-<%--@elvariable id="successMsg" type="java.lang.String"--%>
-<%--@elvariable id="reports"    type="java.util.List"--%>
+<%--@elvariable id="totalRevenue" type="java.lang.Double"--%>
+<%--@elvariable id="sales"        type="java.util.List"--%>
+<%--@elvariable id="successMsg"   type="java.lang.String"--%>
 
-<c:set var="activePage" value="reports" scope="request"/>
+<c:set var="activePage" value="viewSales" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports — Lumenara</title>
+    <title>Sales History — Lumenara</title>
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!--suppress HtmlUnknownTarget -->
@@ -598,15 +599,13 @@
 
         <div class="topbar">
             <div>
-                <h2>Reports</h2>
-                <p class="topbar-sub">Generate and view sales summary reports.</p>
+                <h2>Sales History</h2>
+                <p class="topbar-sub">All recorded transactions.</p>
             </div>
             <div class="topbar-actions">
-                <form action="${pageContext.request.contextPath}/reports" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-info text-white">
-                        <i class="bi bi-file-earmark-bar-graph me-2"></i>Generate New Report
-                    </button>
-                </form>
+                <a href="${pageContext.request.contextPath}/processSale" class="btn btn-success">
+                    <i class="bi bi-cart-plus me-1"></i>New Sale
+                </a>
                 <div class="user-pill">
                     <span class="user-pill-avatar">${fn:toUpperCase(fn:substring(sessionScope.username, 0, 1))}</span>
                     <div>
@@ -624,33 +623,73 @@
             </div>
         </c:if>
 
-        <%-- Reports Table --%>
-        <div class="card" style="animation-delay:.05s">
+        <%-- Revenue Summary --%>
+        <div class="card mb-4" style="background:var(--g-dim)!important;border-color:var(--bdg)!important;animation-delay:.05s">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--green);">$<fmt:formatNumber value="${totalRevenue}" maxFractionDigits="2"/></div>
+                    <div class="small" style="color:var(--tx2);">Total Revenue from ${sales.size()} sale(s)</div>
+                </div>
+                <i class="bi bi-currency-dollar" style="font-size:2.6rem;color:var(--green);opacity:.6;"></i>
+            </div>
+        </div>
+
+        <%-- Sales Table --%>
+        <div class="card" style="animation-delay:.10s">
             <div class="card-header">
-                <span><i class="bi bi-bar-chart-line me-2"></i>Generated Reports (${reports.size()} total)</span>
+                <span><i class="bi bi-receipt me-2 text-success"></i>Transaction Records</span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-dark"><tr>
-                            <th>Report ID</th><th>Generated Date</th>
-                            <th>Total Sales</th><th>Total Revenue</th><th>Top Item</th>
+                            <th class="ps-4">Sale ID</th>
+                            <th>Item ID</th>
+                            <th>Item Name</th>
+                            <th>Qty Sold</th>
+                            <th>Total Price</th>
+                            <th>Date</th>
+                            <c:if test="${sessionScope.role == 'admin'}">
+                                <th class="text-center pe-4">Actions</th>
+                            </c:if>
                         </tr></thead>
                         <tbody>
-                        <c:forEach var="report" items="${reports}">
+                        <c:forEach var="sale" items="${sales}">
                             <tr>
-                                <td><code>${report.reportId}</code></td>
-                                <td>${report.generatedDate}</td>
-                                <td><span class="badge bg-primary">${report.totalSales}</span></td>
-                                <td style="color:var(--green);font-weight:600;">$<fmt:formatNumber value="${report.totalRevenue}" maxFractionDigits="2"/></td>
-                                <td><span class="badge bg-warning text-dark"><i class="bi bi-trophy me-1"></i>${report.topItemName}</span></td>
+                                <td class="ps-4"><code>${sale.saleId}</code></td>
+                                <td><code style="background:rgba(255,255,255,.03);border-color:var(--bd2);color:var(--tx2);">${sale.itemId}</code></td>
+                                <td class="fw-bold text-tx1">${sale.itemName}</td>
+                                <td><span class="badge bg-secondary">${sale.quantitySold} units</span></td>
+                                <td class="fw-bold" style="color:var(--green);">
+                                    $<fmt:formatNumber value="${sale.totalPrice}" maxFractionDigits="2"/>
+                                </td>
+                                <td style="color:var(--tx2);"><i class="bi bi-clock me-1 small"></i>${sale.saleDate}</td>
+                                <c:if test="${sessionScope.role == 'admin'}">
+                                    <td class="text-center pe-4">
+                                        <div class="d-flex justify-content-center gap-2">
+                                            <a href="${pageContext.request.contextPath}/editTransaction?id=${sale.saleId}"
+                                               class="btn btn-action btn-outline-primary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form action="${pageContext.request.contextPath}/deleteSale"
+                                                  method="post" class="d-inline"
+                                                  onsubmit="return confirm('Delete transaction ${sale.saleId}?');">
+                                                <input type="hidden" name="saleId" value="${sale.saleId}">
+                                                <button type="submit" class="btn btn-action btn-outline-danger" title="Delete">
+                                                    <i class="bi bi-trash3"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </c:if>
                             </tr>
                         </c:forEach>
-                        <c:if test="${empty reports}">
+                        <c:if test="${empty sales}">
                             <tr>
-                                <td colspan="5" class="text-center py-5" style="color:var(--tx3);">
-                                    <i class="bi bi-file-earmark-x fs-2 d-block mb-2"></i>
-                                    No reports generated yet. Click "Generate New Report" above.
+                                <td colspan="7" class="text-center py-5" style="color:var(--tx3);">
+                                    <i class="bi bi-receipt fs-2 d-block mb-2"></i>
+                                    <h6 class="fw-medium text-white mb-1">No sales recorded yet</h6>
+                                    <p class="small mb-0"><a href="${pageContext.request.contextPath}/processSale" style="color:var(--green);">Process a sale</a> to see it here.</p>
                                 </td>
                             </tr>
                         </c:if>
