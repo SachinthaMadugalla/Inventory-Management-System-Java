@@ -10,15 +10,9 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
-/**
+/*
  * EditStockServlet — handles editing an existing inventory item.
- *
- * GET  /editStock?id=XXX → loads the item and shows the edit form.
- * POST /editStock         → validates and saves the updated item
- *                           using the Read-Modify-Overwrite pattern.
- *
  * OOP Concept: ABSTRACTION
- * File update logic is hidden inside InventoryService → FileHandler.
  */
 @WebServlet("/editStock")
 public class EditStockServlet extends HttpServlet {
