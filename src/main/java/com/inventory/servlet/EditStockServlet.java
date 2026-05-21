@@ -3,22 +3,16 @@ package com.inventory.servlet;
 import com.inventory.model.Item;
 import com.inventory.service.InventoryService;
 import com.inventory.util.FileHandler;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
 
 import java.io.IOException;
 import java.util.List;
 
-/**
+/*
  * EditStockServlet — handles editing an existing inventory item.
- *
- * GET  /editStock?id=XXX → loads the item and shows the edit form.
- * POST /editStock         → validates and saves the updated item
- *                           using the Read-Modify-Overwrite pattern.
- *
  * OOP Concept: ABSTRACTION
- * File update logic is hidden inside InventoryService → FileHandler.
  */
 @WebServlet("/editStock")
 public class EditStockServlet extends HttpServlet {
@@ -34,7 +28,7 @@ public class EditStockServlet extends HttpServlet {
         }
 
         String itemId    = req.getParameter("id");
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService service = new InventoryService(itemsPath);
 
         List<Item> items = service.getAllItems();
@@ -86,7 +80,7 @@ public class EditStockServlet extends HttpServlet {
         Item updated = new Item(id, name.trim(), category.trim(),
                 quantity, price, expiryDate.trim());
 
-        String itemsPath = getServletContext().getRealPath(FileHandler.ITEMS_FILE);
+        String itemsPath = FileHandler.ITEMS_FILE;
         InventoryService service = new InventoryService(itemsPath);
         service.updateItem(updated); // Read-Modify-Overwrite inside FileHandler
 

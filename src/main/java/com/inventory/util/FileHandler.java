@@ -26,14 +26,17 @@ import java.util.List;
 public class FileHandler {
 
     // -----------------------------------------------------------------------
-    // Path resolution — files live in the "data/" folder at the project root.
-    // ServletContext.getRealPath() is used at runtime; these constants are the
-    // relative names passed in from servlets.
+    // Path resolution — Cross-Platform & Team-Friendly
+    // We use the user's home directory so that it dynamically adapts to 
+    // any team member's computer (e.g., C:/Users/John/InventorySystemData/)
+    // This prevents the "Invalid Login" issue on other laptops!
     // -----------------------------------------------------------------------
-    public static final String ITEMS_FILE   = "data/items.txt";
-    public static final String SALES_FILE   = "data/sales.txt";
-    public static final String USERS_FILE   = "data/users.txt";
-    public static final String REPORTS_FILE = "data/reports.txt";
+    private static final String DATA_DIR = System.getProperty("user.home") + File.separator + "InventorySystemData" + File.separator;
+    
+    public static final String ITEMS_FILE   = DATA_DIR + "items.txt";
+    public static final String SALES_FILE   = DATA_DIR + "sales.txt";
+    public static final String USERS_FILE   = DATA_DIR + "users.txt";
+    public static final String REPORTS_FILE = DATA_DIR + "reports.txt";
 
     // -----------------------------------------------------------------------
     // Generic low-level helpers

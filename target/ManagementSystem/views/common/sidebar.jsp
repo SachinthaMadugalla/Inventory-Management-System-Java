@@ -3,7 +3,8 @@
     Uses Bootstrap 5 for styling.
     The 'activePage' request attribute is used to highlight the current nav item.
 --%>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%--@elvariable id="activePage" type="java.lang.String"--%>
 <div class="d-flex flex-column flex-shrink-0 p-3 bg-dark text-white sidebar-fixed" style="width:250px; min-height:100vh;">
     <a href="${pageContext.request.contextPath}/dashboard"
        class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
