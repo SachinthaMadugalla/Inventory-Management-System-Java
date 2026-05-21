@@ -9,20 +9,9 @@ import javax.servlet.http.*;
 
 import java.io.IOException;
 
-/**
+/*
  * DeleteStockServlet — Component 01: Delete Stock
- *
- * Handles two delete modes:
- *  1. DELETE LAST ADDED (LIFO) — calls stack.pop() via service.deleteLastAdded().
- *  2. DELETE BY ID         — calls service.deleteItemById(id).
- *
- * KEY VIVA POINT — Stack.pop():
- * When mode=last, InventoryService.deleteLastAdded() calls stack.pop() to
- * retrieve the most recently added item, then removes it from the file.
- * This is true LIFO behaviour — NOT a random ID deletion.
- *
  * OOP Concept: ABSTRACTION
- * The servlet never touches the Stack directly; it delegates to the service.
  */
 @WebServlet("/deleteStock")
 public class DeleteStockServlet extends HttpServlet {

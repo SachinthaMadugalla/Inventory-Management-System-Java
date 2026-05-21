@@ -10,20 +10,9 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.UUID;
 
-/**
+/*
  * AddStockServlet — Component 01: Add Stock
- *
- * GET  /addStock  → shows the "Add Item" form.
- * POST /addStock  → validates input, creates an Item, pushes it onto the
- *                   Stack (LIFO), and persists it via InventoryService.
- *
- * OOP Concept: ABSTRACTION
- * All Stack and file operations are hidden inside InventoryService.
- *
- * KEY VIVA POINT — Stack.push():
- * When a new item is saved, InventoryService.addItem() calls stack.push(item).
- * This means the Stack always knows the insertion order, enabling true LIFO
- * deletion via the "Delete Last Added" button.
+ * OOP Concept: ABSTRACTION.
  */
 @WebServlet("/addStock")
 public class AddStockServlet extends HttpServlet {

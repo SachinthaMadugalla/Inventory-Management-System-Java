@@ -1,10 +1,6 @@
 package com.inventory.model;
 
-/**OOP Concept: ENCAPSULATION
- * All fields are private. Public getters/setters control access.
- * Item represents a single inventory product stored in items.txt.
- * CSV Format: id,name,category,quantity,price,expiryDate
- */
+/**OOP Concept: ENCAPSULATION*/
 public class Item {
 
     //Private variables
@@ -47,18 +43,13 @@ public class Item {
     public String getExpiryDate()            { return expiryDate; }
     public void   setExpiryDate(String d)    { this.expiryDate = d; }
 
-    /**
-     * Serializes the Item to a CSV line for file storage.
-     * Format: id,name,category,quantity,price,expiryDate
-     */
+    /*Serializes the Item to a CSV line for file storage.*/
     public String toCsv() {
         return id + "," + name + "," + category + ","
                 + quantity + "," + price + "," + expiryDate;
     }
 
-    /**
-     * Deserializes a CSV line back into an Item object.
-     */
+    /* Deserializes a CSV line back into an Item object.*/
     public static Item fromCsv(String csv) {
         String[] parts = csv.split(",", -1);
         if (parts.length < 6) return null;
