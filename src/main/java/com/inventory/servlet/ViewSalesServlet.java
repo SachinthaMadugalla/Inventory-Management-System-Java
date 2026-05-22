@@ -2,7 +2,7 @@ package com.inventory.servlet;
 
 import com.inventory.model.Sale;
 import com.inventory.service.SalesService;
-import com.inventory.util.FileHandler;
+import com.inventory.util.FilePath;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -26,8 +26,8 @@ public class ViewSalesServlet extends HttpServlet {
             return;
         }
 
-        String salesPath = FileHandler.SALES_FILE;
-        String itemsPath = FileHandler.ITEMS_FILE;
+        String salesPath = FilePath.getSalesPath(getServletContext());
+        String itemsPath = FilePath.getItemsPath(getServletContext());
         SalesService salesService = new SalesService(salesPath, itemsPath);
 
         List<Sale> sales = salesService.getAllSales();
