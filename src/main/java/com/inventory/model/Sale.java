@@ -1,15 +1,8 @@
 package com.inventory.model;
 
-/**
- * OOP Concept: ENCAPSULATION
- * All fields are private with public getters/setters.
- *
- * Sale represents a single sales transaction stored in sales.txt.
- * CSV Format: saleId,itemId,itemName,quantitySold,totalPrice,saleDate
- */
 public class Sale {
 
-    // --- Private fields (Encapsulation) ---
+    //Private fields (Encapsulation)
     private String saleId;
     private String itemId;
     private String itemName;
@@ -17,7 +10,7 @@ public class Sale {
     private double totalPrice;
     private String saleDate; // Format: YYYY-MM-DD
 
-    // --- Constructors ---
+    //Constructors
     public Sale() {}
 
     public Sale(String saleId, String itemId, String itemName,
@@ -30,7 +23,7 @@ public class Sale {
         this.saleDate     = saleDate;
     }
 
-    // --- Getters & Setters ---
+    //Getters & Setters
     public String getSaleId()                    { return saleId; }
     public void   setSaleId(String id)           { this.saleId = id; }
 
@@ -49,28 +42,22 @@ public class Sale {
     public String getSaleDate()                  { return saleDate; }
     public void   setSaleDate(String d)          { this.saleDate = d; }
 
-    /**
-     * Serialises the Sale to a CSV line for file storage.
-     */
     public String toCsv() {
         return saleId + "," + itemId + "," + itemName + ","
-             + quantitySold + "," + totalPrice + "," + saleDate;
+                + quantitySold + "," + totalPrice + "," + saleDate;
     }
 
-    /**
-     * Deserialises a CSV line back into a Sale object.
-     */
     public static Sale fromCsv(String csv) {
         String[] parts = csv.split(",", -1);
         if (parts.length < 6) return null;
         try {
             return new Sale(
-                parts[0].trim(),
-                parts[1].trim(),
-                parts[2].trim(),
-                Integer.parseInt(parts[3].trim()),
-                Double.parseDouble(parts[4].trim()),
-                parts[5].trim()
+                    parts[0].trim(),
+                    parts[1].trim(),
+                    parts[2].trim(),
+                    Integer.parseInt(parts[3].trim()),
+                    Double.parseDouble(parts[4].trim()),
+                    parts[5].trim()
             );
         } catch (NumberFormatException e) {
             return null;
@@ -80,6 +67,6 @@ public class Sale {
     @Override
     public String toString() {
         return "Sale{saleId='" + saleId + "', itemName='" + itemName
-             + "', qty=" + quantitySold + ", total=" + totalPrice + "}";
+                + "', qty=" + quantitySold + ", total=" + totalPrice + "}";
     }
 }
