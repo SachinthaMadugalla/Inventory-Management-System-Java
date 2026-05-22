@@ -2,7 +2,7 @@ package com.inventory.servlet;
 
 import com.inventory.model.Item;
 import com.inventory.service.InventoryService;
-import com.inventory.util.FileHandler;
+import com.inventory.util.FilePath;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -28,7 +28,7 @@ public class ViewInventoryServlet extends HttpServlet {
             return;
         }
 
-        String itemsPath = FileHandler.ITEMS_FILE;
+        String itemsPath = FilePath.getItemsPath(getServletContext());
         InventoryService service = new InventoryService(itemsPath);
 
         List<Item> items = service.getAllItems();
