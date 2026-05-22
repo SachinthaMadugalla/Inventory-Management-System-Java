@@ -31,13 +31,10 @@
             background-size:28px 28px;
             color:var(--tx1);
             min-height:100vh;
-            display:flex;
-            align-items:flex-start;           /* keep card from being vertically centered (prevents clipping) */
-            justify-content:center;
             padding:60px 16px;                /* give room at top so card is not hidden under taskbar */
             margin:0;
             position:relative;
-            overflow:auto;                    /* allow page scrolling when viewport is small */
+            overflow-x:hidden;                    /* allow page scrolling when viewport is small */
         }
         body::before {
             content:''; position:fixed; top:-200px; right:-120px;
@@ -81,8 +78,8 @@
             border-radius:24px;
             padding:40px 36px 34px;
             animation:cardEnter .55s cubic-bezier(.16,1,.3,1) both;
-            max-height: calc(100vh - 80px); /* leaves some space above/below for comfortable viewing */
-            overflow:auto;                  /* allows inner scrolling so the Create Account button is reachable */
+            margin-left: auto;
+            margin-right: auto;
         }
         .auth-card::before {
             content:''; position:absolute; inset:-1px; border-radius:25px;
@@ -381,7 +378,7 @@
 
         /* ── Client-side form validation before submit ── */
         var form = document.getElementById('reg-form');
-        if (form) {
+        if (.auth-card) {
             form.addEventListener('submit', function (e) {
                 var pw  = document.getElementById('password').value;
                 var cpw = document.getElementById('confirmPassword').value;

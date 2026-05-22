@@ -2,7 +2,7 @@ package com.inventory.servlet;
 
 import com.inventory.model.User;
 import com.inventory.service.UserService;
-import com.inventory.util.FileHandler;
+import com.inventory.util.FilePath;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -92,7 +92,7 @@ public class RegisterServlet extends HttpServlet {
                 email.trim().toLowerCase()
         );
 
-        UserService userService = new UserService(FileHandler.USERS_FILE);
+        UserService userService = new UserService(FilePath.getUsersPath(getServletContext()));
         String result = userService.register(newUser);
 
         switch (result) {

@@ -6,7 +6,6 @@ import com.inventory.model.User;
 import com.inventory.model.Report;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,19 +23,6 @@ import java.util.List;
  * This guarantees the file is always in a consistent state.
  */
 public class FileHandler {
-
-    // -----------------------------------------------------------------------
-    // Path resolution — Cross-Platform & Team-Friendly
-    // We use the user's home directory so that it dynamically adapts to 
-    // any team member's computer (e.g., C:/Users/John/InventorySystemData/)
-    // This prevents the "Invalid Login" issue on other laptops!
-    // -----------------------------------------------------------------------
-    private static final String DATA_DIR = System.getProperty("user.dir") + File.separator + "data" + File.separator;
-    
-    public static final String ITEMS_FILE   = DATA_DIR + "items.txt";
-    public static final String SALES_FILE   = DATA_DIR + "sales.txt";
-    public static final String USERS_FILE   = DATA_DIR + "users.txt";
-    public static final String REPORTS_FILE = DATA_DIR + "reports.txt";
 
     // -----------------------------------------------------------------------
     // Generic low-level helpers
