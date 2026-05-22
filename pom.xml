@@ -48,15 +48,6 @@
 
         <!-- Provide the actual JSTL implementation for runtime -->
         <dependency>
-        <!-- JSTL 1.2 for Java EE -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.2</version>
-        </dependency>
-
-        <!-- Provide the actual JSTL implementation for runtime -->
-        <dependency>
             <groupId>org.glassfish.web</groupId>
             <artifactId>jstl-impl</artifactId>
             <version>1.2</version>
@@ -76,6 +67,7 @@
             </exclusions>
         </dependency>
     </dependencies>
+
 
     <build>
         <finalName>ManagementSystem</finalName>
