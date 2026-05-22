@@ -31,7 +31,7 @@ public class FileHandler {
     // any team member's computer (e.g., C:/Users/John/InventorySystemData/)
     // This prevents the "Invalid Login" issue on other laptops!
     // -----------------------------------------------------------------------
-    private static final String DATA_DIR = System.getProperty("user.home") + File.separator + "InventorySystemData" + File.separator;
+    private static final String DATA_DIR = System.getProperty("user.dir") + File.separator + "data" + File.separator;
     
     public static final String ITEMS_FILE   = DATA_DIR + "items.txt";
     public static final String SALES_FILE   = DATA_DIR + "sales.txt";
