@@ -48,10 +48,9 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = req.getSession();
             session.setAttribute("loggedInUser", user);
             session.setAttribute("username",     user.getUsername());
-            session.setAttribute("fullName",     user.getFullName() != null ? user.getFullName() : user.getUsername());
             session.setAttribute("role",         user.getRole());
 
-            // Apply Remember Me: extend session timeout if checked
+            // ApplyRemember Me: extend session timeout if checked
             if ("on".equals(rememberMe)) {
                 session.setMaxInactiveInterval(REMEMBER_ME_SECONDS);
             } else {

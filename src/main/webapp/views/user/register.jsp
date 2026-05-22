@@ -2,7 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--@elvariable id="error"        type="java.lang.String"--%>
 <%--@elvariable id="success"      type="java.lang.String"--%>
-<%--@elvariable id="prevFullName" type="java.lang.String"--%>
 <%--@elvariable id="prevUsername" type="java.lang.String"--%>
 <%--@elvariable id="prevEmail"    type="java.lang.String"--%>
 <%--@elvariable id="prevRole"     type="java.lang.String"--%>
@@ -30,10 +29,15 @@
             background-color:var(--bg-0);
             background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,.035) 1px,transparent 0);
             background-size:28px 28px;
-            color:var(--tx1); min-height:100vh;
-            display:flex; align-items:center; justify-content:center;
-            padding:32px 16px; margin:0;
-            position:relative; overflow:hidden;
+            color:var(--tx1);
+            min-height:100vh;
+            display:flex;
+            align-items:flex-start;           /* keep card from being vertically centered (prevents clipping) */
+            justify-content:center;
+            padding:60px 16px;                /* give room at top so card is not hidden under taskbar */
+            margin:0;
+            position:relative;
+            overflow:auto;                    /* allow page scrolling when viewport is small */
         }
         body::before {
             content:''; position:fixed; top:-200px; right:-120px;
@@ -68,12 +72,17 @@
         @keyframes rippleGrow { to{transform:scale(3.5);opacity:0;} }
 
         .auth-card {
-            position:relative; z-index:10;
-            width:100%; max-width:440px;
+            position:relative;
+            z-index:10;
+            width:100%;
+            max-width:440px;
             background:rgba(9,14,28,.88);
             backdrop-filter:blur(28px); -webkit-backdrop-filter:blur(28px);
-            border-radius:24px; padding:40px 36px 34px;
+            border-radius:24px;
+            padding:40px 36px 34px;
             animation:cardEnter .55s cubic-bezier(.16,1,.3,1) both;
+            max-height: calc(100vh - 80px); /* leaves some space above/below for comfortable viewing */
+            overflow:auto;                  /* allows inner scrolling so the Create Account button is reachable */
         }
         .auth-card::before {
             content:''; position:absolute; inset:-1px; border-radius:25px;
@@ -225,16 +234,7 @@
         </div>
     </c:if>
 
-    <form action="${pageContext.request.contextPath}/register" method="post" novalidate id="reg-form">
-
-        <%-- Full Name --%>
-        <label for="fullName" class="field-label">Full Name</label>
-        <div class="input-wrap">
-            <i class="bi bi-person-badge input-icon"></i>
-            <input type="text" class="input-modern" id="fullName" name="fullName"
-                   placeholder="Enter your full name" required autofocus maxlength="100"
-                   value="${not empty prevFullName ? prevFullName : ''}">
-        </div>
+    <form action="${pageContext.request.contextPath}/register" method="post" id="reg-form">
 
         <%-- Username --%>
         <label for="username" class="field-label">Username</label>

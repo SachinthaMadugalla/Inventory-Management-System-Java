@@ -28,7 +28,7 @@ public class Admin extends User {
 
     public Admin(String fullName, String username, String password,
                  String email, String adminCode) {
-        super(fullName, username, password, "admin", email);
+        super(username, password, "admin", email);
         this.adminCode = adminCode;
     }
 
@@ -53,7 +53,6 @@ public class Admin extends User {
         User u = User.fromCsv(csv);
         if (u == null) return null;
         Admin admin = new Admin();
-        admin.setFullName(u.getFullName());
         admin.setUsername(u.getUsername());
         admin.setPassword(u.getPassword());
         admin.setRole("admin");
