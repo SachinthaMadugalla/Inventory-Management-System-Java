@@ -36,6 +36,7 @@ public class ViewSalesServlet extends HttpServlet {
         req.setAttribute("sales",        sales);
         req.setAttribute("totalRevenue", totalRevenue);
 
+
         // Flash message
         String successMsg = (String) session.getAttribute("successMsg");
         if (successMsg != null) {
