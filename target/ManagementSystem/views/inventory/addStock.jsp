@@ -149,6 +149,7 @@
       margin-left: 256px !important;
       padding: 28px 36px !important;
       animation: fadeIn .45s ease;
+      transition: margin-left 0.3s ease-in-out;
     }
 
     /* ===========================  SIDEBAR  =========================== */
@@ -164,6 +165,7 @@
       display: flex; flex-direction:column;
       color: var(--tx1) !important;
       animation: slideLeft .4s ease;
+      transition: transform 0.3s ease-in-out;
     }
     .sidebar-fixed::-webkit-scrollbar { width:3px; }
     .sidebar-fixed::-webkit-scrollbar-thumb { background: var(--bd2); border-radius:2px; }
@@ -587,6 +589,18 @@
       height:1px; border:none; margin:18px 0;
       background:linear-gradient(90deg,transparent,var(--bdg),transparent);
     }
+
+    @media (max-width: 992px) {
+        .sidebar-fixed {
+            transform: translateX(-100%);
+        }
+        .sidebar-fixed.show {
+            transform: translateX(0);
+        }
+        .main-content {
+            margin-left: 0 !important;
+        }
+    }
   </style>
 </head>
 <body>
@@ -597,8 +611,11 @@
 
     <div class="topbar">
       <div>
-        <h2>Add Stock</h2>
-        <p class="topbar-sub">Component 01 — New items are pushed onto the LIFO Stack.</p>
+        <button class="btn btn-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+          <i class="bi bi-list"></i>
+        </button>
+        <h2 class="d-none d-lg-block">Add Stock</h2>
+        <p class="topbar-sub d-none d-lg-block">Component 01 — New items are pushed onto the LIFO Stack.</p>
       </div>
       <div class="topbar-actions">
         <div class="user-pill">
@@ -664,20 +681,20 @@
                      min="1" placeholder="e.g. 100" required>
             </div>
             <div class="col-md-4">
-              <label for="price" class="form-label">Unit Price ($) <span style="color:var(--red)">*</span></label>
+              <label for="price" class="form-label">Unit Price (Rs.) <span style="color:var(--red)">*</span></label>
               <input type="number" class="form-control" id="price" name="price"
                      step="0.01" min="0" placeholder="e.g. 9.99" required>
             </div>
             <div class="col-md-4">
-              <label for="expiryDate" class="form-label">Expiry Date <span style="color:var(--red)">*</span></label>
-              <input type="date" class="form-control" id="expiryDate" name="expiryDate" required>
+              <label for="expiryDate" class="form-label">Expiry Date <span id="expiry-required" style="color:var(--red); display:none;">*</span></label>
+              <input type="date" class="form-control" id="expiryDate" name="expiryDate">
             </div>
             <div class="col-12 mt-3">
               <button type="submit" class="btn btn-primary px-4">
                 <i class="bi bi-plus-circle me-2"></i>Add Item (Push to Stack)
               </button>
               <a href="${pageContext.request.contextPath}/viewInventory"
-                 class="btn btn-outline-secondary ms-2">Cancel</a>
+                 class="btn btn-outline-secondary ms-2 mt-2 mt-sm-0">Cancel</a>
             </div>
           </div>
         </form>
@@ -699,6 +716,27 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   (function(){
+    const categorySelect = document.getElementById('category');
+    const expiryDateInput = document.getElementById('expiryDate');
+    const expiryRequiredSpan = document.getElementById('expiry-required');
+
+    const requiredCategories = ['Medicine', 'Food', 'Beverages'];
+
+    function toggleExpiryRequirement() {
+      const selectedCategory = categorySelect.value;
+      if (requiredCategories.includes(selectedCategory)) {
+        expiryDateInput.required = true;
+        expiryRequiredSpan.style.display = 'inline';
+      } else {
+        expiryDateInput.required = false;
+        expiryRequiredSpan.style.display = 'none';
+      }
+    }
+
+    categorySelect.addEventListener('change', toggleExpiryRequirement);
+
+    // Run on page load in case a category is pre-selected
+    toggleExpiryRequirement();
     /* ---- Ripple on all .btn ---- */
     document.addEventListener('click',function(e){
       const b=e.target.closest('.btn');

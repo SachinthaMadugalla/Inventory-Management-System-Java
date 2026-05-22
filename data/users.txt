@@ -1,3 +1,4 @@
 admin,admin123,admin
 john,john123,user
 sachintha,sachintha123,user
+Sachi,Sachiya0599,admin,sachinthanipun04@gmail.com
