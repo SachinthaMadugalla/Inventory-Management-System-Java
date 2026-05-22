@@ -146,6 +146,7 @@
             margin-left: 256px !important;
             padding: 28px 36px !important;
             animation: fadeIn .45s ease;
+            transition: margin-left 0.3s ease-in-out;
         }
 
         /* ===========================  SIDEBAR  =========================== */
@@ -161,6 +162,7 @@
             display: flex; flex-direction:column;
             color: var(--tx1) !important;
             animation: slideLeft .4s ease;
+            transition: transform 0.3s ease-in-out;
         }
         .sidebar-fixed::-webkit-scrollbar { width:3px; }
         .sidebar-fixed::-webkit-scrollbar-thumb { background: var(--bd2); border-radius:2px; }
@@ -585,6 +587,17 @@
             background:linear-gradient(90deg,transparent,var(--bdg),transparent);
         }
 
+        @media (max-width: 992px) {
+            .sidebar-fixed {
+                transform: translateX(-100%);
+            }
+            .sidebar-fixed.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -598,8 +611,11 @@
         <%-- Topbar --%>
         <div class="topbar">
             <div>
-                <h2>Dashboard</h2>
-                <p class="topbar-sub">Welcome back, <strong>${sessionScope.username}</strong></p>
+                <button class="btn btn-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h2 class="d-none d-lg-block">Dashboard</h2>
+                <p class="topbar-sub d-none d-lg-block">Welcome back, <strong>${sessionScope.username}</strong></p>
             </div>
             <div class="topbar-actions">
                 <a href="${pageContext.request.contextPath}/addStock" class="btn btn-primary">
@@ -639,7 +655,7 @@
             <div class="col-md-3">
                 <div class="card stat-card is-blue p-3" style="animation-delay:.15s">
                     <div class="stat-icon-badge"><i class="bi bi-currency-dollar"></i></div>
-                    <div class="stat-number" data-count="${totalRevenue}" data-prefix="$">$0</div>
+                    <div class="stat-number" data-count="${totalRevenue}" data-prefix="Rs.">Rs.0</div>
                     <div class="stat-label">Total Revenue</div>
                     <span class="stat-chip" style="background:var(--b-dim);color:var(--blue);"><i class="bi bi-bank"></i> Earnings</span>
                 </div>
@@ -681,36 +697,38 @@
                 <span><i class="bi bi-clock-history me-2"></i>Recently Added Items</span>
             </div>
             <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                    <tr>
-                        <th>ID</th><th>Name</th><th>Category</th>
-                        <th>Qty</th><th>Price</th><th>Expiry</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach var="item" items="${recentItems}">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
                         <tr>
-                            <td><code>${item.id}</code></td>
-                            <td class="fw-semibold">${item.name}</td>
-                            <td><span class="badge bg-secondary">${item.category}</span></td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${item.quantity < 10}">
-                                        <span class="badge bg-danger">${item.quantity}</span>
-                                    </c:when>
-                                    <c:otherwise>${item.quantity}</c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>$<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
-                            <td>${item.expiryDate}</td>
+                            <th>ID</th><th>Name</th><th>Category</th>
+                            <th>Qty</th><th>Price</th><th>Expiry</th>
                         </tr>
-                    </c:forEach>
-                    <c:if test="${empty recentItems}">
-                        <tr><td colspan="6" class="text-center py-4" style="color:var(--tx3);">No items in inventory yet.</td></tr>
-                    </c:if>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        <c:forEach var="item" items="${recentItems}">
+                            <tr>
+                                <td><code>${item.id}</code></td>
+                                <td class="fw-semibold">${item.name}</td>
+                                <td><span class="badge bg-secondary">${item.category}</span></td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${item.quantity < 10}">
+                                            <span class="badge bg-danger">${item.quantity}</span>
+                                        </c:when>
+                                        <c:otherwise>${item.quantity}</c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>Rs.<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
+                                <td>${item.expiryDate}</td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${empty recentItems}">
+                            <tr><td colspan="6" class="text-center py-4" style="color:var(--tx3);">No items in inventory yet.</td></tr>
+                        </c:if>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

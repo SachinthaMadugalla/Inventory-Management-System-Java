@@ -4,9 +4,9 @@ import com.inventory.model.Item;
 import com.inventory.model.Sale;
 import com.inventory.model.User;
 import com.inventory.model.Report;
+import com.inventory.model.Expiry;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,19 +24,6 @@ import java.util.List;
  * This guarantees the file is always in a consistent state.
  */
 public class FileHandler {
-
-    // -----------------------------------------------------------------------
-    // Path resolution — Cross-Platform & Team-Friendly
-    // We use the user's home directory so that it dynamically adapts to 
-    // any team member's computer (e.g., C:/Users/John/InventorySystemData/)
-    // This prevents the "Invalid Login" issue on other laptops!
-    // -----------------------------------------------------------------------
-    private static final String DATA_DIR = System.getProperty("user.dir") + File.separator + "data" + File.separator;
-    
-    public static final String ITEMS_FILE   = DATA_DIR + "items.txt";
-    public static final String SALES_FILE   = DATA_DIR + "sales.txt";
-    public static final String USERS_FILE   = DATA_DIR + "users.txt";
-    public static final String REPORTS_FILE = DATA_DIR + "reports.txt";
 
     // -----------------------------------------------------------------------
     // Generic low-level helpers
@@ -247,6 +234,29 @@ public class FileHandler {
         List<String> lines = new ArrayList<>();
         for (Report r : reports) {
             lines.add(r.toCsv());
+        }
+        writeLines(filePath, lines);
+    }
+    
+    // -----------------------------------------------------------------------
+    // Expiry CRUD operations
+    // -----------------------------------------------------------------------
+
+    /** Reads all Expiry from expiry_items.csv. */
+    public static List<Expiry> readExpiryItems(String filePath) {
+        List<Expiry> expiryItems = new ArrayList<>();
+        for (String line : readLines(filePath)) {
+            Expiry expiry = Expiry.fromCsv(line);
+            if (expiry != null) expiryItems.add(expiry);
+        }
+        return expiryItems;
+    }
+
+    /** Overwrites expiry_items.csv with the provided list. */
+    public static void writeExpiryItems(String filePath, List<Expiry> expiryItems) {
+        List<String> lines = new ArrayList<>();
+        for (Expiry expiry : expiryItems) {
+            lines.add(expiry.toCsv());
         }
         writeLines(filePath, lines);
     }

@@ -2,7 +2,7 @@ package com.inventory.servlet;
 
 import com.inventory.model.Item;
 import com.inventory.service.InventoryService;
-import com.inventory.util.FileHandler;
+import com.inventory.util.FilePath;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -28,7 +28,7 @@ public class AddStockServlet extends HttpServlet {
             return;
         }
 
-        String itemsPath = FileHandler.ITEMS_FILE;
+        String itemsPath = FilePath.getItemsPath(getServletContext());
         InventoryService service = new InventoryService(itemsPath);
 
         // Pass the top-of-stack item so the UI can show "next to be deleted"
@@ -58,10 +58,28 @@ public class AddStockServlet extends HttpServlet {
 
         // --- Basic validation ---
         if (name == null || name.trim().isEmpty()
-                || qtyStr == null || priceStr == null || expiryDate == null) {
-            req.setAttribute("error", "All fields are required.");
+                || category == null || category.trim().isEmpty()
+                || qtyStr == null || qtyStr.trim().isEmpty()
+                || priceStr == null || priceStr.trim().isEmpty()) {
+            req.setAttribute("error", "Name, Category, Quantity, and Price are required.");
             doGet(req, resp);
             return;
+        }
+
+        // Validate expiry date based on category
+        boolean isExpiryRequired = "Medicine".equalsIgnoreCase(category)
+                || "Food".equalsIgnoreCase(category)
+                || "Beverages".equalsIgnoreCase(category);
+
+        if (isExpiryRequired && (expiryDate == null || expiryDate.trim().isEmpty())) {
+            req.setAttribute("error", "Expiry Date is required for Medicine, Food, and Beverages.");
+            doGet(req, resp);
+            return;
+        }
+
+        // Handle empty expiry date for non-required categories
+        if (expiryDate == null || expiryDate.trim().isEmpty()) {
+            expiryDate = "N/A";
         }
 
         int    quantity;
@@ -77,11 +95,12 @@ public class AddStockServlet extends HttpServlet {
 
         // --- Build the Item ---
         String itemId = "ITM-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        // New items are created with "Active" status
         Item newItem = new Item(itemId, name.trim(), category.trim(),
-                quantity, price, expiryDate.trim());
+                quantity, price, expiryDate.trim(), "Active");
 
         // --- Persist via service (which also calls stack.push()) ---
-        String itemsPath = FileHandler.ITEMS_FILE;
+        String itemsPath = FilePath.getItemsPath(getServletContext());
         InventoryService service = new InventoryService(itemsPath);
         service.addItem(newItem); // ← stack.push() happens inside here
 

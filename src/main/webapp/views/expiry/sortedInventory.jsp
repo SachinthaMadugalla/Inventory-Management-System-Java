@@ -13,14 +13,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .sidebar-fixed { position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100; }
-        .main-content  { margin-left: 260px; padding: 2.5rem; }
+        .sidebar-fixed { position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 100; transition: transform 0.3s ease-in-out; }
+        .main-content  { margin-left: 260px; padding: 2.5rem; transition: margin-left 0.3s ease-in-out; }
         .card-custom { border-radius: 16px; border: none; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); }
         .table-custom th { text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; color: #64748b; background-color: #f1f5f9; border-bottom: none; padding: 1rem; }
         .table-custom td { padding: 1rem; vertical-align: middle; border-bottom: 1px solid #e2e8f0; }
         .status-expired { background-color: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
         .status-warning { background-color: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
         .status-valid { background-color: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+
+        @media (max-width: 992px) {
+            .sidebar-fixed { transform: translateX(-100%); }
+            .sidebar-fixed.show { transform: translateX(0); }
+            .main-content { margin-left: 0 !important; padding: 1rem; }
+        }
     </style>
 </head>
 <body>
@@ -28,8 +34,15 @@
     <jsp:include page="/views/common/sidebar.jsp"/>
 
     <div class="main-content flex-grow-1">
-        <h2 class="fw-bold mb-1" style="color: #0f172a;">Sorted Inventory View</h2>
-        <p class="text-muted mb-4">Component 02 — All items sorted by expiry date using Merge Sort (O(n log n))</p>
+        <div class="d-flex align-items-center mb-4">
+            <button class="btn btn-primary d-lg-none me-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                <i class="bi bi-list"></i>
+            </button>
+            <div>
+                <h2 class="fw-bold mb-1" style="color: #0f172a;">Sorted Inventory View</h2>
+                <p class="text-muted mb-0 d-none d-lg-block">Component 02 — All items sorted by expiry date using Merge Sort (O(n log n))</p>
+            </div>
+        </div>
 
         <%-- Algorithm Info Card --%>
         <div class="card card-custom border-start border-4 mb-4" style="border-left-color: #4f46e5 !important;">
@@ -48,7 +61,7 @@
 
         <%-- Sorted Items Table --%>
         <div class="card card-custom">
-            <div class="card-header bg-transparent border-0 pt-4 pb-3 px-4 d-flex justify-content-between align-items-center">
+            <div class="card-header bg-transparent border-0 pt-4 pb-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <h5 class="fw-bold mb-0" style="color: #0f172a;">
                     <i class="bi bi-sort-down me-2" style="color: #4f46e5;"></i>Inventory Sorted by Expiry Date <span class="badge rounded-pill ms-2" style="background-color: #e2e8f0; color: #475569;">${sortedItems.size()} items</span>
                 </h5>
@@ -80,7 +93,7 @@
                             <td class="fw-bold text-dark">${item.name}</td>
                             <td><span class="badge rounded-pill" style="background-color: #f1f5f9; color: #475569;">${item.category}</span></td>
                             <td class="fw-medium">${item.quantity} units</td>
-                            <td class="fw-medium">$<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
+                            <td class="fw-medium">Rs.<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
                             <td><strong class="font-monospace text-dark">${item.expiryDate}</strong></td>
                             <td class="pe-4">
                                 <c:choose>

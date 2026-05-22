@@ -149,6 +149,7 @@
             margin-left: 256px !important;
             padding: 28px 36px !important;
             animation: fadeIn .45s ease;
+            transition: margin-left 0.3s ease-in-out;
         }
 
         /* ===========================  SIDEBAR  =========================== */
@@ -164,6 +165,7 @@
             display: flex; flex-direction:column;
             color: var(--tx1) !important;
             animation: slideLeft .4s ease;
+            transition: transform 0.3s ease-in-out;
         }
         .sidebar-fixed::-webkit-scrollbar { width:3px; }
         .sidebar-fixed::-webkit-scrollbar-thumb { background: var(--bd2); border-radius:2px; }
@@ -588,6 +590,17 @@
             background:linear-gradient(90deg,transparent,var(--bdg),transparent);
         }
 
+        @media (max-width: 992px) {
+            .sidebar-fixed {
+                transform: translateX(-100%);
+            }
+            .sidebar-fixed.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -598,8 +611,11 @@
 
         <div class="topbar">
             <div>
-                <h2>Reports</h2>
-                <p class="topbar-sub">Generate and view sales summary reports.</p>
+                <button class="btn btn-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h2 class="d-none d-lg-block">Reports</h2>
+                <p class="topbar-sub d-none d-lg-block">Generate and view sales summary reports.</p>
             </div>
             <div class="topbar-actions">
                 <form action="${pageContext.request.contextPath}/reports" method="post" class="d-inline">
@@ -642,7 +658,7 @@
                                 <td><code>${report.reportId}</code></td>
                                 <td>${report.generatedDate}</td>
                                 <td><span class="badge bg-primary">${report.totalSales}</span></td>
-                                <td style="color:var(--green);font-weight:600;">$<fmt:formatNumber value="${report.totalRevenue}" maxFractionDigits="2"/></td>
+                                <td style="color:var(--green);font-weight:600;">Rs.<fmt:formatNumber value="${report.totalRevenue}" maxFractionDigits="2"/></td>
                                 <td><span class="badge bg-warning text-dark"><i class="bi bi-trophy me-1"></i>${report.topItemName}</span></td>
                             </tr>
                         </c:forEach>

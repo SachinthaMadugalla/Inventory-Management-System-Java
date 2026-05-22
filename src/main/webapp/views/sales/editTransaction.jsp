@@ -146,6 +146,7 @@
             margin-left: 256px !important;
             padding: 28px 36px !important;
             animation: fadeIn .45s ease;
+            transition: margin-left 0.3s ease-in-out;
         }
 
         /* ===========================  SIDEBAR  =========================== */
@@ -161,6 +162,7 @@
             display: flex; flex-direction:column;
             color: var(--tx1) !important;
             animation: slideLeft .4s ease;
+            transition: transform 0.3s ease-in-out;
         }
         .sidebar-fixed::-webkit-scrollbar { width:3px; }
         .sidebar-fixed::-webkit-scrollbar-thumb { background: var(--bd2); border-radius:2px; }
@@ -585,6 +587,17 @@
             background:linear-gradient(90deg,transparent,var(--bdg),transparent);
         }
 
+        @media (max-width: 992px) {
+            .sidebar-fixed {
+                transform: translateX(-100%);
+            }
+            .sidebar-fixed.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -595,8 +608,11 @@
 
         <div class="topbar">
             <div>
-                <h2>Edit Transaction</h2>
-                <p class="topbar-sub">Component 03 — Correct an erroneous transaction record.</p>
+                <button class="btn btn-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h2 class="d-none d-lg-block">Edit Transaction</h2>
+                <p class="topbar-sub d-none d-lg-block">Component 03 — Correct an erroneous transaction record.</p>
             </div>
             <div class="topbar-actions">
                 <div class="user-pill">
@@ -637,7 +653,7 @@
                                    value="${sale.quantitySold}" min="1" required>
                         </div>
                         <div class="col-md-4">
-                            <label for="totalPrice" class="form-label">Total Price ($)</label>
+                            <label for="totalPrice" class="form-label">Total Price (Rs.)</label>
                             <input type="number" class="form-control" id="totalPrice" name="totalPrice"
                                    value="${sale.totalPrice}" step="0.01" min="0" required>
                         </div>
@@ -651,7 +667,7 @@
                                 <i class="bi bi-save me-2"></i>Save Changes
                             </button>
                             <a href="${pageContext.request.contextPath}/viewSales"
-                               class="btn btn-outline-secondary ms-2">Cancel</a>
+                               class="btn btn-outline-secondary ms-2 mt-2 mt-sm-0">Cancel</a>
                         </div>
                     </div>
                 </form>

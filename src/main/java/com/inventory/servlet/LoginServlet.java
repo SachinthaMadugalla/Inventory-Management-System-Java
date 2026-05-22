@@ -2,7 +2,7 @@ package com.inventory.servlet;
 
 import com.inventory.model.User;
 import com.inventory.service.UserService;
-import com.inventory.util.FileHandler;
+import com.inventory.util.FilePath;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -40,7 +40,7 @@ public class LoginServlet extends HttpServlet {
         if (password        != null) password        = password.trim();
 
         // Delegate authentication to the service layer (supports email OR username)
-        UserService userService = new UserService(FileHandler.USERS_FILE);
+        UserService userService = new UserService(FilePath.getUsersPath(getServletContext()));
         User user = userService.authenticate(usernameOrEmail, password);
 
         if (user != null) {

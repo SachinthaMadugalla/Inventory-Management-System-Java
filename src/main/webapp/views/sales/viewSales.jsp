@@ -150,6 +150,7 @@
             margin-left: 256px !important;
             padding: 28px 36px !important;
             animation: fadeIn .45s ease;
+            transition: margin-left 0.3s ease-in-out;
         }
 
         /* ===========================  SIDEBAR  =========================== */
@@ -165,6 +166,7 @@
             display: flex; flex-direction:column;
             color: var(--tx1) !important;
             animation: slideLeft .4s ease;
+            transition: transform 0.3s ease-in-out;
         }
         .sidebar-fixed::-webkit-scrollbar { width:3px; }
         .sidebar-fixed::-webkit-scrollbar-thumb { background: var(--bd2); border-radius:2px; }
@@ -589,6 +591,17 @@
             background:linear-gradient(90deg,transparent,var(--bdg),transparent);
         }
 
+        @media (max-width: 992px) {
+            .sidebar-fixed {
+                transform: translateX(-100%);
+            }
+            .sidebar-fixed.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -599,8 +612,11 @@
 
         <div class="topbar">
             <div>
-                <h2>Sales History</h2>
-                <p class="topbar-sub">All recorded transactions.</p>
+                <button class="btn btn-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h2 class="d-none d-lg-block">Sales History</h2>
+                <p class="topbar-sub d-none d-lg-block">All recorded transactions.</p>
             </div>
             <div class="topbar-actions">
                 <a href="${pageContext.request.contextPath}/processSale" class="btn btn-success">
@@ -627,7 +643,7 @@
         <div class="card mb-4" style="background:var(--g-dim)!important;border-color:var(--bdg)!important;animation-delay:.05s">
             <div class="card-body d-flex justify-content-between align-items-center">
                 <div>
-                    <div style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--green);">$<fmt:formatNumber value="${totalRevenue}" maxFractionDigits="2"/></div>
+                    <div style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;color:var(--green);">Rs.<fmt:formatNumber value="${totalRevenue}" maxFractionDigits="2"/></div>
                     <div class="small" style="color:var(--tx2);">Total Revenue from ${sales.size()} sale(s)</div>
                 </div>
                 <i class="bi bi-currency-dollar" style="font-size:2.6rem;color:var(--green);opacity:.6;"></i>
@@ -661,7 +677,7 @@
                                 <td class="fw-bold text-tx1">${sale.itemName}</td>
                                 <td><span class="badge bg-secondary">${sale.quantitySold} units</span></td>
                                 <td class="fw-bold" style="color:var(--green);">
-                                    $<fmt:formatNumber value="${sale.totalPrice}" maxFractionDigits="2"/>
+                                    Rs.<fmt:formatNumber value="${sale.totalPrice}" maxFractionDigits="2"/>
                                 </td>
                                 <td style="color:var(--tx2);"><i class="bi bi-clock me-1 small"></i>${sale.saleDate}</td>
                                 <c:if test="${sessionScope.role == 'admin'}">

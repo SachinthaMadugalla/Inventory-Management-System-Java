@@ -3,7 +3,7 @@ package com.inventory.servlet;
 import com.inventory.model.User;
 import com.inventory.service.EmailService;
 import com.inventory.service.UserService;
-import com.inventory.util.FileHandler;
+import com.inventory.util.FilePath;
 
 import javax.mail.MessagingException;
 import javax.servlet.ServletException;
@@ -51,7 +51,7 @@ public class ForgotPasswordServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = req.getParameter("action");
-        UserService  userService  = new UserService(FileHandler.USERS_FILE);
+        UserService  userService  = new UserService(FilePath.getUsersPath(getServletContext()));
         EmailService emailService = new EmailService();
 
         // ── STEP 1: look up email, generate & send OTP ───────────────────────
@@ -226,4 +226,3 @@ public class ForgotPasswordServlet extends HttpServlet {
         return email.substring(0, 2) + "****" + email.substring(at);
     }
 }
-
