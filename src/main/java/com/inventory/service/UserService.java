@@ -13,42 +13,88 @@ public class UserService {
         this.filePath = filePath;
     }
 
-    //Authenticates a user by matching username and password.
-    //Returns the matching User object, or null if credentials are invalid.
-    public User authenticate(String username, String password) {
+    /**
+     * Authenticates a user by matching username OR email with the password.
+     * Returns the matching User object, or null if credentials are invalid.
+     */
+    public User authenticate(String usernameOrEmail, String password) {
+        if (usernameOrEmail == null || password == null) return null;
         List<User> users = FileHandler.readUsers(filePath);
         for (User user : users) {
-            if (user.getUsername().equals(username)
-                    && user.getPassword().equals(password)) {
+            boolean matchIdentifier = user.getUsername().equals(usernameOrEmail)
+                    || (user.getEmail() != null
+                    && user.getEmail().equalsIgnoreCase(usernameOrEmail));
+            if (matchIdentifier && user.getPassword().equals(password)) {
                 return user;
             }
         }
         return null; // Authentication failed
     }
 
-    //Registers a new user if the username is not already taken.
-    //Returns true on success, false if the username already exists.
-    public boolean register(User newUser) {
+    /**
+     * Registers a new user if neither the username nor the email is already taken.
+     * Returns:
+     *   "ok"              — success
+     *   "username_taken"  — username already exists
+     *   "email_taken"     — email already registered
+     */
+    public String register(User newUser) {
         List<User> users = FileHandler.readUsers(filePath);
         for (User u : users) {
             if (u.getUsername().equalsIgnoreCase(newUser.getUsername())) {
-                return false; // Username already taken
+                return "username_taken";
+            }
+            if (newUser.getEmail() != null && !newUser.getEmail().isEmpty()
+                    && newUser.getEmail().equalsIgnoreCase(u.getEmail())) {
+                return "email_taken";
             }
         }
         FileHandler.addUser(filePath, newUser);
-        return true;
+        return "ok";
     }
 
-    //Returns all registered users.
+    // Returns all registered users.
     public List<User> getAllUsers() {
         return FileHandler.readUsers(filePath);
     }
 
-    //Deletes a user by username
+    // Deletes a user by username.
     public boolean deleteUser(String username) {
         List<User> users = FileHandler.readUsers(filePath);
         boolean removed = users.removeIf(u -> u.getUsername().equals(username));
         if (removed) FileHandler.writeUsers(filePath, users);
         return removed;
+    }
+
+    /**
+     * Finds a user by their registered email address (case-insensitive).
+     * Returns the User object, or null if no match is found.
+     */
+    public User findByEmail(String email) {
+        if (email == null || email.trim().isEmpty()) return null;
+        List<User> users = FileHandler.readUsers(filePath);
+        for (User u : users) {
+            if (email.trim().equalsIgnoreCase(u.getEmail())) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Resets the password for the given username.
+     * OTP verification is handled in the servlet (stored in session).
+     * Returns true on success, false if the username is not found.
+     */
+    public boolean resetPassword(String username, String newPassword) {
+        List<User> users = FileHandler.readUsers(filePath);
+        for (User u : users) {
+            if (u.getUsername().equalsIgnoreCase(username)) {
+                u.setPassword(newPassword.trim());
+                FileHandler.writeUsers(filePath, users);
+                return true;
+            }
+        }
+        return false;
     }
 }

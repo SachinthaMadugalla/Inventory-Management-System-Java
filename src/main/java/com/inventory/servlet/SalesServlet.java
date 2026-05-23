@@ -4,7 +4,7 @@ import com.inventory.model.Item;
 import com.inventory.model.Sale;
 import com.inventory.service.InventoryService;
 import com.inventory.service.SalesService;
-import com.inventory.util.FileHandler;
+import com.inventory.util.FilePath;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -14,6 +14,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * SalesServlet — handles the sales form (GET) and sale processing (POST).
+ *
+ * OOP Concept: ABSTRACTION
+ * Business logic (stock decrement, sale recording) is in SalesService.
+ */
 @WebServlet("/processSale")
 public class SalesServlet extends HttpServlet {
 
@@ -27,7 +33,7 @@ public class SalesServlet extends HttpServlet {
             return;
         }
 
-        String itemsPath = FileHandler.ITEMS_FILE;
+        String itemsPath = FilePath.getItemsPath(getServletContext());
         InventoryService inventoryService = new InventoryService(itemsPath);
         List<Item> items = inventoryService.getAllItems();
 
@@ -48,8 +54,8 @@ public class SalesServlet extends HttpServlet {
         String itemId  = req.getParameter("itemId");
         String qtyStr  = req.getParameter("quantity");
 
-        String itemsPath = FileHandler.ITEMS_FILE;
-        String salesPath = FileHandler.SALES_FILE;
+        String itemsPath = FilePath.getItemsPath(getServletContext());
+        String salesPath = FilePath.getSalesPath(getServletContext());
 
         InventoryService inventoryService = new InventoryService(itemsPath);
         SalesService salesService = new SalesService(salesPath, itemsPath);
@@ -93,7 +99,7 @@ public class SalesServlet extends HttpServlet {
             return;
         }
 
-        session.setAttribute("successMsg", "Sale recorded successfully! Total: $" + totalPrice);
+        session.setAttribute("successMsg", "Sale recorded successfully! Total: Rs." + totalPrice);
         resp.sendRedirect(req.getContextPath() + "/viewSales");
     }
 }
