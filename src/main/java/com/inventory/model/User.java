@@ -3,7 +3,6 @@ package com.inventory.model;
 public class User {
 
     // Private fields (Encapsulation)
-    private String fullName;  // display name
     private String username;
     private String password;
     private String role;      // "admin" or "user"
@@ -18,8 +17,7 @@ public class User {
         this.role     = role;
     }
 
-    public User(String fullName, String username, String password, String role, String email) {
-        this.fullName = fullName;
+    public User(String username, String password, String role, String email) {
         this.username = username;
         this.password = password;
         this.role     = role;
@@ -27,8 +25,6 @@ public class User {
     }
 
     // Getters & Setters
-    public String getFullName() { return fullName; }
-    public void   setFullName(String f) { this.fullName = f; }
 
     public String getUsername() { return username; }
     public void   setUsername(String u) { this.username = u; }
@@ -43,15 +39,14 @@ public class User {
     public void   setEmail(String e) { this.email = e; }
 
     /**
-     * CSV format: fullName,username,password,role,email
+     * CSV format: username,password,role,email
      * fullName and email are optional for backward-compatibility with old records.
      *
      * Old 3-field records (username,password,role) are still readable via fromCsv().
      */
     public String toCsv() {
-        String fn = (fullName != null) ? fullName : "";
         String em = (email    != null) ? email    : "";
-        return fn + "," + username + "," + password + "," + role + "," + em;
+        return username + "," + password + "," + role + "," + em;
     }
 
     public static User fromCsv(String csv) {
@@ -72,8 +67,7 @@ public class User {
             u.setRole(parts[2].trim());
             u.setEmail(parts[3].trim());
         } else {
-            // New 5-field format: fullName,username,password,role,email
-            u.setFullName(parts[0].trim());
+            // New 5-field:format:username,password,role,email
             u.setUsername(parts[1].trim());
             u.setPassword(parts[2].trim());
             u.setRole(parts[3].trim());
