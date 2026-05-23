@@ -9,16 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * OOP Concept: ABSTRACTION (Service Layer)
- * SalesService handles all sales business logic:
- *  - Recording a sale and decrementing inventory stock.
- *  - Retrieving sales history.
- *  - Computing revenue totals for reports.
+ * SalesService — Handles all sales business logic (Component 03).
+ * Processes sales, manages inventory deduction, calculates revenue, and generates reports.
+ * OOP: ABSTRACTION (hides file I/O complexity; servlets only call high-level methods).
  */
 public class SalesService {
 
-    private final String salesFilePath;
-    private final String itemsFilePath;
+    private final String salesFilePath;   // Path to sales.txt
+    private final String itemsFilePath;   // Path to items.txt
 
     public SalesService(String salesFilePath, String itemsFilePath) {
         this.salesFilePath = salesFilePath;
@@ -26,16 +24,15 @@ public class SalesService {
     }
 
     /**
-     * Processes a sale:
-     *  1. Validates that the item exists and has sufficient stock.
-     *  2. Decrements the item's quantity in items.txt (Read-Modify-Overwrite).
-     *  3. Appends the sale record to sales.txt.
-     *
-     * @return null on success, or an error message string on failure.
+     * Process a sale: validate stock → decrement inventory → record sale.
+     * Returns null on success, error message on failure.
+     * Uses Read-Modify-Overwrite pattern for data consistency.
      */
     public String processSale(Sale sale) {
-        // Read current inventory
+        // Read all items from file
         List<Item> items = FileHandler.readItems(itemsFilePath);
+
+        // Find the item being sold
         Item target = null;
         for (Item item : items) {
             if (item.getId().equals(sale.getItemId())) {
@@ -44,31 +41,35 @@ public class SalesService {
             }
         }
 
+        // Validate: item exists
         if (target == null) {
             return "Item not found: " + sale.getItemId();
         }
+
+        // Validate: sufficient stock available
         if (target.getQuantity() < sale.getQuantitySold()) {
             return "Insufficient stock. Available: " + target.getQuantity();
         }
 
-        // Decrement stock (Read-Modify-Overwrite via FileHandler)
+        // Decrement stock and persist to items.txt
         target.setQuantity(target.getQuantity() - sale.getQuantitySold());
         FileHandler.updateItem(itemsFilePath, target);
 
-        // Persist the sale record
+        // Record the sale in sales.txt
         FileHandler.addSale(salesFilePath, sale);
-        return null; // null = success
+        return null; // null indicates success
     }
 
     /**
-     * Returns all sales records.
+     * Retrieve all sales records from file.
      */
     public List<Sale> getAllSales() {
         return FileHandler.readSales(salesFilePath);
     }
 
     /**
-     * Computes total revenue across all sales.
+     * Calculate total revenue (sum of all totalPrice values).
+     * Used for dashboard reports.
      */
     public double getTotalRevenue() {
         double total = 0;
@@ -79,25 +80,27 @@ public class SalesService {
     }
 
     /**
-     * Returns a map of itemName → total quantity sold.
-     * Used to determine the top-selling item for reports.
+     * Map item names to total quantity sold (for analytics).
+     * Example: {"Milk": 50, "Bread": 35} → Milk is top seller
      */
     public Map<String, Integer> getSalesByItem() {
         Map<String, Integer> map = new HashMap<>();
         for (Sale sale : FileHandler.readSales(salesFilePath)) {
+            // Accumulate quantities for each item
             map.merge(sale.getItemName(), sale.getQuantitySold(), Integer::sum);
         }
         return map;
     }
 
     /**
-     * Returns the name of the best-selling item (highest total quantity sold).
+     * Find the best-selling item (highest total quantity sold).
+     * Used in Component 05 (Reports) for top-selling analysis.
      */
     public String getTopSellingItem() {
         Map<String, Integer> map = getSalesByItem();
         return map.entrySet().stream()
-                .max(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .orElse("N/A");
+                .max(Map.Entry.comparingByValue())  // Find entry with max value
+                .map(Map.Entry::getKey)              // Extract item name
+                .orElse("N/A");                       // Default if no sales exist
     }
 }
