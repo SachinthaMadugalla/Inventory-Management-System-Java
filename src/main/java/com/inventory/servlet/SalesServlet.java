@@ -14,16 +14,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * SalesServlet — handles the sales form (GET) and sale processing (POST).
- *
- * OOP Concept: ABSTRACTION
- * Business logic (stock decrement, sale recording) is in SalesService.
- */
+/** * SalesServlet — Handles sales form display (GET) and sale processing (POST).
+ * * Validates stock availability, creates sale record, and decrements inventory.
+ * * OOP: ABSTRACTION (delegates sale processing to SalesService). */
 @WebServlet("/processSale")
 public class SalesServlet extends HttpServlet {
 
     @Override
+    // GET: Display from with available items
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
@@ -42,6 +40,7 @@ public class SalesServlet extends HttpServlet {
     }
 
     @Override
+    // POST: Process sale, validate stock, create sale record, decrement inventory
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
@@ -75,6 +74,7 @@ public class SalesServlet extends HttpServlet {
             return;
         }
 
+        // validate quantity input
         int qty;
         try {
             qty = Integer.parseInt(qtyStr.trim());
@@ -85,9 +85,11 @@ public class SalesServlet extends HttpServlet {
             return;
         }
 
+        // Calculate total price and generate unique sale ID
         double totalPrice = selectedItem.getPrice() * qty;
         String saleId = "SLE-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
+        // Create Sale object
         Sale sale = new Sale(saleId, itemId, selectedItem.getName(),
                 qty, totalPrice, LocalDate.now().toString());
 
@@ -99,6 +101,7 @@ public class SalesServlet extends HttpServlet {
             return;
         }
 
+        // Success: set message and redirect to sales list
         session.setAttribute("successMsg", "Sale recorded successfully! Total: Rs." + totalPrice);
         resp.sendRedirect(req.getContextPath() + "/viewSales");
     }
