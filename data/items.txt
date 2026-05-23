@@ -1,4 +1,2 @@
-ITM-59233408,cake,Food,440,2400.0,2026-05-22,Active
 ITM-F6EF7CC4,MSI Cyborg 15 (core 7),Electronics,98,500000.0,N/A,Active
 ITM-0F97951D,Coke (2L),Beverages,350,640.0,2026-05-23,Active
-ITM-59233408,cake,Food,500,2400.0,2026-05-22,Active

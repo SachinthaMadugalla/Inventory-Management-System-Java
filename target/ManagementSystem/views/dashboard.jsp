@@ -387,7 +387,7 @@
         .is-amber  .stat-icon-badge { background:var(--a-dim); color:var(--amber);  }
         .stat-number {
             font-family:'Syne',sans-serif;
-            font-size:38px; font-weight:800; line-height:1;
+            font-size:28px; font-weight:800; line-height:1;
             letter-spacing:-1.5px; color:var(--tx1);
             margin-bottom:7px;
         }
@@ -679,10 +679,13 @@
             </div>
             <div class="col-md-3 col-sm-6">
                 <div class="card stat-card is-blue p-3" style="animation-delay:.15s">
-                    <div class="stat-icon-badge"><i class="bi bi-currency-dollar"></i></div>
-                    <div class="stat-number" data-count="${totalRevenue}" data-prefix="Rs.">Rs.0</div>
-                    <div class="stat-label">Total Revenue</div>
-                    <span class="stat-chip" style="background:var(--b-dim);color:var(--blue);"><i class="bi bi-bank"></i> Earnings</span>
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon-badge me-3"><i class="bi bi-currency-dollar"></i></div>
+                        <div>
+                            <div class="stat-number" data-count="${totalRevenue}" data-prefix="Rs." style="font-size: 28px;">Rs.0</div>
+                            <div class="stat-label mb-0">Total Revenue</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6">

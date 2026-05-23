@@ -1,5 +1,4 @@
 package com.inventory.model;
-
 public class Expiry {
     private String id;
     private String itemId;

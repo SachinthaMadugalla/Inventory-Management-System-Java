@@ -1,5 +1,4 @@
 package com.inventory.model;
-
 public class User {
 
     // Private fields (Encapsulation)
@@ -39,7 +38,7 @@ public class User {
     public void   setEmail(String e) { this.email = e; }
 
     /**
-     * CSV format: fullName,username,password,role,email
+     * CSV format: username,password,role,email
      * fullName and email are optional for backward-compatibility with old records.
      *
      * Old 3-field records (username,password,role) are still readable via fromCsv().
