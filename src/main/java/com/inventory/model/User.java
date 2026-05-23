@@ -1,5 +1,4 @@
 package com.inventory.model;
-
 public class User {
 
     // Private fields (Encapsulation)
