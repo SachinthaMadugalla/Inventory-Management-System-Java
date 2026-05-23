@@ -654,7 +654,7 @@
                                 <td class="fw-semibold">${item.name}</td>
                                 <td><span class="badge bg-secondary">${item.category}</span></td>
                                 <td>${item.quantity}</td>
-                                <td>$<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
+                                <td>Rs.<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
                                 <td><span class="badge bg-danger"><i class="bi bi-calendar-x me-1"></i>${item.expiryDate}</span></td>
                                 <c:if test="${sessionScope.role == 'admin'}">
                                     <td class="text-center">

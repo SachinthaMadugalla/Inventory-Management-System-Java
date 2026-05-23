@@ -5,80 +5,86 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--@elvariable id="activePage" type="java.lang.String"--%>
-<div class="d-flex flex-column flex-shrink-0 sidebar-fixed">
-    <a href="${pageContext.request.contextPath}/dashboard" class="sidebar-brand">
-        <span class="sidebar-brand-icon"><i class="bi bi-box-seam-fill"></i></span>
-        <span class="sidebar-brand-text">Lumenara</span>
-    </a>
+<div class="offcanvas-lg offcanvas-start sidebar-fixed" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
+    <div class="offcanvas-header d-flex justify-content-between align-items-center mb-3">
+        <a href="${pageContext.request.contextPath}/dashboard" class="sidebar-brand text-decoration-none">
+            <span class="sidebar-brand-icon me-2"><i class="bi bi-box-seam-fill"></i></span>
+            <span class="sidebar-brand-text">Lumenara IMS</span>
+        </a>
+        <button type="button" class="btn-close d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body d-flex flex-column h-100">
+        <div class="sidebar-section-label mt-1">Menu</div>
 
-    <div class="sidebar-section-label mt-1">Menu</div>
+        <ul class="nav nav-pills flex-column mb-auto">
 
-    <ul class="nav nav-pills flex-column mb-auto">
+            <%-- Dashboard (admin only) --%>
+            <c:if test="${sessionScope.role == 'admin'}">
+                <li class="nav-item">
+                    <a href="${pageContext.request.contextPath}/dashboard"
+                       class="nav-link ${activePage == 'dashboard' ? 'active' : ''}">
+                        <i class="bi bi-speedometer2"></i>Dashboard
+                    </a>
+                </li>
+            </c:if>
 
-        <%-- Dashboard (admin only) --%>
-        <c:if test="${sessionScope.role == 'admin'}">
+            <%-- Inventory --%>
             <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/dashboard"
-                   class="nav-link ${activePage == 'dashboard' ? 'active' : ''}">
-                    <i class="bi bi-speedometer2"></i>Dashboard
+                <a href="${pageContext.request.contextPath}/viewInventory"
+                   class="nav-link ${activePage == 'inventory' ? 'active' : ''}">
+                    <i class="bi bi-boxes"></i>Inventory
                 </a>
             </li>
-        </c:if>
 
-        <%-- Inventory --%>
-        <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/viewInventory"
-               class="nav-link ${activePage == 'inventory' ? 'active' : ''}">
-                <i class="bi bi-boxes"></i>Inventory
-            </a>
-        </li>
+            <%-- Add Stock (admin only) --%>
+            <c:if test="${sessionScope.role == 'admin'}">
+                <li class="nav-item">
+                    <a href="${pageContext.request.contextPath}/addStock"
+                       class="nav-link ${activePage == 'addStock' ? 'active' : ''}">
+                        <i class="bi bi-plus-circle"></i>Add Stock
+                    </a>
+                </li>
+            </c:if>
 
-        <%-- Add Stock (admin only) --%>
-        <c:if test="${sessionScope.role == 'admin'}">
+            <%-- Expiry Management --%>
             <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/addStock"
-                   class="nav-link ${activePage == 'addStock' ? 'active' : ''}">
-                    <i class="bi bi-plus-circle"></i>Add Stock
+                <a href="${pageContext.request.contextPath}/expiryManagement"
+                   class="nav-link ${activePage == 'expiry' ? 'active' : ''}">
+                    <i class="bi bi-calendar-x"></i>Expiry Mgmt
                 </a>
             </li>
-        </c:if>
 
-        <%-- Expiry Management --%>
-        <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/expiryManagement"
-               class="nav-link ${activePage == 'expiry' ? 'active' : ''}">
-                <i class="bi bi-calendar-x"></i>Expiry Mgmt
-            </a>
-        </li>
-
-        <%-- Sales --%>
-        <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/processSale"
-               class="nav-link ${activePage == 'addSale' ? 'active' : ''}">
-                <i class="bi bi-cart-plus"></i>New Sale
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="${pageContext.request.contextPath}/viewSales"
-               class="nav-link ${activePage == 'viewSales' ? 'active' : ''}">
-                <i class="bi bi-receipt"></i>Sales History
-            </a>
-        </li>
-
-        <%-- Reports (admin only) --%>
-        <c:if test="${sessionScope.role == 'admin'}">
+            <%-- Sales --%>
             <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/reports"
-                   class="nav-link ${activePage == 'reports' ? 'active' : ''}">
-                    <i class="bi bi-bar-chart-line"></i>Reports
+                <a href="${pageContext.request.contextPath}/processSale"
+                   class="nav-link ${activePage == 'addSale' ? 'active' : ''}">
+                    <i class="bi bi-cart-plus"></i>New Sale
                 </a>
             </li>
-        </c:if>
-    </ul>
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/viewSales"
+                   class="nav-link ${activePage == 'viewSales' ? 'active' : ''}">
+                    <i class="bi bi-receipt"></i>Sales History
+                </a>
+            </li>
 
-    <div class="sidebar-section-label">System</div>
-    <a href="${pageContext.request.contextPath}/logout"
-       class="btn btn-outline-danger btn-sm w-100">
-        <i class="bi bi-box-arrow-right me-1"></i>Logout
-    </a>
+            <%-- Reports (admin only) --%>
+            <c:if test="${sessionScope.role == 'admin'}">
+                <li class="nav-item">
+                    <a href="${pageContext.request.contextPath}/reports"
+                       class="nav-link ${activePage == 'reports' ? 'active' : ''}">
+                        <i class="bi bi-bar-chart-line"></i>Reports
+                    </a>
+                </li>
+            </c:if>
+        </ul>
+
+        <div class="mt-auto">
+            <div class="sidebar-section-label">System</div>
+            <a href="${pageContext.request.contextPath}/logout"
+               class="btn btn-outline-danger btn-sm w-100">
+                <i class="bi bi-box-arrow-right me-1"></i>Logout
+            </a>
+        </div>
+    </div>
 </div>

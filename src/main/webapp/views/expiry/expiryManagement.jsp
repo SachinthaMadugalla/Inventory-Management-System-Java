@@ -1,24 +1,22 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
-<%--@elvariable id="successMsg" type="java.lang.String"--%>
-<%--@elvariable id="reports"    type="java.util.List"--%>
 
-<c:set var="activePage" value="reports" scope="request"/>
+<c:set var="activePage" value="expiry" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports — Lumenara</title>
+    <title>Expiry Management — InvenTrack</title>
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         /* ============================================================
-           Lumenara — Midnight Ops Theme
+           InvenTrack — Midnight Ops Theme
            Palette : Dark Navy + Electric Forest Green + Deep Violet
            Fonts   : Syne (display) · Outfit (body) · JetBrains Mono
            ============================================================ */
@@ -151,7 +149,6 @@
             padding: 28px 36px;
             animation: fadeIn .45s ease;
             width: 100%;
-            transition: margin-left 0.3s ease-in-out;
         }
 
         /* ===========================  SIDEBAR  =========================== */
@@ -605,22 +602,29 @@
             height:1px; border:none; margin:18px 0;
             background:linear-gradient(90deg,transparent,var(--bdg),transparent);
         }
+        .expired-row{background:var(--r-dim)!important;}
+        .warning-row{background:var(--a-dim)!important;}
+        .summary-pill{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(255,255,255,.03);border:1px solid var(--bd2);border-radius:999px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;}
+        .summary-pill.is-red{color:var(--red);border-color:rgba(248,113,113,.3);}
+        .summary-pill.is-amber{color:var(--amber);border-color:rgba(251,191,36,.3);}
+        .summary-pill.is-green{color:var(--green);border-color:var(--bdg);}
 
         @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0 !important;
+                padding: 16px !important;
+            }
             .sidebar-fixed {
                 transform: translateX(-100%);
             }
             .sidebar-fixed.show {
                 transform: translateX(0);
             }
-            .main-content {
-                margin-left: 0 !important;
-                padding: 16px !important;
-            }
             .menu-toggle {
                 display: block;
             }
         }
+
     </style>
 </head>
 <body>
@@ -631,20 +635,15 @@
 
         <div class="topbar">
             <div class="topbar-header">
-                <button class="menu-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                <button class="menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
                     <i class="bi bi-list"></i>
                 </button>
                 <div>
-                    <h2>Reports</h2>
-                    <p class="topbar-sub d-none d-sm-block">Generate and view sales summary reports.</p>
+                    <h2>Expiry Management</h2>
+                    <p class="topbar-sub">Component 02 — Items sorted by expiry date using custom <strong>MergeSort O(n log n)</strong>.</p>
                 </div>
             </div>
             <div class="topbar-actions">
-                <form action="${pageContext.request.contextPath}/reports" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-info text-white">
-                        <i class="bi bi-file-earmark-bar-graph me-2"></i>Generate New Report
-                    </button>
-                </form>
                 <div class="user-pill">
                     <span class="user-pill-avatar">${fn:toUpperCase(fn:substring(sessionScope.username, 0, 1))}</span>
                     <div>
@@ -655,42 +654,77 @@
             </div>
         </div>
 
-        <c:if test="${not empty successMsg}">
-            <div class="alert alert-success alert-dismissible fade show">
-                <i class="bi bi-check-circle-fill me-2"></i>${successMsg}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        </c:if>
+        <%-- Algorithm Info --%>
+        <div class="alert alert-primary mb-4">
+            <h6 class="fw-bold"><i class="bi bi-sort-numeric-up me-2"></i>MergeSort Algorithm Active</h6>
+            <p class="mb-0 small">
+                Items below are sorted by <code>expiryDate</code> (YYYY-MM-DD) in ascending order using a
+                hand-written divide-and-conquer Merge Sort — <strong>NOT</strong> <code>Collections.sort()</code>.
+                Time complexity: <strong>O(n log n)</strong> guaranteed.
+            </p>
+        </div>
 
-        <%-- Reports Table --%>
-        <div class="card" style="animation-delay:.05s">
-            <div class="card-header">
-                <span><i class="bi bi-bar-chart-line me-2"></i>Generated Reports (${reports.size()} total)</span>
-            </div>
+        <%-- Summary Badges --%>
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            <span class="summary-pill is-red"><i class="bi bi-x-circle"></i>Expired: ${expired.size()}</span>
+            <span class="summary-pill is-amber"><i class="bi bi-exclamation-triangle"></i>Expiring Soon (&#8804;30 days): ${expiringSoon.size()}</span>
+            <span class="summary-pill is-green"><i class="bi bi-check-circle"></i>Total Sorted: ${sortedItems.size()}</span>
+        </div>
+
+        <%-- Sorted Items Table --%>
+        <div class="card" style="animation-delay:.10s">
+            <div class="card-header"><span><i class="bi bi-table me-2"></i>All Items — Sorted by Expiry Date (Ascending)</span></div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-dark"><tr>
-                            <th>Report ID</th><th>Generated Date</th>
-                            <th>Total Sales</th><th>Total Revenue</th><th>Top Item</th>
+                            <th>#</th><th>ID</th><th>Name</th><th>Category</th>
+                            <th>Quantity</th><th>Expiry Date</th><th>Status</th>
                         </tr></thead>
                         <tbody>
-                        <c:forEach var="report" items="${reports}">
-                            <tr>
-                                <td><code>${report.reportId}</code></td>
-                                <td>${report.generatedDate}</td>
-                                <td><span class="badge bg-primary">${report.totalSales}</span></td>
-                                <td style="color:var(--green);font-weight:600;">Rs.<fmt:formatNumber value="${report.totalRevenue}" maxFractionDigits="2"/></td>
-                                <td><span class="badge bg-warning text-dark"><i class="bi bi-trophy me-1"></i>${report.topItemName}</span></td>
-                            </tr>
-                        </c:forEach>
-                        <c:if test="${empty reports}">
-                            <tr>
-                                <td colspan="5" class="text-center py-5" style="color:var(--tx3);">
-                                    <i class="bi bi-file-earmark-x fs-2 d-block mb-2"></i>
-                                    No reports generated yet. Click "Generate New Report" above.
+                        <c:set var="rank" value="1"/>
+                        <c:forEach var="item" items="${sortedItems}">
+                            <%-- Determine row class based on expiry status --%>
+                            <c:set var="rowClass" value=""/>
+                            <c:forEach var="exp" items="${expired}">
+                                <c:if test="${exp.id == item.id}"><c:set var="rowClass" value="expired-row"/></c:if>
+                            </c:forEach>
+                            <c:forEach var="soon" items="${expiringSoon}">
+                                <c:if test="${soon.id == item.id && empty rowClass}"><c:set var="rowClass" value="warning-row"/></c:if>
+                            </c:forEach>
+                            <tr class="${rowClass}">
+                                <td class="small" style="color:var(--tx3);">${rank}</td>
+                                <td><code>${item.id}</code></td>
+                                <td class="fw-semibold">${item.name}</td>
+                                <td><span class="badge bg-secondary">${item.category}</span></td>
+                                <td>${item.quantity}</td>
+                                <td><strong>${item.expiryDate}</strong></td>
+                                <td>
+                                    <c:set var="isExpired" value="false"/>
+                                    <c:forEach var="exp" items="${expired}">
+                                        <c:if test="${exp.id == item.id}"><c:set var="isExpired" value="true"/></c:if>
+                                    </c:forEach>
+                                    <c:set var="isSoon" value="false"/>
+                                    <c:forEach var="soon" items="${expiringSoon}">
+                                        <c:if test="${soon.id == item.id}"><c:set var="isSoon" value="true"/></c:if>
+                                    </c:forEach>
+                                    <c:choose>
+                                        <c:when test="${isExpired}">
+                                            <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Expired</span>
+                                        </c:when>
+                                        <c:when test="${isSoon}">
+                                            <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle me-1"></i>Expiring Soon</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Good</span>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </td>
                             </tr>
+                            <c:set var="rank" value="${rank + 1}"/>
+                        </c:forEach>
+                        <c:if test="${empty sortedItems}">
+                            <tr><td colspan="7" class="text-center py-5" style="color:var(--tx3);"><i class="bi bi-inbox fs-2 d-block mb-2"></i>No items to display.</td></tr>
                         </c:if>
                         </tbody>
                     </table>

@@ -76,6 +76,7 @@
       color: var(--tx1);
       min-height: 100vh;
       margin: 0; padding: 0;
+      overflow-x: hidden;
     }
     body::before {
       content: '';
@@ -146,9 +147,10 @@
     /* ===========================  LAYOUT  =========================== */
     .d-flex { position:relative; z-index:1; }
     .main-content {
-      margin-left: 256px !important;
-      padding: 28px 36px !important;
+      margin-left: 256px;
+      padding: 28px 36px;
       animation: fadeIn .45s ease;
+      width: 100%;
       transition: margin-left 0.3s ease-in-out;
     }
 
@@ -271,6 +273,11 @@
       position:absolute; bottom:0; left:0; right:0; height:1px;
       background:linear-gradient(90deg,transparent,var(--bdg),transparent);
     }
+    .topbar-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
     .topbar h2 {
       font-family:'Syne',sans-serif;
       font-size:22px; font-weight:800; margin:0 0 2px;
@@ -295,6 +302,15 @@
     }
     .user-pill-name { font-size:13px; font-weight:600; color:var(--tx1); line-height:1.2; }
     .user-pill-role { font-size:10px; color:var(--green); line-height:1.2; font-weight:600; letter-spacing:.4px; text-transform:uppercase; }
+    .menu-toggle {
+        display: none;
+        background: transparent;
+        border: none;
+        color: var(--tx1);
+        font-size: 24px;
+        cursor: pointer;
+        padding: 0;
+    }
 
     /* ===========================  CARDS  =========================== */
     .card {
@@ -599,6 +615,10 @@
         }
         .main-content {
             margin-left: 0 !important;
+            padding: 16px !important;
+        }
+        .menu-toggle {
+            display: block;
         }
     }
   </style>
@@ -610,12 +630,14 @@
   <div class="main-content flex-grow-1">
 
     <div class="topbar">
-      <div>
-        <button class="btn btn-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+      <div class="topbar-header">
+        <button class="menu-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
           <i class="bi bi-list"></i>
         </button>
-        <h2 class="d-none d-lg-block">Add Stock</h2>
-        <p class="topbar-sub d-none d-lg-block">Component 01 — New items are pushed onto the LIFO Stack.</p>
+        <div>
+          <h2>Add Stock</h2>
+          <p class="topbar-sub d-none d-sm-block">Component 01 — New items are pushed onto the LIFO Stack.</p>
+        </div>
       </div>
       <div class="topbar-actions">
         <div class="user-pill">

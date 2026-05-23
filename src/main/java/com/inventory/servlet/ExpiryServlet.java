@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 @WebServlet("/expiryManagement")
 public class ExpiryServlet extends HttpServlet {
@@ -59,7 +58,7 @@ public class ExpiryServlet extends HttpServlet {
         List<Expiry> expiryItems = expiryService.getAllExpiryItems();
         req.setAttribute("expiryItems", expiryItems);
 
-        req.getRequestDispatcher("/WEB-INF/views/expiry/expiryManagment.jsp").forward(req, resp);
+        req.getRequestDispatcher("/views/expiry/expiryManagement.jsp").forward(req, resp);
     }
 
     @Override

@@ -1,13 +1,13 @@
 package com.inventory.model;
 
 public class Expiry {
-
     private String id;
     private String itemId;
-    private String expiryDate; // Format: YYYY-MM-DD
+    private String expiryDate;
     private boolean disposed;
 
-    public Expiry() {}
+    public Expiry() {
+    }
 
     public Expiry(String id, String itemId, String expiryDate, boolean disposed) {
         this.id = id;
@@ -53,22 +53,8 @@ public class Expiry {
     }
 
     public static Expiry fromCsv(String csv) {
-        String[] parts = csv.split(",", -1);
+        String[] parts = csv.split(",");
         if (parts.length < 4) return null;
-        try {
-            return new Expiry(
-                    parts[0].trim(),
-                    parts[1].trim(),
-                    parts[2].trim(),
-                    Boolean.parseBoolean(parts[3].trim())
-            );
-        } catch (Exception e) {
-            return null; // Skip malformed lines
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "Expiry{id='" + id + "', itemId='" + itemId + "', expiryDate='" + expiryDate + "', disposed=" + disposed + "}";
+        return new Expiry(parts[0], parts[1], parts[2], Boolean.parseBoolean(parts[3]));
     }
 }

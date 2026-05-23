@@ -73,6 +73,7 @@
             color: var(--tx1);
             min-height: 100vh;
             margin: 0; padding: 0;
+            overflow-x: hidden;
         }
         body::before {
             content: '';
@@ -143,9 +144,10 @@
         /* ===========================  LAYOUT  =========================== */
         .d-flex { position:relative; z-index:1; }
         .main-content {
-            margin-left: 256px !important;
-            padding: 28px 36px !important;
+            margin-left: 256px;
+            padding: 28px 36px;
             animation: fadeIn .45s ease;
+            width: 100%;
         }
 
         /* ===========================  SIDEBAR  =========================== */
@@ -161,6 +163,7 @@
             display: flex; flex-direction:column;
             color: var(--tx1) !important;
             animation: slideLeft .4s ease;
+            transition: transform 0.3s ease-in-out;
         }
         .sidebar-fixed::-webkit-scrollbar { width:3px; }
         .sidebar-fixed::-webkit-scrollbar-thumb { background: var(--bd2); border-radius:2px; }
@@ -266,6 +269,11 @@
             position:absolute; bottom:0; left:0; right:0; height:1px;
             background:linear-gradient(90deg,transparent,var(--bdg),transparent);
         }
+        .topbar-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
         .topbar h2 {
             font-family:'Syne',sans-serif;
             font-size:22px; font-weight:800; margin:0 0 2px;
@@ -290,6 +298,15 @@
         }
         .user-pill-name { font-size:13px; font-weight:600; color:var(--tx1); line-height:1.2; }
         .user-pill-role { font-size:10px; color:var(--green); line-height:1.2; font-weight:600; letter-spacing:.4px; text-transform:uppercase; }
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--tx1);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+        }
 
         /* ===========================  CARDS  =========================== */
         .card {
@@ -585,6 +602,25 @@
             background:linear-gradient(90deg,transparent,var(--bdg),transparent);
         }
 
+        @media (max-width: 992px) {
+            .sidebar-fixed {
+                transform: translateX(-100%);
+            }
+            .sidebar-fixed.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+                padding: 16px !important;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            /* Hide non-essential topbar elements on very small screens */
+            .topbar-actions a.btn {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -597,15 +633,20 @@
 
         <%-- Topbar --%>
         <div class="topbar">
-            <div>
-                <h2>Dashboard</h2>
-                <p class="topbar-sub">Welcome back, <strong>${sessionScope.username}</strong></p>
+            <div class="topbar-header">
+                <button class="menu-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <h2>Dashboard</h2>
+                    <p class="topbar-sub d-none d-sm-block">Welcome back, <strong>${sessionScope.username}</strong></p>
+                </div>
             </div>
             <div class="topbar-actions">
-                <a href="${pageContext.request.contextPath}/addStock" class="btn btn-primary">
+                <a href="${pageContext.request.contextPath}/addStock" class="btn btn-primary d-none d-sm-inline-flex">
                     <i class="bi bi-plus-lg me-1"></i>Add Stock
                 </a>
-                <a href="${pageContext.request.contextPath}/processSale" class="btn btn-outline-secondary">
+                <a href="${pageContext.request.contextPath}/processSale" class="btn btn-outline-secondary d-none d-sm-inline-flex">
                     <i class="bi bi-cart-plus me-1"></i>New Sale
                 </a>
                 <div class="user-pill">
@@ -620,7 +661,7 @@
 
         <%-- Stat Cards --%>
         <div class="row g-4 mb-4">
-            <div class="col-md-3">
+            <div class="col-md-3 col-sm-6">
                 <div class="card stat-card is-green p-3" style="animation-delay:.05s">
                     <div class="stat-icon-badge"><i class="bi bi-boxes"></i></div>
                     <div class="stat-number" data-count="${totalItems}">0</div>
@@ -628,7 +669,7 @@
                     <span class="stat-chip"><i class="bi bi-graph-up-arrow"></i> All stock</span>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-sm-6">
                 <div class="card stat-card is-violet p-3" style="animation-delay:.10s">
                     <div class="stat-icon-badge"><i class="bi bi-receipt"></i></div>
                     <div class="stat-number" data-count="${totalSales}">0</div>
@@ -636,15 +677,15 @@
                     <span class="stat-chip" style="background:var(--v-dim);color:var(--violet);"><i class="bi bi-cart-check"></i> Transactions</span>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-sm-6">
                 <div class="card stat-card is-blue p-3" style="animation-delay:.15s">
                     <div class="stat-icon-badge"><i class="bi bi-currency-dollar"></i></div>
-                    <div class="stat-number" data-count="${totalRevenue}" data-prefix="$">$0</div>
+                    <div class="stat-number" data-count="${totalRevenue}" data-prefix="Rs.">Rs.0</div>
                     <div class="stat-label">Total Revenue</div>
                     <span class="stat-chip" style="background:var(--b-dim);color:var(--blue);"><i class="bi bi-bank"></i> Earnings</span>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-sm-6">
                 <div class="card stat-card is-amber p-3" style="animation-delay:.20s">
                     <div class="stat-icon-badge"><i class="bi bi-exclamation-triangle"></i></div>
                     <div class="stat-number" data-count="${lowStockCount}">0</div>
@@ -681,36 +722,38 @@
                 <span><i class="bi bi-clock-history me-2"></i>Recently Added Items</span>
             </div>
             <div class="card-body p-0">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
-                    <tr>
-                        <th>ID</th><th>Name</th><th>Category</th>
-                        <th>Qty</th><th>Price</th><th>Expiry</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach var="item" items="${recentItems}">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
                         <tr>
-                            <td><code>${item.id}</code></td>
-                            <td class="fw-semibold">${item.name}</td>
-                            <td><span class="badge bg-secondary">${item.category}</span></td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${item.quantity < 10}">
-                                        <span class="badge bg-danger">${item.quantity}</span>
-                                    </c:when>
-                                    <c:otherwise>${item.quantity}</c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>$<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
-                            <td>${item.expiryDate}</td>
+                            <th>ID</th><th>Name</th><th>Category</th>
+                            <th>Qty</th><th>Price</th><th>Expiry</th>
                         </tr>
-                    </c:forEach>
-                    <c:if test="${empty recentItems}">
-                        <tr><td colspan="6" class="text-center py-4" style="color:var(--tx3);">No items in inventory yet.</td></tr>
-                    </c:if>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                        <c:forEach var="item" items="${recentItems}">
+                            <tr>
+                                <td><code>${item.id}</code></td>
+                                <td class="fw-semibold">${item.name}</td>
+                                <td><span class="badge bg-secondary">${item.category}</span></td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${item.quantity < 10}">
+                                            <span class="badge bg-danger">${item.quantity}</span>
+                                        </c:when>
+                                        <c:otherwise>${item.quantity}</c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>Rs.<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
+                                <td>${item.expiryDate}</td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${empty recentItems}">
+                            <tr><td colspan="6" class="text-center py-4" style="color:var(--tx3);">No items in inventory yet.</td></tr>
+                        </c:if>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
