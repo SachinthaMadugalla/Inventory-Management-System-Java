@@ -2,7 +2,7 @@ package com.inventory.servlet;
 
 import com.inventory.model.Item;
 import com.inventory.service.InventoryService;
-import com.inventory.util.FileHandler;
+import com.inventory.util.FilePath; // Changed from FileHandler
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -10,15 +10,9 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
-/**
+/*
  * EditStockServlet — handles editing an existing inventory item.
- *
- * GET  /editStock?id=XXX → loads the item and shows the edit form.
- * POST /editStock         → validates and saves the updated item
- *                           using the Read-Modify-Overwrite pattern.
- *
  * OOP Concept: ABSTRACTION
- * File update logic is hidden inside InventoryService → FileHandler.
  */
 @WebServlet("/editStock")
 public class EditStockServlet extends HttpServlet {
@@ -34,7 +28,7 @@ public class EditStockServlet extends HttpServlet {
         }
 
         String itemId    = req.getParameter("id");
-        String itemsPath = FileHandler.ITEMS_FILE;
+        String itemsPath = FilePath.getItemsPath(getServletContext()); // Updated
         InventoryService service = new InventoryService(itemsPath);
 
         List<Item> items = service.getAllItems();
@@ -72,6 +66,32 @@ public class EditStockServlet extends HttpServlet {
         String priceStr   = req.getParameter("price");
         String expiryDate = req.getParameter("expiryDate");
 
+        // Basic validation
+        if (name == null || name.trim().isEmpty()
+                || category == null || category.trim().isEmpty()
+                || qtyStr == null || qtyStr.trim().isEmpty()
+                || priceStr == null || priceStr.trim().isEmpty()) {
+            req.setAttribute("error", "Name, Category, Quantity, and Price are required.");
+            doGet(req, resp);
+            return;
+        }
+
+        // Validate expiry date based on category
+        boolean isExpiryRequired = "Medicine".equalsIgnoreCase(category)
+                || "Food".equalsIgnoreCase(category)
+                || "Beverages".equalsIgnoreCase(category);
+
+        if (isExpiryRequired && (expiryDate == null || expiryDate.trim().isEmpty())) {
+            req.setAttribute("error", "Expiry Date is required for Medicine, Food, and Beverages.");
+            doGet(req, resp);
+            return;
+        }
+
+        // Handle empty expiry date for non-required categories
+        if (expiryDate == null || expiryDate.trim().isEmpty()) {
+            expiryDate = "N/A";
+        }
+
         int    quantity;
         double price;
         try {
@@ -83,11 +103,22 @@ public class EditStockServlet extends HttpServlet {
             return;
         }
 
-        Item updated = new Item(id, name.trim(), category.trim(),
-                quantity, price, expiryDate.trim());
-
-        String itemsPath = FileHandler.ITEMS_FILE;
+        // Retrieve existing item to keep its status
+        String itemsPath = FilePath.getItemsPath(getServletContext()); // Updated
         InventoryService service = new InventoryService(itemsPath);
+        Item existingItem = null;
+        for (Item item : service.getAllItems()) {
+            if (item.getId().equals(id)) {
+                existingItem = item;
+                break;
+            }
+        }
+        
+        String status = (existingItem != null) ? existingItem.getStatus() : "Active";
+
+        Item updated = new Item(id, name.trim(), category.trim(),
+                quantity, price, expiryDate.trim(), status);
+
         service.updateItem(updated); // Read-Modify-Overwrite inside FileHandler
 
         session.setAttribute("successMsg", "Item updated successfully.");

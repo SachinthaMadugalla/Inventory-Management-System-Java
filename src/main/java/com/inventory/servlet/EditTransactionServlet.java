@@ -3,6 +3,7 @@ package com.inventory.servlet;
 import com.inventory.model.Sale;
 import com.inventory.service.SalesService;
 import com.inventory.util.FileHandler;
+import com.inventory.util.FilePath;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -35,8 +36,8 @@ public class EditTransactionServlet extends HttpServlet {
         }
 
         String saleId    = req.getParameter("id");
-        String salesPath = FileHandler.SALES_FILE;
-        String itemsPath = FileHandler.ITEMS_FILE;
+        String salesPath = FilePath.getSalesPath(getServletContext());
+        String itemsPath = FilePath.getItemsPath(getServletContext());
         SalesService service = new SalesService(salesPath, itemsPath);
 
         Sale target = null;
@@ -84,8 +85,8 @@ public class EditTransactionServlet extends HttpServlet {
             return;
         }
 
-        String salesPath = FileHandler.SALES_FILE;
-        String itemsPath = FileHandler.ITEMS_FILE;
+        String salesPath = FilePath.getSalesPath(getServletContext());
+        String itemsPath = FilePath.getItemsPath(getServletContext());
         SalesService service = new SalesService(salesPath, itemsPath);
 
         // Read-Modify-Overwrite

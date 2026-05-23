@@ -34,7 +34,6 @@ public class SalesServlet extends HttpServlet {
             return;
         }
 
-        // Fetch all items from inventory for dropdown selection
         String itemsPath = FilePath.getItemsPath(getServletContext());
         InventoryService inventoryService = new InventoryService(itemsPath);
         List<Item> items = inventoryService.getAllItems();
@@ -109,7 +108,6 @@ public class SalesServlet extends HttpServlet {
             return;
         }
 
-        // Success: set message and redirect to sales list
         session.setAttribute("successMsg", "Sale recorded successfully! Total: Rs." + totalPrice);
         resp.sendRedirect(req.getContextPath() + "/viewSales");
     }

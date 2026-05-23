@@ -1,15 +1,17 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
+<%--@elvariable id="successMsg" type="java.lang.String"--%>
+<%--@elvariable id="reports"    type="java.util.List"--%>
 
-<c:set var="activePage" value="expiry" scope="request"/>
+<c:set var="activePage" value="reports" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expiry Management — Lumenara</title>
+    <title>Reports — Lumenara</title>
     <!--suppress HtmlUnknownTarget -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!--suppress HtmlUnknownTarget -->
@@ -74,6 +76,7 @@
             color: var(--tx1);
             min-height: 100vh;
             margin: 0; padding: 0;
+            overflow-x: hidden;
         }
         body::before {
             content: '';
@@ -144,9 +147,11 @@
         /* ===========================  LAYOUT  =========================== */
         .d-flex { position:relative; z-index:1; }
         .main-content {
-            margin-left: 256px !important;
-            padding: 28px 36px !important;
+            margin-left: 256px;
+            padding: 28px 36px;
             animation: fadeIn .45s ease;
+            width: 100%;
+            transition: margin-left 0.3s ease-in-out;
         }
 
         /* ===========================  SIDEBAR  =========================== */
@@ -162,6 +167,7 @@
             display: flex; flex-direction:column;
             color: var(--tx1) !important;
             animation: slideLeft .4s ease;
+            transition: transform 0.3s ease-in-out;
         }
         .sidebar-fixed::-webkit-scrollbar { width:3px; }
         .sidebar-fixed::-webkit-scrollbar-thumb { background: var(--bd2); border-radius:2px; }
@@ -267,6 +273,11 @@
             position:absolute; bottom:0; left:0; right:0; height:1px;
             background:linear-gradient(90deg,transparent,var(--bdg),transparent);
         }
+        .topbar-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
         .topbar h2 {
             font-family:'Syne',sans-serif;
             font-size:22px; font-weight:800; margin:0 0 2px;
@@ -291,6 +302,15 @@
         }
         .user-pill-name { font-size:13px; font-weight:600; color:var(--tx1); line-height:1.2; }
         .user-pill-role { font-size:10px; color:var(--green); line-height:1.2; font-weight:600; letter-spacing:.4px; text-transform:uppercase; }
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--tx1);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+        }
 
         /* ===========================  CARDS  =========================== */
         .card {
@@ -512,13 +532,95 @@
         .table > :not(caption) > * > .table-danger {
             background:var(--r-dim) !important; color:var(--tx1) !important;
         }
-        .expired-row{background:var(--r-dim)!important;}
-        .warning-row{background:var(--a-dim)!important;}
-        .summary-pill{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:rgba(255,255,255,.03);border:1px solid var(--bd2);border-radius:999px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;}
-        .summary-pill.is-red{color:var(--red);border-color:rgba(248,113,113,.3);}
-        .summary-pill.is-amber{color:var(--amber);border-color:rgba(251,191,36,.3);}
-        .summary-pill.is-green{color:var(--green);border-color:var(--bdg);}
 
+        /* ===========================  FORMS  =========================== */
+        .form-control, .form-select {
+            font-family:'Outfit',sans-serif !important;
+            background:rgba(255,255,255,.04) !important;
+            border:1px solid var(--bd2) !important;
+            border-radius:12px !important;
+            padding:11px 14px !important;
+            font-size:14px !important; color:var(--tx1) !important;
+            transition:border-color .2s, box-shadow .2s !important;
+        }
+        .form-control::placeholder { color:var(--tx3) !important; }
+        .form-control:focus, .form-select:focus {
+            background:rgba(0,232,150,.04) !important;
+            border-color:var(--green) !important;
+            box-shadow:0 0 0 3px var(--g-dim), 0 0 22px rgba(0,232,150,.06) !important;
+            color:var(--tx1) !important;
+        }
+        .form-select option { background:var(--bg-1); color:var(--tx1); }
+        .form-label {
+            font-family:'Outfit',sans-serif !important;
+            font-weight:600 !important; font-size:11px !important;
+            text-transform:uppercase; letter-spacing:.7px;
+            color:var(--tx2) !important; margin-bottom:7px;
+        }
+        .form-text { font-size:12px; color:var(--tx3); }
+        .input-group-text {
+            background:rgba(255,255,255,.04) !important;
+            border:1px solid var(--bd2) !important;
+            color:var(--tx2) !important; border-radius:12px !important;
+        }
+
+        /* ===========================  ALERTS  =========================== */
+        .alert {
+            border-radius:14px !important;
+            padding:14px 18px !important; font-size:13.5px;
+            border:1px solid transparent !important;
+            backdrop-filter:blur(8px);
+        }
+        .alert-info    { background:var(--b-dim) !important; color:var(--blue)   !important; border-color:rgba(56,189,248,.2) !important; }
+        .alert-success { background:var(--g-dim) !important; color:var(--green)  !important; border-color:var(--bdg) !important; }
+        .alert-danger  { background:var(--r-dim) !important; color:var(--red)    !important; border-color:rgba(248,113,113,.2) !important; }
+        .alert-primary { background:var(--g-dim) !important; color:var(--green)  !important; border-color:var(--bdg) !important; }
+        .alert-warning { background:var(--a-dim) !important; color:var(--amber)  !important; border-color:rgba(251,191,36,.2) !important; }
+        .btn-close { filter:invert(1) !important; opacity:.55 !important; }
+        .btn-close:hover { opacity:1 !important; }
+
+        /* ===========================  MISC  =========================== */
+        code {
+            font-family:'JetBrains Mono',monospace;
+            background:rgba(0,232,150,.08); color:var(--green);
+            padding:2px 8px; border-radius:6px; font-size:11.5px;
+            border:1px solid var(--bdg);
+        }
+        .text-muted   { color:var(--tx2) !important; }
+        .text-primary { color:var(--green) !important; }
+        .text-success { color:var(--green) !important; }
+        .text-danger  { color:var(--red) !important; }
+        .text-warning { color:var(--amber) !important; }
+        .text-info    { color:var(--blue) !important; }
+        hr { border-color:var(--bd) !important; opacity:1; }
+        h1,h2,h3,h4,h5,h6 { font-family:'Syne',sans-serif; letter-spacing:-.3px; color:var(--tx1); }
+        .fw-bold, .fw-semibold { font-family:'Syne',sans-serif !important; }
+
+        .gradient-text {
+            background:linear-gradient(120deg,var(--tx1) 40%,var(--green));
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+            background-clip:text;
+        }
+        .glow-divider {
+            height:1px; border:none; margin:18px 0;
+            background:linear-gradient(90deg,transparent,var(--bdg),transparent);
+        }
+
+        @media (max-width: 992px) {
+            .sidebar-fixed {
+                transform: translateX(-100%);
+            }
+            .sidebar-fixed.show {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0 !important;
+                padding: 16px !important;
+            }
+            .menu-toggle {
+                display: block;
+            }
+        }
     </style>
 </head>
 <body>
@@ -528,11 +630,21 @@
     <div class="main-content flex-grow-1">
 
         <div class="topbar">
-            <div>
-                <h2>Expiry Management</h2>
-                <p class="topbar-sub">Component 02 — Items sorted by expiry date using custom <strong>MergeSort O(n log n)</strong>.</p>
+            <div class="topbar-header">
+                <button class="menu-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <h2>Reports</h2>
+                    <p class="topbar-sub d-none d-sm-block">Generate and view sales summary reports.</p>
+                </div>
             </div>
             <div class="topbar-actions">
+                <form action="${pageContext.request.contextPath}/reports" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-info text-white">
+                        <i class="bi bi-file-earmark-bar-graph me-2"></i>Generate New Report
+                    </button>
+                </form>
                 <div class="user-pill">
                     <span class="user-pill-avatar">${fn:toUpperCase(fn:substring(sessionScope.username, 0, 1))}</span>
                     <div>
@@ -543,77 +655,42 @@
             </div>
         </div>
 
-        <%-- Algorithm Info --%>
-        <div class="alert alert-primary mb-4">
-            <h6 class="fw-bold"><i class="bi bi-sort-numeric-up me-2"></i>MergeSort Algorithm Active</h6>
-            <p class="mb-0 small">
-                Items below are sorted by <code>expiryDate</code> (YYYY-MM-DD) in ascending order using a
-                hand-written divide-and-conquer Merge Sort — <strong>NOT</strong> <code>Collections.sort()</code>.
-                Time complexity: <strong>O(n log n)</strong> guaranteed.
-            </p>
-        </div>
+        <c:if test="${not empty successMsg}">
+            <div class="alert alert-success alert-dismissible fade show">
+                <i class="bi bi-check-circle-fill me-2"></i>${successMsg}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </c:if>
 
-        <%-- Summary Badges --%>
-        <div class="d-flex flex-wrap gap-2 mb-4">
-            <span class="summary-pill is-red"><i class="bi bi-x-circle"></i>Expired: ${expired.size()}</span>
-            <span class="summary-pill is-amber"><i class="bi bi-exclamation-triangle"></i>Expiring Soon (&#8804;30 days): ${expiringSoon.size()}</span>
-            <span class="summary-pill is-green"><i class="bi bi-check-circle"></i>Total Sorted: ${sortedItems.size()}</span>
-        </div>
-
-        <%-- Sorted Items Table --%>
-        <div class="card" style="animation-delay:.10s">
-            <div class="card-header"><span><i class="bi bi-table me-2"></i>All Items — Sorted by Expiry Date (Ascending)</span></div>
+        <%-- Reports Table --%>
+        <div class="card" style="animation-delay:.05s">
+            <div class="card-header">
+                <span><i class="bi bi-bar-chart-line me-2"></i>Generated Reports (${reports.size()} total)</span>
+            </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-dark"><tr>
-                            <th>#</th><th>ID</th><th>Name</th><th>Category</th>
-                            <th>Quantity</th><th>Expiry Date</th><th>Status</th>
+                            <th>Report ID</th><th>Generated Date</th>
+                            <th>Total Sales</th><th>Total Revenue</th><th>Top Item</th>
                         </tr></thead>
                         <tbody>
-                        <c:set var="rank" value="1"/>
-                        <c:forEach var="item" items="${sortedItems}">
-                            <%-- Determine row class based on expiry status --%>
-                            <c:set var="rowClass" value=""/>
-                            <c:forEach var="exp" items="${expired}">
-                                <c:if test="${exp.id == item.id}"><c:set var="rowClass" value="expired-row"/></c:if>
-                            </c:forEach>
-                            <c:forEach var="soon" items="${expiringSoon}">
-                                <c:if test="${soon.id == item.id && empty rowClass}"><c:set var="rowClass" value="warning-row"/></c:if>
-                            </c:forEach>
-                            <tr class="${rowClass}">
-                                <td class="small" style="color:var(--tx3);">${rank}</td>
-                                <td><code>${item.id}</code></td>
-                                <td class="fw-semibold">${item.name}</td>
-                                <td><span class="badge bg-secondary">${item.category}</span></td>
-                                <td>${item.quantity}</td>
-                                <td><strong>${item.expiryDate}</strong></td>
-                                <td>
-                                    <c:set var="isExpired" value="false"/>
-                                    <c:forEach var="exp" items="${expired}">
-                                        <c:if test="${exp.id == item.id}"><c:set var="isExpired" value="true"/></c:if>
-                                    </c:forEach>
-                                    <c:set var="isSoon" value="false"/>
-                                    <c:forEach var="soon" items="${expiringSoon}">
-                                        <c:if test="${soon.id == item.id}"><c:set var="isSoon" value="true"/></c:if>
-                                    </c:forEach>
-                                    <c:choose>
-                                        <c:when test="${isExpired}">
-                                            <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Expired</span>
-                                        </c:when>
-                                        <c:when test="${isSoon}">
-                                            <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle me-1"></i>Expiring Soon</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Good</span>
-                                        </c:otherwise>
-                                    </c:choose>
+                        <c:forEach var="report" items="${reports}">
+                            <tr>
+                                <td><code>${report.reportId}</code></td>
+                                <td>${report.generatedDate}</td>
+                                <td><span class="badge bg-primary">${report.totalSales}</span></td>
+                                <td style="color:var(--green);font-weight:600;">Rs.<fmt:formatNumber value="${report.totalRevenue}" maxFractionDigits="2"/></td>
+                                <td><span class="badge bg-warning text-dark"><i class="bi bi-trophy me-1"></i>${report.topItemName}</span></td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${empty reports}">
+                            <tr>
+                                <td colspan="5" class="text-center py-5" style="color:var(--tx3);">
+                                    <i class="bi bi-file-earmark-x fs-2 d-block mb-2"></i>
+                                    No reports generated yet. Click "Generate New Report" above.
                                 </td>
                             </tr>
-                            <c:set var="rank" value="${rank + 1}"/>
-                        </c:forEach>
-                        <c:if test="${empty sortedItems}">
-                            <tr><td colspan="7" class="text-center py-5" style="color:var(--tx3);"><i class="bi bi-inbox fs-2 d-block mb-2"></i>No items to display.</td></tr>
                         </c:if>
                         </tbody>
                     </table>
