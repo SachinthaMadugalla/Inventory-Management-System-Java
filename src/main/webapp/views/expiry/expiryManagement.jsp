@@ -74,6 +74,7 @@
             color: var(--tx1);
             min-height: 100vh;
             margin: 0; padding: 0;
+            overflow-x: hidden;
         }
         body::before {
             content: '';
@@ -144,9 +145,10 @@
         /* ===========================  LAYOUT  =========================== */
         .d-flex { position:relative; z-index:1; }
         .main-content {
-            margin-left: 256px !important;
-            padding: 28px 36px !important;
+            margin-left: 256px;
+            padding: 28px 36px;
             animation: fadeIn .45s ease;
+            width: 100%;
         }
 
         /* ===========================  SIDEBAR  =========================== */
@@ -162,6 +164,7 @@
             display: flex; flex-direction:column;
             color: var(--tx1) !important;
             animation: slideLeft .4s ease;
+            transition: transform 0.3s ease-in-out;
         }
         .sidebar-fixed::-webkit-scrollbar { width:3px; }
         .sidebar-fixed::-webkit-scrollbar-thumb { background: var(--bd2); border-radius:2px; }
@@ -267,6 +270,11 @@
             position:absolute; bottom:0; left:0; right:0; height:1px;
             background:linear-gradient(90deg,transparent,var(--bdg),transparent);
         }
+        .topbar-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
         .topbar h2 {
             font-family:'Syne',sans-serif;
             font-size:22px; font-weight:800; margin:0 0 2px;
@@ -291,6 +299,15 @@
         }
         .user-pill-name { font-size:13px; font-weight:600; color:var(--tx1); line-height:1.2; }
         .user-pill-role { font-size:10px; color:var(--green); line-height:1.2; font-weight:600; letter-spacing:.4px; text-transform:uppercase; }
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--tx1);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+        }
 
         /* ===========================  CARDS  =========================== */
         .card {
@@ -592,6 +609,22 @@
         .summary-pill.is-amber{color:var(--amber);border-color:rgba(251,191,36,.3);}
         .summary-pill.is-green{color:var(--green);border-color:var(--bdg);}
 
+        @media (max-width: 992px) {
+            .main-content {
+                margin-left: 0 !important;
+                padding: 16px !important;
+            }
+            .sidebar-fixed {
+                transform: translateX(-100%);
+            }
+            .sidebar-fixed.show {
+                transform: translateX(0);
+            }
+            .menu-toggle {
+                display: block;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -601,9 +634,14 @@
     <div class="main-content flex-grow-1">
 
         <div class="topbar">
-            <div>
-                <h2>Expiry Management</h2>
-                <p class="topbar-sub">Component 02 — Items sorted by expiry date using custom <strong>MergeSort O(n log n)</strong>.</p>
+            <div class="topbar-header">
+                <button class="menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <h2>Expiry Management</h2>
+                    <p class="topbar-sub">Component 02 — Items sorted by expiry date using custom <strong>MergeSort O(n log n)</strong>.</p>
+                </div>
             </div>
             <div class="topbar-actions">
                 <div class="user-pill">
@@ -631,6 +669,59 @@
             <span class="summary-pill is-red"><i class="bi bi-x-circle"></i>Expired: ${expired.size()}</span>
             <span class="summary-pill is-amber"><i class="bi bi-exclamation-triangle"></i>Expiring Soon (&#8804;30 days): ${expiringSoon.size()}</span>
             <span class="summary-pill is-green"><i class="bi bi-check-circle"></i>Total Sorted: ${sortedItems.size()}</span>
+        </div>
+
+        <%-- Expired Items Management --%>
+        <div class="card mb-4" style="animation-delay:.15s">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-trash me-2"></i>Expired Items Management</span>
+                <form action="${pageContext.request.contextPath}/disposeItem" method="post" onsubmit="return confirm('Are you sure you want to clear all disposed items? This action cannot be undone.');">
+                    <input type="hidden" name="action" value="clear">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" ${empty expired ? 'disabled' : ''}>
+                        <i class="bi bi-trash-fill me-1"></i> Clear All Disposed
+                    </button>
+                </form>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Expiry Date</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="item" items="${expired}">
+                                <tr>
+                                    <td><code>${item.id}</code></td>
+                                    <td class="fw-semibold">${item.name}</td>
+                                    <td><strong>${item.expiryDate}</strong></td>
+                                    <td class="text-center">
+                                        <form action="${pageContext.request.contextPath}/disposeItem" method="post">
+                                            <input type="hidden" name="action" value="mark">
+                                            <input type="hidden" name="itemId" value="${item.id}">
+                                            <button type="submit" class="btn btn-sm btn-warning">
+                                                <i class="bi bi-archive-fill me-1"></i> Dispose
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            <c:if test="${empty expired}">
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">
+                                        <i class="bi bi-check-circle-fill fs-3 d-block mb-2 text-success"></i>
+                                        No expired items.
+                                    </td>
+                                </tr>
+                            </c:if>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <%-- Sorted Items Table --%>

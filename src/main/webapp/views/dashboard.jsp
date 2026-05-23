@@ -73,6 +73,7 @@
             color: var(--tx1);
             min-height: 100vh;
             margin: 0; padding: 0;
+            overflow-x: hidden;
         }
         body::before {
             content: '';
@@ -143,10 +144,10 @@
         /* ===========================  LAYOUT  =========================== */
         .d-flex { position:relative; z-index:1; }
         .main-content {
-            margin-left: 256px !important;
-            padding: 28px 36px !important;
+            margin-left: 256px;
+            padding: 28px 36px;
             animation: fadeIn .45s ease;
-            transition: margin-left 0.3s ease-in-out;
+            width: 100%;
         }
 
         /* ===========================  SIDEBAR  =========================== */
@@ -268,6 +269,11 @@
             position:absolute; bottom:0; left:0; right:0; height:1px;
             background:linear-gradient(90deg,transparent,var(--bdg),transparent);
         }
+        .topbar-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
         .topbar h2 {
             font-family:'Syne',sans-serif;
             font-size:22px; font-weight:800; margin:0 0 2px;
@@ -292,6 +298,15 @@
         }
         .user-pill-name { font-size:13px; font-weight:600; color:var(--tx1); line-height:1.2; }
         .user-pill-role { font-size:10px; color:var(--green); line-height:1.2; font-weight:600; letter-spacing:.4px; text-transform:uppercase; }
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--tx1);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+        }
 
         /* ===========================  CARDS  =========================== */
         .card {
@@ -372,7 +387,7 @@
         .is-amber  .stat-icon-badge { background:var(--a-dim); color:var(--amber);  }
         .stat-number {
             font-family:'Syne',sans-serif;
-            font-size:38px; font-weight:800; line-height:1;
+            font-size:28px; font-weight:800; line-height:1;
             letter-spacing:-1.5px; color:var(--tx1);
             margin-bottom:7px;
         }
@@ -596,6 +611,14 @@
             }
             .main-content {
                 margin-left: 0 !important;
+                padding: 16px !important;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            /* Hide non-essential topbar elements on very small screens */
+            .topbar-actions a.btn {
+                display: none;
             }
         }
     </style>
@@ -610,18 +633,20 @@
 
         <%-- Topbar --%>
         <div class="topbar">
-            <div>
-                <button class="btn btn-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+            <div class="topbar-header">
+                <button class="menu-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
                     <i class="bi bi-list"></i>
                 </button>
-                <h2 class="d-none d-lg-block">Dashboard</h2>
-                <p class="topbar-sub d-none d-lg-block">Welcome back, <strong>${sessionScope.username}</strong></p>
+                <div>
+                    <h2>Dashboard</h2>
+                    <p class="topbar-sub d-none d-sm-block">Welcome back, <strong>${sessionScope.username}</strong></p>
+                </div>
             </div>
             <div class="topbar-actions">
-                <a href="${pageContext.request.contextPath}/addStock" class="btn btn-primary">
+                <a href="${pageContext.request.contextPath}/addStock" class="btn btn-primary d-none d-sm-inline-flex">
                     <i class="bi bi-plus-lg me-1"></i>Add Stock
                 </a>
-                <a href="${pageContext.request.contextPath}/processSale" class="btn btn-outline-secondary">
+                <a href="${pageContext.request.contextPath}/processSale" class="btn btn-outline-secondary d-none d-sm-inline-flex">
                     <i class="bi bi-cart-plus me-1"></i>New Sale
                 </a>
                 <div class="user-pill">
@@ -636,7 +661,7 @@
 
         <%-- Stat Cards --%>
         <div class="row g-4 mb-4">
-            <div class="col-md-3">
+            <div class="col-md-3 col-sm-6">
                 <div class="card stat-card is-green p-3" style="animation-delay:.05s">
                     <div class="stat-icon-badge"><i class="bi bi-boxes"></i></div>
                     <div class="stat-number" data-count="${totalItems}">0</div>
@@ -644,7 +669,7 @@
                     <span class="stat-chip"><i class="bi bi-graph-up-arrow"></i> All stock</span>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-sm-6">
                 <div class="card stat-card is-violet p-3" style="animation-delay:.10s">
                     <div class="stat-icon-badge"><i class="bi bi-receipt"></i></div>
                     <div class="stat-number" data-count="${totalSales}">0</div>
@@ -652,15 +677,18 @@
                     <span class="stat-chip" style="background:var(--v-dim);color:var(--violet);"><i class="bi bi-cart-check"></i> Transactions</span>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-sm-6">
                 <div class="card stat-card is-blue p-3" style="animation-delay:.15s">
-                    <div class="stat-icon-badge"><i class="bi bi-currency-dollar"></i></div>
-                    <div class="stat-number" data-count="${totalRevenue}" data-prefix="Rs.">Rs.0</div>
-                    <div class="stat-label">Total Revenue</div>
-                    <span class="stat-chip" style="background:var(--b-dim);color:var(--blue);"><i class="bi bi-bank"></i> Earnings</span>
+                    <div class="d-flex align-items-center">
+                        <div class="stat-icon-badge me-3"><i class="bi bi-currency-dollar"></i></div>
+                        <div>
+                            <div class="stat-number" data-count="${totalRevenue}" data-prefix="Rs." style="font-size: 28px;">Rs.0</div>
+                            <div class="stat-label mb-0">Total Revenue</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 col-sm-6">
                 <div class="card stat-card is-amber p-3" style="animation-delay:.20s">
                     <div class="stat-icon-badge"><i class="bi bi-exclamation-triangle"></i></div>
                     <div class="stat-number" data-count="${lowStockCount}">0</div>

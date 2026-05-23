@@ -3,7 +3,9 @@ package com.inventory.service;
 import com.inventory.model.Expiry;
 import com.inventory.model.Item;
 import com.inventory.util.FileHandler;
+import java.io.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,8 +19,14 @@ public class ExpiryService {
         this.itemsPath = itemsPath;
         this.expiryItemsPath = expiryItemsPath;
     }
+    
+    // Fallback constructor for backward compatibility in other parts of the app
+    public ExpiryService(String itemsPath) {
+        this.itemsPath = itemsPath;
+        this.expiryItemsPath = itemsPath.replace("items.txt", "expiry_items.csv"); // Default assumption
+    }
 
-    // --- Item-related Expiry Methods ---
+    // --- Original Item-based expiry methods ---
 
     public List<Item> getExpiredItems() {
         List<Item> allItems = FileHandler.readItems(itemsPath);
@@ -58,7 +66,7 @@ public class ExpiryService {
         List<Item> itemsToKeep = allItems.stream()
                 .filter(item -> !"Disposed".equalsIgnoreCase(item.getStatus()))
                 .collect(Collectors.toList());
-
+        
         if (itemsToKeep.size() < allItems.size()) {
             FileHandler.writeItems(itemsPath, itemsToKeep);
             return true;
@@ -66,47 +74,80 @@ public class ExpiryService {
         return false;
     }
 
-    // --- Expiry Object CRUD Methods ---
+    // --- New dedicated Expiry object CRUD operations ---
 
     public List<Expiry> getAllExpiryItems() {
-        return FileHandler.readExpiryItems(expiryItemsPath);
+        List<Expiry> expiryItems = new ArrayList<>();
+        File file = new File(expiryItemsPath);
+        if (!file.exists()) return expiryItems;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.trim().isEmpty()) {
+                    Expiry expiry = Expiry.fromCsv(line.trim());
+                    if (expiry != null) expiryItems.add(expiry);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading " + expiryItemsPath + ": " + e.getMessage());
+        }
+        return expiryItems;
+    }
+
+    private void writeExpiryItems(List<Expiry> expiryItems) {
+        File file = new File(expiryItemsPath);
+        if (file.getParentFile() != null) {
+            file.getParentFile().mkdirs();
+        }
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, false))) {
+            for (Expiry expiry : expiryItems) {
+                bw.write(expiry.toCsv());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing " + expiryItemsPath + ": " + e.getMessage());
+        }
     }
 
     public void addExpiryItem(Expiry expiry) {
-        List<Expiry> expiryItems = getAllExpiryItems();
         if (expiry.getId() == null || expiry.getId().isEmpty()) {
-            expiry.setId(UUID.randomUUID().toString());
+            expiry.setId("EXP-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
         }
-        expiryItems.add(expiry);
-        FileHandler.writeExpiryItems(expiryItemsPath, expiryItems);
+        File file = new File(expiryItemsPath);
+        if (file.getParentFile() != null) {
+            file.getParentFile().mkdirs();
+        }
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
+            bw.write(expiry.toCsv());
+            bw.newLine();
+        } catch (IOException e) {
+            System.err.println("Error appending to " + expiryItemsPath + ": " + e.getMessage());
+        }
     }
 
-    public Expiry getExpiryItemById(String id) {
-        return getAllExpiryItems().stream()
-                .filter(e -> e.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
-    public void updateExpiryItem(Expiry updatedExpiry) {
+    public boolean updateExpiryItem(Expiry updated) {
         List<Expiry> expiryItems = getAllExpiryItems();
         boolean found = false;
         for (int i = 0; i < expiryItems.size(); i++) {
-            if (expiryItems.get(i).getId().equals(updatedExpiry.getId())) {
-                expiryItems.set(i, updatedExpiry);
+            if (expiryItems.get(i).getId().equals(updated.getId())) {
+                expiryItems.set(i, updated);
                 found = true;
                 break;
             }
         }
         if (found) {
-            FileHandler.writeExpiryItems(expiryItemsPath, expiryItems);
+            writeExpiryItems(expiryItems);
         }
+        return found;
     }
 
-    public void deleteExpiryItem(String id) {
+    public boolean deleteExpiryItem(String id) {
         List<Expiry> expiryItems = getAllExpiryItems();
-        if (expiryItems.removeIf(e -> e.getId().equals(id))) {
-            FileHandler.writeExpiryItems(expiryItemsPath, expiryItems);
+        boolean removed = expiryItems.removeIf(e -> e.getId().equals(id));
+        if (removed) {
+            writeExpiryItems(expiryItems);
         }
+        return removed;
     }
 }
