@@ -1,10 +1,6 @@
 package com.inventory.model;
 
-/**OOP Concept: ENCAPSULATION
- * All fields are private. Public getters/setters control access.
- * Item represents a single inventory product stored in items.txt.
- * CSV Format: id,name,category,quantity,price,expiryDate
- */
+/**OOP Concept: ENCAPSULATION*/
 public class Item {
 
     //Private variables
@@ -14,6 +10,7 @@ public class Item {
     private int    quantity;
     private double price;
     private String expiryDate; // Format: YYYY-MM-DD
+    private String status;     // e.g., "Active", "Disposed"
 
     // --- Constructors ---
     public Item() {}
@@ -26,6 +23,18 @@ public class Item {
         this.quantity = quantity;
         this.price = price;
         this.expiryDate = expiryDate;
+        this.status = "Active"; // Default status
+    }
+
+    public Item(String id, String name, String category,
+                int quantity, double price, String expiryDate, String status) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.quantity = quantity;
+        this.price = price;
+        this.expiryDate = expiryDate;
+        this.status = status;
     }
 
     // --- Getters & Setters ---
@@ -47,29 +56,29 @@ public class Item {
     public String getExpiryDate()            { return expiryDate; }
     public void   setExpiryDate(String d)    { this.expiryDate = d; }
 
-    /**
-     * Serializes the Item to a CSV line for file storage.
-     * Format: id,name,category,quantity,price,expiryDate
-     */
+    public String getStatus()                { return status; }
+    public void   setStatus(String s)        { this.status = s; }
+
+    /*Serializes the Item to a CSV line for file storage.*/
     public String toCsv() {
         return id + "," + name + "," + category + ","
-                + quantity + "," + price + "," + expiryDate;
+                + quantity + "," + price + "," + expiryDate + "," + status;
     }
 
-    /**
-     * Deserializes a CSV line back into an Item object.
-     */
+    /* Deserializes a CSV line back into an Item object.*/
     public static Item fromCsv(String csv) {
         String[] parts = csv.split(",", -1);
         if (parts.length < 6) return null;
         try {
+            String status = parts.length > 6 ? parts[6].trim() : "Active";
             return new Item(
                     parts[0].trim(),
                     parts[1].trim(),
                     parts[2].trim(),
                     Integer.parseInt(parts[3].trim()),
                     Double.parseDouble(parts[4].trim()),
-                    parts[5].trim()
+                    parts[5].trim(),
+                    status
             );
         } catch (NumberFormatException e) {
             return null; // Skip malformed lines

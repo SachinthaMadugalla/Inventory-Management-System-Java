@@ -3,7 +3,7 @@ package com.inventory.servlet;
 import com.inventory.model.Report;
 import com.inventory.service.ReportService;
 import com.inventory.service.SalesService;
-import com.inventory.util.FileHandler;
+import com.inventory.util.FilePath;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -30,9 +30,9 @@ public class ReportServlet extends HttpServlet {
             return;
         }
 
-        String reportsPath = FileHandler.REPORTS_FILE;
-        String salesPath   = FileHandler.SALES_FILE;
-        String itemsPath   = FileHandler.ITEMS_FILE;
+        String reportsPath = FilePath.getReportsPath(getServletContext());
+        String salesPath   = FilePath.getSalesPath(getServletContext());
+        String itemsPath   = FilePath.getItemsPath(getServletContext());
 
         SalesService salesService   = new SalesService(salesPath, itemsPath);
         ReportService reportService = new ReportService(reportsPath, salesService);
@@ -60,9 +60,9 @@ public class ReportServlet extends HttpServlet {
             return;
         }
 
-        String reportsPath = FileHandler.REPORTS_FILE;
-        String salesPath   = FileHandler.SALES_FILE;
-        String itemsPath   = FileHandler.ITEMS_FILE;
+        String reportsPath = FilePath.getReportsPath(getServletContext());
+        String salesPath   = FilePath.getSalesPath(getServletContext());
+        String itemsPath   = FilePath.getItemsPath(getServletContext());
 
         SalesService salesService   = new SalesService(salesPath, itemsPath);
         ReportService reportService = new ReportService(reportsPath, salesService);
@@ -70,7 +70,7 @@ public class ReportServlet extends HttpServlet {
         Report generated = reportService.generateReport();
         session.setAttribute("successMsg",
                 "Report generated: " + generated.getReportId()
-                        + " | Revenue: $" + generated.getTotalRevenue());
+                        + " | Revenue: Rs." + generated.getTotalRevenue());
 
         resp.sendRedirect(req.getContextPath() + "/reports");
     }
