@@ -1,18 +1,24 @@
 package com.inventory.model;
 
+/**
+ * Sale — Model class representing a sales transaction.
+ * OOP: ENCAPSULATION (private fields with getters/setters).
+ * Supports CSV serialization (toCsv/fromCsv) for file persistence.
+ */
 public class Sale {
 
-    //Private fields (Encapsulation)
-    private String saleId;
-    private String itemId;
-    private String itemName;
-    private int    quantitySold;
-    private double totalPrice;
-    private String saleDate; // Format: YYYY-MM-DD
+    // Private fields (Encapsulation)
+    private String saleId;       // Unique sale identifier
+    private String itemId;       // Reference to sold item
+    private String itemName;     // Item name (cached for record)
+    private int    quantitySold; // Number of units sold
+    private double totalPrice;   // Quantity × Item Price
+    private String saleDate;     // Sale date (YYYY-MM-DD format)
 
-    //Constructors
+    // Default constructor
     public Sale() {}
 
+    // Parameterized constructor
     public Sale(String saleId, String itemId, String itemName,
                 int quantitySold, double totalPrice, String saleDate) {
         this.saleId       = saleId;
@@ -23,7 +29,7 @@ public class Sale {
         this.saleDate     = saleDate;
     }
 
-    //Getters & Setters
+    // Getters & Setters for all fields
     public String getSaleId()                    { return saleId; }
     public void   setSaleId(String id)           { this.saleId = id; }
 
@@ -42,14 +48,16 @@ public class Sale {
     public String getSaleDate()                  { return saleDate; }
     public void   setSaleDate(String d)          { this.saleDate = d; }
 
+    // Convert Sale object to CSV format for file storage
     public String toCsv() {
         return saleId + "," + itemId + "," + itemName + ","
                 + quantitySold + "," + totalPrice + "," + saleDate;
     }
 
+    // Parse CSV line back into Sale object (Deserialization)
     public static Sale fromCsv(String csv) {
         String[] parts = csv.split(",", -1);
-        if (parts.length < 6) return null;
+        if (parts.length < 6) return null;  // Invalid format
         try {
             return new Sale(
                     parts[0].trim(),
@@ -60,10 +68,11 @@ public class Sale {
                     parts[5].trim()
             );
         } catch (NumberFormatException e) {
-            return null;
+            return null;  // Skip malformed lines
         }
     }
 
+    // String representation for debugging
     @Override
     public String toString() {
         return "Sale{saleId='" + saleId + "', itemName='" + itemName
