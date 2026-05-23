@@ -77,21 +77,14 @@ public class ExpiryServlet extends HttpServlet {
 
         try {
             switch (action) {
-                case "add":
-                    addExpiryItem(req);
-                    break;
-                case "update":
-                    updateExpiryItem(req);
-                    break;
-                case "delete":
-                    deleteExpiryItem(req);
-                    break;
-                case "markDisposed": // Action for marking an Item as disposed
-                    String itemIdToDispose = req.getParameter("itemIdToDispose");
+                case "mark":
+                    String itemIdToDispose = req.getParameter("itemId");
                     expiryService.markItemAsDisposed(itemIdToDispose);
+                    session.setAttribute("successMsg", "Item marked as disposed.");
                     break;
-                case "clearDisposed": // Action for clearing all disposed Items
+                case "clear":
                     expiryService.clearAllDisposedItems();
+                    session.setAttribute("successMsg", "Disposed items cleared.");
                     break;
             }
         } catch (Exception e) {

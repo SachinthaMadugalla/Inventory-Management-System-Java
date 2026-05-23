@@ -671,6 +671,59 @@
             <span class="summary-pill is-green"><i class="bi bi-check-circle"></i>Total Sorted: ${sortedItems.size()}</span>
         </div>
 
+        <%-- Expired Items Management --%>
+        <div class="card mb-4" style="animation-delay:.15s">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-trash me-2"></i>Expired Items Management</span>
+                <form action="${pageContext.request.contextPath}/disposeItem" method="post" onsubmit="return confirm('Are you sure you want to clear all disposed items? This action cannot be undone.');">
+                    <input type="hidden" name="action" value="clear">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" ${empty expired ? 'disabled' : ''}>
+                        <i class="bi bi-trash-fill me-1"></i> Clear All Disposed
+                    </button>
+                </form>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Expiry Date</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="item" items="${expired}">
+                                <tr>
+                                    <td><code>${item.id}</code></td>
+                                    <td class="fw-semibold">${item.name}</td>
+                                    <td><strong>${item.expiryDate}</strong></td>
+                                    <td class="text-center">
+                                        <form action="${pageContext.request.contextPath}/disposeItem" method="post">
+                                            <input type="hidden" name="action" value="mark">
+                                            <input type="hidden" name="itemId" value="${item.id}">
+                                            <button type="submit" class="btn btn-sm btn-warning">
+                                                <i class="bi bi-archive-fill me-1"></i> Dispose
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            <c:if test="${empty expired}">
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">
+                                        <i class="bi bi-check-circle-fill fs-3 d-block mb-2 text-success"></i>
+                                        No expired items.
+                                    </td>
+                                </tr>
+                            </c:if>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <%-- Sorted Items Table --%>
         <div class="card" style="animation-delay:.10s">
             <div class="card-header"><span><i class="bi bi-table me-2"></i>All Items — Sorted by Expiry Date (Ascending)</span></div>
