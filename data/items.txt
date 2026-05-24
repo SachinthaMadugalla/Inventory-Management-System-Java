@@ -1,2 +1,2 @@
-ITM-F6EF7CC4,MSI Cyborg 15 (core 7),Electronics,98,500000.0,N/A,Active
-ITM-0F97951D,Coke (2L),Beverages,350,640.0,2026-05-23,Active
+ITM-F6EF7CC4,MSI Cyborg 15 (core 7),Electronics,96,500000.0,N/A,Active
+ITM-0F97951D,Coke (2L),Beverages,350,640.0,2026-05-23,Disposed
