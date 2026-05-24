@@ -640,7 +640,7 @@
                 </button>
                 <div>
                     <h2>Expiry Management</h2>
-                    <p class="topbar-sub">Component 02 — Items sorted by expiry date using custom <strong>MergeSort O(n log n)</strong>.</p>
+                    <p class="topbar-sub">Items sorted by expiry date — earliest first.</p>
                 </div>
             </div>
             <div class="topbar-actions">
@@ -652,16 +652,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <%-- Algorithm Info --%>
-        <div class="alert alert-primary mb-4">
-            <h6 class="fw-bold"><i class="bi bi-sort-numeric-up me-2"></i>MergeSort Algorithm Active</h6>
-            <p class="mb-0 small">
-                Items below are sorted by <code>expiryDate</code> (YYYY-MM-DD) in ascending order using a
-                hand-written divide-and-conquer Merge Sort — <strong>NOT</strong> <code>Collections.sort()</code>.
-                Time complexity: <strong>O(n log n)</strong> guaranteed.
-            </p>
         </div>
 
         <%-- Summary Badges --%>
@@ -686,38 +676,38 @@
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
                         <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Expiry Date</th>
-                                <th class="text-center">Action</th>
-                            </tr>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Expiry Date</th>
+                            <th class="text-center">Action</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="item" items="${expired}">
-                                <tr>
-                                    <td><code>${item.id}</code></td>
-                                    <td class="fw-semibold">${item.name}</td>
-                                    <td><strong>${item.expiryDate}</strong></td>
-                                    <td class="text-center">
-                                        <form action="${pageContext.request.contextPath}/disposeItem" method="post">
-                                            <input type="hidden" name="action" value="mark">
-                                            <input type="hidden" name="itemId" value="${item.id}">
-                                            <button type="submit" class="btn btn-sm btn-warning">
-                                                <i class="bi bi-archive-fill me-1"></i> Dispose
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                            <c:if test="${empty expired}">
-                                <tr>
-                                    <td colspan="4" class="text-center py-4 text-muted">
-                                        <i class="bi bi-check-circle-fill fs-3 d-block mb-2 text-success"></i>
-                                        No expired items.
-                                    </td>
-                                </tr>
-                            </c:if>
+                        <c:forEach var="item" items="${expired}">
+                            <tr>
+                                <td><code>${item.id}</code></td>
+                                <td class="fw-semibold">${item.name}</td>
+                                <td><strong>${item.expiryDate}</strong></td>
+                                <td class="text-center">
+                                    <form action="${pageContext.request.contextPath}/disposeItem" method="post">
+                                        <input type="hidden" name="action" value="mark">
+                                        <input type="hidden" name="itemId" value="${item.id}">
+                                        <button type="submit" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-archive-fill me-1"></i> Dispose
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${empty expired}">
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">
+                                    <i class="bi bi-check-circle-fill fs-3 d-block mb-2 text-success"></i>
+                                    No expired items.
+                                </td>
+                            </tr>
+                        </c:if>
                         </tbody>
                     </table>
                 </div>
