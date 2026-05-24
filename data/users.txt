@@ -3,3 +3,4 @@ john,john123,user
 sachintha,sachintha123,user
 Sachi,Sachiya0599,admin,sachinthanipun04@gmail.com
 Madugalla,Sootin0599,user,sachinthanipun03@gmail.com
+Kaveenth,Kaveenth@0617,admin,kaveenthshanker@gmail.com

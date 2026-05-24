@@ -3,11 +3,33 @@ package com.inventory.util;
 import javax.servlet.ServletContext;
 import java.io.File;
 
+/*
+ * Default location (auto-created on first run):
+ *   Windows: C:\Users\<you>\inventory-app\data\
+ */
 public class FilePath {
 
-    // This path points directly to the project's source data folder.
-    // This is for development convenience to see live changes in the project files.
-    private static final String DATA_DIR = "C:/Users/sachi/Desktop/Inventory-Management-System-Java/data/";
+    private static final String DATA_DIR = resolveDataDir();
+
+    private static String resolveDataDir() {
+        // 1. JVM system property
+        String override = System.getProperty("inventory.data.dir");
+        // 2. Environment variable
+        if (override == null || override.isEmpty()) {
+            override = System.getenv("INVENTORY_DATA_DIR");
+        }
+        // 3. Default: <user home>/inventory-app/data
+        String base = (override != null && !override.isEmpty())
+                ? override
+                : System.getProperty("user.home") + File.separator
+                + "inventory-app" + File.separator + "data";
+
+        File dir = new File(base);
+        if (!dir.exists()) {
+            dir.mkdirs(); // create the folder on first run
+        }
+        return dir.getAbsolutePath() + File.separator;
+    }
 
     public static String getItemsPath(ServletContext context) {
         return DATA_DIR + "items.txt";
