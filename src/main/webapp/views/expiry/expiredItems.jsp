@@ -597,7 +597,7 @@
         <div class="topbar">
             <div>
                 <h2>Expired Items</h2>
-                <p class="topbar-sub">Component 02 — Items past their expiry date requiring immediate action.</p>
+                <p class="topbar-sub">Items past their expiry date requiring immediate action.</p>
             </div>
             <div class="topbar-actions">
                 <div class="user-pill">
@@ -685,13 +685,6 @@
             </div>
         </div>
 
-        <div class="alert alert-info mt-4">
-            <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>OOP Concepts in Action</h6>
-            <ul class="mb-0 small">
-                <li><strong>Encapsulation:</strong> Expiry date is private inside Item class; accessed via getExpiryDate().</li>
-                <li><strong>Abstraction:</strong> ExpiryServlet uses MergeSort via InventoryService to sort and filter items.</li>
-            </ul>
-        </div>
     </div>
 </div>
 <!--suppress HtmlUnknownTarget -->
