@@ -40,22 +40,7 @@
             </button>
             <div>
                 <h2 class="fw-bold mb-1" style="color: #0f172a;">Sorted Inventory View</h2>
-                <p class="text-muted mb-0 d-none d-lg-block">Component 02 — All items sorted by expiry date using Merge Sort (O(n log n))</p>
-            </div>
-        </div>
-
-        <%-- Algorithm Info Card --%>
-        <div class="card card-custom border-start border-4 mb-4" style="border-left-color: #4f46e5 !important;">
-            <div class="card-body p-4">
-                <h6 class="fw-bold text-uppercase mb-2" style="color: #3730a3; font-size: 0.8rem; letter-spacing: 0.05em;">
-                    <i class="bi bi-sort-numeric-down me-2"></i>Merge Sort Applied
-                </h6>
-                <p class="mb-0 text-secondary">
-                    Items below are sorted by expiry date in <strong>ascending order</strong>
-                    (soonest to expire first) using a custom <code>MergeSort.sortByExpiryDate()</code>
-                    implementation — O(n log n) divide-and-conquer algorithm.
-                    <span class="badge rounded-pill px-2 py-1 ms-1" style="background-color: #e0e7ff; color: #3730a3;">Collections.sort() is NOT used.</span>
-                </p>
+                <p class="text-muted mb-0 d-none d-lg-block">All items sorted by expiry date — soonest to expire first.</p>
             </div>
         </div>
 
@@ -72,8 +57,8 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                <table class="table table-custom align-middle mb-0">
-                    <thead>
+                    <table class="table table-custom align-middle mb-0">
+                        <thead>
                         <tr>
                             <th class="ps-4">Rank</th>
                             <th>ID</th>
@@ -84,58 +69,47 @@
                             <th>Expiry Date</th>
                             <th class="pe-4">Status</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         <c:forEach var="item" items="${sortedItems}" varStatus="loop">
-                        <tr>
-                            <td class="ps-4 fw-semibold text-muted">#${loop.index + 1}</td>
-                            <td><code class="px-2 py-1 rounded" style="background-color: #f1f5f9; color: #475569;">${item.id}</code></td>
-                            <td class="fw-bold text-dark">${item.name}</td>
-                            <td><span class="badge rounded-pill" style="background-color: #f1f5f9; color: #475569;">${item.category}</span></td>
-                            <td class="fw-medium">${item.quantity} units</td>
-                            <td class="fw-medium">Rs.<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
-                            <td><strong class="font-monospace text-dark">${item.expiryDate}</strong></td>
-                            <td class="pe-4">
-                                <c:choose>
-                                    <c:when test="${item.expiryDate lt today}">
-                                        <span class="badge rounded-pill status-expired px-3 py-2"><i class="bi bi-x-circle-fill me-1"></i>Expired</span>
-                                    </c:when>
-                                    <c:when test="${item.expiryDate le today30}">
-                                        <span class="badge rounded-pill status-warning px-3 py-2"><i class="bi bi-exclamation-triangle-fill me-1"></i>Expiring Soon</span>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <span class="badge rounded-pill status-valid px-3 py-2"><i class="bi bi-check-circle-fill me-1"></i>Valid</span>
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td class="ps-4 fw-semibold text-muted">#${loop.index + 1}</td>
+                                <td><code class="px-2 py-1 rounded" style="background-color: #f1f5f9; color: #475569;">${item.id}</code></td>
+                                <td class="fw-bold text-dark">${item.name}</td>
+                                <td><span class="badge rounded-pill" style="background-color: #f1f5f9; color: #475569;">${item.category}</span></td>
+                                <td class="fw-medium">${item.quantity} units</td>
+                                <td class="fw-medium">Rs.<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
+                                <td><strong class="font-monospace text-dark">${item.expiryDate}</strong></td>
+                                <td class="pe-4">
+                                    <c:choose>
+                                        <c:when test="${item.expiryDate lt today}">
+                                            <span class="badge rounded-pill status-expired px-3 py-2"><i class="bi bi-x-circle-fill me-1"></i>Expired</span>
+                                        </c:when>
+                                        <c:when test="${item.expiryDate le today30}">
+                                            <span class="badge rounded-pill status-warning px-3 py-2"><i class="bi bi-exclamation-triangle-fill me-1"></i>Expiring Soon</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge rounded-pill status-valid px-3 py-2"><i class="bi bi-check-circle-fill me-1"></i>Valid</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                            </tr>
                         </c:forEach>
                         <c:if test="${empty sortedItems}">
-                        <tr>
-                            <td colspan="8" class="text-center text-muted py-5">
-                                <div class="mb-3"><i class="bi bi-inbox fs-1 text-black-50 opacity-25"></i></div>
-                                <h6 class="fw-medium text-dark mb-1">No items found</h6>
-                                <p class="small mb-0">Your inventory is currently empty.</p>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-5">
+                                    <div class="mb-3"><i class="bi bi-inbox fs-1 text-black-50 opacity-25"></i></div>
+                                    <h6 class="fw-medium text-dark mb-1">No items found</h6>
+                                    <p class="small mb-0">Your inventory is currently empty.</p>
+                                </td>
+                            </tr>
                         </c:if>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <div class="alert alert-info border-0 rounded-3 shadow-sm mt-4 d-flex align-items-start" style="background-color: #eff6ff; color: #1e3a8a;">
-            <i class="bi bi-lightbulb fs-4 me-3 mt-1" style="color: #3b82f6;"></i>
-            <div>
-                <h6 class="fw-bold mb-2">OOP Concepts in Action</h6>
-                <ul class="mb-0 small ps-3">
-                    <li class="mb-1"><strong>Abstraction:</strong> MergeSort logic is fully encapsulated in the MergeSort class.</li>
-                    <li class="mb-1"><strong>Encapsulation:</strong> Expiry date is private in Item; accessed via getExpiryDate().</li>
-                    <li><strong>Algorithm:</strong> Merge Sort O(n log n) — divide list in half, sort each half, merge back.</li>
-                </ul>
-            </div>
-        </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
