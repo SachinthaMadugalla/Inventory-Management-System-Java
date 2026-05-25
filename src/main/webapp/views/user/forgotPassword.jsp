@@ -14,22 +14,41 @@
   <style>
     /* ── Lumenara — Forgot Password · midnight-purple palette ── */
     :root {
-      --bg:     #07041A;
-      --green:  #00E896;
-      --violet: #8B5CF6;
-      --v-deep: #5B21B6;
-      --g-dim:  rgba(0,232,150,.10);
-      --g-glow: rgba(0,232,150,.38);
-      --v-dim:  rgba(139,92,246,.12);
-      --v-glow: rgba(139,92,246,.40);
-      --tx1:    #EEE8FF;
-      --tx2:    #8878A6;
-      --tx3:    #3A2F5A;
-      --bd2:    rgba(255,255,255,.10);
-      --bdv:    rgba(139,92,246,.25);
-      --bdg:    rgba(0,232,150,.18);
-      --red:    #F87171;
-      --r-dim:  rgba(248,113,113,.10);
+      --bg-0:   #f0f2f5;
+      --bg-1:   #ffffff;
+      --bg-2:   #f8f9fa;
+      --card:   #ffffff;
+      --card-h: #f8f9fa;
+
+      --green:  #00a65a;
+      --g-dim:  rgba(0,166,90,0.12);
+      --g-glow: rgba(0,166,90,0.35);
+      --g-soft: rgba(0,166,90,0.22);
+
+      --violet: #605ca8;
+      --v-dim:  rgba(96,92,168,0.12);
+      --v-glow: rgba(96,92,168,0.30);
+
+      --blue:   #0073b7;
+      --b-dim:  rgba(0,115,183,0.12);
+      --b-glow: rgba(0,115,183,0.28);
+
+      --amber:  #f39c12;
+      --a-dim:  rgba(243,156,18,0.12);
+      --a-glow: rgba(243,156,18,0.30);
+
+      --red:    #dd4b39;
+      --r-dim:  rgba(221,75,57,0.12);
+      --r-glow: rgba(221,75,57,0.28);
+
+      --tx1: #333333;
+      --tx2: #666666;
+      --tx3: #aaaaaa;
+
+      --bd:  rgba(0,0,0,0.08);
+      --bd2: rgba(0,0,0,0.13);
+      --bdg: rgba(0,166,90,0.22);
+      --bdv: rgba(96,92,168,0.22);
     }
     *, *::before, *::after { box-sizing: border-box; }
     body {
@@ -70,7 +89,7 @@
       content: ''; position: absolute; inset: -1px; border-radius: 27px;
       background: linear-gradient(140deg,
       rgba(139,92,246,.55), rgba(80,30,180,.35),
-      rgba(0,232,150,.15), rgba(139,92,246,.20));
+      rgba(0,166,90,.15), rgba(96,92,168,.20));
       z-index: -1;
     }
     @keyframes card-rise {
@@ -108,7 +127,7 @@
     .step-dot.active  { background:var(--violet); color:#fff; box-shadow:0 0 12px var(--v-glow); }
     .step-dot.done    { background:var(--green);  color:#031510; }
     .step-dot.pending { background:rgba(139,92,246,.12); color:var(--tx3); border:1px solid var(--bdv); }
-    .step-line { flex:1; height:1px; background:rgba(139,92,246,.20); }
+    .step-line { flex:1; height:1px; background:rgba(96,92,168,.20); }
     .step-labels { display:flex; justify-content:space-between; margin-top:6px; margin-bottom:18px; }
     .step-labels span { font-size:9.5px; color:var(--tx3); letter-spacing:.4px; text-align:center; flex:1; }
     .step-labels span.active-label { color:var(--violet); font-weight:600; }
@@ -119,7 +138,7 @@
       padding:12px 14px; border-radius:12px;
       font-size:13px; line-height:1.5; margin-bottom:18px;
     }
-    .auth-alert.is-error   { background:var(--r-dim); border:1px solid rgba(248,113,113,.22); color:var(--red); }
+    .auth-alert.is-error   { background:var(--r-dim); border:1px solid rgba(221,75,57,.22); color:var(--red); }
     .auth-alert.is-success { background:var(--g-dim); border:1px solid var(--bdg); color:var(--green); }
     .auth-dismiss {
       margin-left:auto; flex-shrink:0; background:none; border:none;
@@ -384,11 +403,11 @@
     var hint    = document.getElementById('strength-hint');
     var levels  = [
       { pct:'0%',   color:'transparent', label:'' },
-      { pct:'25%',  color:'#F87171',     label:'⚠ Weak' },
-      { pct:'50%',  color:'#FBBF24',     label:'▲ Fair' },
+      { pct:'25%',  color:'#dd4b39',     label:'⚠ Weak' },
+      { pct:'50%',  color:'#f39c12',     label:'▲ Fair' },
       { pct:'75%',  color:'#34D399',     label:'✓ Good' },
-      { pct:'100%', color:'#00E896',     label:'✦ Strong' },
-      { pct:'100%', color:'#00E896',     label:'✦ Strong' }
+      { pct:'100%', color:'#00a65a',     label:'✦ Strong' },
+      { pct:'100%', color:'#00a65a',     label:'✦ Strong' }
     ];
     function score(pw) {
       var s = 0;
