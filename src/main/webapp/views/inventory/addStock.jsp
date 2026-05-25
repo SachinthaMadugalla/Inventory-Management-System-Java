@@ -1,17 +1,16 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%--@elvariable id="stackSize" type="java.lang.Integer"--%>
-<%--@elvariable id="stackTop"  type="com.inventory.model.Item"--%>
-<%--@elvariable id="error"     type="java.lang.String"--%>
+<%--@elvariable id="item"  type="com.inventory.model.Item"--%>
+<%--@elvariable id="error" type="java.lang.String"--%>
 
-<c:set var="activePage" value="addStock" scope="request"/>
+<c:set var="activePage" value="inventory" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Stock — Lumenara</title>
+  <title>Edit Item — Lumenara</title>
   <!--suppress HtmlUnknownTarget -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!--suppress HtmlUnknownTarget -->
@@ -26,41 +25,41 @@
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
     :root {
-      --bg-0:   #050810;
-      --bg-1:   #090E1C;
-      --bg-2:   #0D1526;
-      --card:   rgba(9, 14, 28, 0.82);
-      --card-h: rgba(12, 19, 38, 0.95);
+      --bg-0:   #f0f2f5;
+      --bg-1:   #ffffff;
+      --bg-2:   #f8f9fa;
+      --card:   #ffffff;
+      --card-h: #f8f9fa;
 
-      --green:  #00E896;
-      --g-dim:  rgba(0,232,150,0.10);
-      --g-glow: rgba(0,232,150,0.38);
-      --g-soft: rgba(0,232,150,0.20);
+      --green:  #00a65a;
+      --g-dim:  rgba(0,166,90,0.12);
+      --g-glow: rgba(0,166,90,0.35);
+      --g-soft: rgba(0,166,90,0.22);
 
-      --violet: #7C3AED;
-      --v-dim:  rgba(124,58,237,0.10);
-      --v-glow: rgba(124,58,237,0.35);
+      --violet: #605ca8;
+      --v-dim:  rgba(96,92,168,0.12);
+      --v-glow: rgba(96,92,168,0.30);
 
-      --blue:   #38BDF8;
-      --b-dim:  rgba(56,189,248,0.10);
-      --b-glow: rgba(56,189,248,0.30);
+      --blue:   #0073b7;
+      --b-dim:  rgba(0,115,183,0.12);
+      --b-glow: rgba(0,115,183,0.28);
 
-      --amber:  #FBBF24;
-      --a-dim:  rgba(251,191,36,0.10);
-      --a-glow: rgba(251,191,36,0.30);
+      --amber:  #f39c12;
+      --a-dim:  rgba(243,156,18,0.12);
+      --a-glow: rgba(243,156,18,0.30);
 
-      --red:    #F87171;
-      --r-dim:  rgba(248,113,113,0.10);
-      --r-glow: rgba(248,113,113,0.28);
+      --red:    #dd4b39;
+      --r-dim:  rgba(221,75,57,0.12);
+      --r-glow: rgba(221,75,57,0.28);
 
-      --tx1: #ECF0FF;
-      --tx2: #7A8BA6;
-      --tx3: #3A4A5E;
+      --tx1: #333333;
+      --tx2: #666666;
+      --tx3: #aaaaaa;
 
-      --bd:  rgba(255,255,255,0.065);
-      --bd2: rgba(255,255,255,0.12);
-      --bdg: rgba(0,232,150,0.20);
-      --bdv: rgba(124,58,237,0.22);
+      --bd:  rgba(0,0,0,0.08);
+      --bd2: rgba(0,0,0,0.13);
+      --bdg: rgba(0,166,90,0.22);
+      --bdv: rgba(96,92,168,0.22);
     }
 
     /* ===========================  BASE  =========================== */
@@ -71,18 +70,17 @@
     body {
       font-family: 'Outfit', system-ui, sans-serif;
       background-color: var(--bg-0);
-      background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 0);
+      background-image: none;
       background-size: 28px 28px;
       color: var(--tx1);
       min-height: 100vh;
       margin: 0; padding: 0;
-      overflow-x: hidden;
     }
     body::before {
       content: '';
       position: fixed; top: -220px; right: -160px;
       width: 720px; height: 720px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(0,232,150,0.07) 0%, transparent 68%);
+      background: none;
       animation: orb1 26s ease-in-out infinite;
       pointer-events: none; z-index: 0;
     }
@@ -90,7 +88,7 @@
       content: '';
       position: fixed; bottom: -200px; left: -160px;
       width: 640px; height: 640px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 68%);
+      background: none;
       animation: orb2 32s ease-in-out infinite;
       pointer-events: none; z-index: 0;
     }
@@ -147,10 +145,9 @@
     /* ===========================  LAYOUT  =========================== */
     .d-flex { position:relative; z-index:1; }
     .main-content {
-      margin-left: 256px;
-      padding: 28px 36px;
+      margin-left: 256px !important;
+      padding: 28px 36px !important;
       animation: fadeIn .45s ease;
-      width: 100%;
       transition: margin-left 0.3s ease-in-out;
     }
 
@@ -159,7 +156,7 @@
       position: fixed !important;
       top:0; left:0; width:256px !important; height:100vh;
       overflow-y: auto; z-index:100;
-      background: rgba(5,8,16,0.94) !important;
+      background: #222d32 !important;
       backdrop-filter: blur(28px);
       -webkit-backdrop-filter: blur(28px);
       border-right: 1px solid var(--bd2) !important;
@@ -181,7 +178,7 @@
     .sidebar-brand:hover { opacity:.8; }
     .sidebar-brand-icon {
       width:38px; height:38px; border-radius:11px;
-      background: linear-gradient(140deg, var(--green), rgba(0,232,150,.5));
+      background: linear-gradient(140deg, var(--green), rgba(0,166,90,.5));
       display:flex; align-items:center; justify-content:center;
       font-size:18px; color:#fff; flex-shrink:0;
       animation: iconGlow 3.5s ease-in-out infinite;
@@ -213,7 +210,7 @@
     .nav-pills .nav-link i { font-size:15px; width:17px; flex-shrink:0; }
     .nav-pills .nav-link:hover {
       color:var(--tx1) !important;
-      background:rgba(255,255,255,.04) !important;
+      background:#f8f9fa !important;
       transform:translateX(2px);
     }
     .nav-pills .nav-link.active {
@@ -228,11 +225,11 @@
     .nav-pills .nav-link.active::after {
       content:'';
       position:absolute; top:0; width:40%; height:100%;
-      background:linear-gradient(90deg,transparent,rgba(0,232,150,.08),transparent);
+      background:linear-gradient(90deg,transparent,rgba(0,166,90,.08),transparent);
       animation: shimmerSweep 3.5s ease-in-out infinite;
     }
     .sidebar-userbox {
-      background: rgba(255,255,255,.03);
+      background: rgba(0,0,0,.03);
       border:1px solid var(--bd); border-radius:12px;
       padding:12px; margin-bottom:4px;
     }
@@ -245,7 +242,7 @@
     }
     .sidebar-fixed .btn-outline-danger {
       background:transparent !important;
-      border:1px solid rgba(248,113,113,.2) !important;
+      border:1px solid rgba(221,75,57,.2) !important;
       color:var(--red) !important; border-radius:12px !important;
       font-weight:600 !important; font-size:13px !important;
       transition:all .2s !important;
@@ -256,6 +253,24 @@
       box-shadow:0 0 14px var(--r-glow) !important;
     }
 
+
+    /* ===  Light-theme sidebar text overrides  === */
+    .sidebar-fixed { background: #222d32 !important; border-right: 1px solid rgba(0,0,0,.2) !important; }
+    .sidebar-fixed, .sidebar-fixed .sidebar-brand,
+    .sidebar-fixed .u-name { color: rgba(255,255,255,.85) !important; }
+    .sidebar-fixed .sidebar-brand-text {
+      background: linear-gradient(120deg, #ffffff 40%, var(--green));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .sidebar-fixed .sidebar-section-label { color: rgba(255,255,255,.30) !important; }
+    .sidebar-fixed .nav-pills .nav-link { color: rgba(255,255,255,.65) !important; }
+    .sidebar-fixed .nav-pills .nav-link:hover { color: #fff !important; background: rgba(255,255,255,.07) !important; }
+    .sidebar-fixed .nav-pills .nav-link.active { color: var(--green) !important; background: rgba(0,166,90,.15) !important; }
+    .sidebar-fixed .nav-pills .nav-link.active i { color: var(--green) !important; }
+    .sidebar-fixed .sidebar-userbox { background: rgba(255,255,255,.05) !important; border-color: rgba(255,255,255,.08) !important; }
+    .sidebar-fixed::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); }
+    .sidebar-fixed .text-muted { color: rgba(255,255,255,.45) !important; }
     /* ===========================  TOPBAR  =========================== */
     .topbar {
       display:flex; justify-content:space-between; align-items:center;
@@ -264,7 +279,7 @@
       background:var(--card);
       backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
       border:1px solid var(--bd); border-radius:20px;
-      box-shadow:0 4px 28px rgba(0,0,0,.3);
+      box-shadow:0 4px 28px rgba(0,0,0,.08);
       animation: fadeUp .4s ease .04s both;
       position:relative; overflow:hidden;
     }
@@ -272,11 +287,6 @@
       content:'';
       position:absolute; bottom:0; left:0; right:0; height:1px;
       background:linear-gradient(90deg,transparent,var(--bdg),transparent);
-    }
-    .topbar-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
     }
     .topbar h2 {
       font-family:'Syne',sans-serif;
@@ -291,7 +301,7 @@
     .user-pill {
       display:flex; align-items:center; gap:10px;
       padding:6px 14px 6px 6px;
-      background:rgba(255,255,255,.04);
+      background:#f8f9fa;
       border:1px solid var(--bd2); border-radius:999px;
     }
     .user-pill-avatar {
@@ -302,15 +312,6 @@
     }
     .user-pill-name { font-size:13px; font-weight:600; color:var(--tx1); line-height:1.2; }
     .user-pill-role { font-size:10px; color:var(--green); line-height:1.2; font-weight:600; letter-spacing:.4px; text-transform:uppercase; }
-    .menu-toggle {
-      display: none;
-      background: transparent;
-      border: none;
-      color: var(--tx1);
-      font-size: 24px;
-      cursor: pointer;
-      padding: 0;
-    }
 
     /* ===========================  CARDS  =========================== */
     .card {
@@ -318,7 +319,7 @@
       backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
       border:1px solid var(--bd) !important;
       border-radius:18px !important;
-      box-shadow:0 4px 24px rgba(0,0,0,.22) !important;
+      box-shadow:0 4px 24px rgba(0,0,0,.07) !important;
       transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
       animation: fadeUp .4s ease both;
       position:relative; overflow:hidden;
@@ -333,7 +334,7 @@
     }
     .card:hover {
       transform:translateY(-3px);
-      box-shadow:0 14px 44px rgba(0,0,0,.38), 0 0 0 1px var(--bdg) !important;
+      box-shadow:0 14px 44px rgba(0,0,0,.10), 0 0 0 1px var(--bdg) !important;
       border-color:var(--bdg) !important;
     }
     .card:nth-child(2) { animation-delay:.07s; }
@@ -358,7 +359,7 @@
       backdrop-filter:blur(20px) !important;
       border:1px solid var(--bd) !important;
       border-radius:18px !important;
-      box-shadow:0 4px 24px rgba(0,0,0,.2) !important;
+      box-shadow:0 4px 24px rgba(0,0,0,.07) !important;
       color:var(--tx1) !important;
       position:relative; overflow:hidden;
       transition:transform .25s ease, box-shadow .25s ease;
@@ -370,16 +371,16 @@
     }
     .stat-card:hover {
       transform:translateY(-4px) scale(1.01);
-      box-shadow:0 18px 48px rgba(0,0,0,.42) !important;
+      box-shadow:0 18px 48px rgba(0,0,0,.12) !important;
     }
-    .stat-card.is-green { background:rgba(0,232,150,.06) !important; border-color:var(--bdg) !important; }
-    .stat-card.is-green::after { background:linear-gradient(90deg,var(--green),rgba(0,232,150,.2)); }
-    .stat-card.is-violet { background:rgba(124,58,237,.06) !important; border-color:var(--bdv) !important; }
-    .stat-card.is-violet::after { background:linear-gradient(90deg,var(--violet),rgba(124,58,237,.2)); }
-    .stat-card.is-blue { background:rgba(56,189,248,.06) !important; border-color:rgba(56,189,248,.2) !important; }
-    .stat-card.is-blue::after { background:linear-gradient(90deg,var(--blue),rgba(56,189,248,.2)); }
-    .stat-card.is-amber { background:rgba(251,191,36,.06) !important; border-color:rgba(251,191,36,.2) !important; }
-    .stat-card.is-amber::after { background:linear-gradient(90deg,var(--amber),rgba(251,191,36,.2)); }
+    .stat-card.is-green { background:rgba(0,166,90,.06) !important; border-color:var(--bdg) !important; }
+    .stat-card.is-green::after { background:linear-gradient(90deg,var(--green),rgba(0,166,90,.2)); }
+    .stat-card.is-violet { background:rgba(96,92,168,.06) !important; border-color:var(--bdv) !important; }
+    .stat-card.is-violet::after { background:linear-gradient(90deg,var(--violet),rgba(96,92,168,.2)); }
+    .stat-card.is-blue { background:rgba(0,115,183,.06) !important; border-color:rgba(0,115,183,.2) !important; }
+    .stat-card.is-blue::after { background:linear-gradient(90deg,var(--blue),rgba(0,115,183,.2)); }
+    .stat-card.is-amber { background:rgba(243,156,18,.06) !important; border-color:rgba(243,156,18,.2) !important; }
+    .stat-card.is-amber::after { background:linear-gradient(90deg,var(--amber),rgba(243,156,18,.2)); }
     .stat-icon-badge {
       width:46px; height:46px; border-radius:13px;
       display:flex; align-items:center; justify-content:center;
@@ -424,7 +425,7 @@
     .btn:hover::before { left:130%; }
     .btn-primary, .btn-success {
       background:var(--green) !important; border-color:var(--green) !important;
-      color:#040A14 !important; font-weight:700 !important;
+      color:#ffffff !important; font-weight:700 !important;
       box-shadow:0 4px 18px var(--g-glow) !important;
     }
     .btn-primary:hover,.btn-success:hover {
@@ -433,25 +434,25 @@
     }
     .btn-warning {
       background:var(--amber) !important; border-color:var(--amber) !important;
-      color:#040A14 !important; box-shadow:0 4px 18px var(--a-glow) !important;
+      color:#ffffff !important; box-shadow:0 4px 18px var(--a-glow) !important;
     }
     .btn-warning:hover { transform:translateY(-1px); box-shadow:0 8px 28px var(--a-glow) !important; }
     .btn-danger {
       background:var(--red) !important; border-color:var(--red) !important;
-      color:#040A14 !important; box-shadow:0 4px 18px var(--r-glow) !important;
+      color:#ffffff !important; box-shadow:0 4px 18px var(--r-glow) !important;
     }
     .btn-danger:hover { transform:translateY(-1px); box-shadow:0 8px 28px var(--r-glow) !important; }
     .btn-info {
       background:var(--blue) !important; border-color:var(--blue) !important;
-      color:#040A14 !important; box-shadow:0 4px 18px var(--b-glow) !important;
+      color:#ffffff !important; box-shadow:0 4px 18px var(--b-glow) !important;
     }
     .btn-info:hover, .btn-info.text-white:hover { transform:translateY(-1px); box-shadow:0 8px 28px var(--b-glow) !important; }
-    .btn-info.text-white { color:#040A14 !important; }
+    .btn-info.text-white { color:#ffffff !important; }
     .btn-outline-secondary {
       background:transparent !important; border:1px solid var(--bd2) !important;
       color:var(--tx2) !important;
     }
-    .btn-outline-secondary:hover { background:rgba(255,255,255,.04) !important; color:var(--tx1) !important; }
+    .btn-outline-secondary:hover { background:#f8f9fa !important; color:var(--tx1) !important; }
     .btn-outline-primary {
       background:transparent !important; border:1px solid var(--green) !important;
       color:var(--green) !important;
@@ -463,7 +464,7 @@
     }
     .btn-outline-warning:hover { background:var(--a-dim) !important; }
     .btn-outline-danger {
-      background:transparent !important; border:1px solid rgba(248,113,113,.3) !important;
+      background:transparent !important; border:1px solid rgba(221,75,57,.3) !important;
       color:var(--red) !important;
     }
     .btn-outline-danger:hover { background:var(--r-dim) !important; }
@@ -484,10 +485,10 @@
     }
     .badge.bg-primary { background:var(--g-dim) !important; color:var(--green) !important; border:1px solid var(--bdg); }
     .badge.bg-success  { background:var(--g-dim) !important; color:var(--green) !important; border:1px solid var(--bdg); }
-    .badge.bg-secondary{ background:rgba(255,255,255,.05) !important; color:var(--tx2) !important; border:1px solid var(--bd); }
-    .badge.bg-danger   { background:var(--r-dim) !important; color:var(--red) !important; border:1px solid rgba(248,113,113,.25); }
-    .badge.bg-warning  { background:var(--a-dim) !important; color:var(--amber) !important; border:1px solid rgba(251,191,36,.25); }
-    .badge.bg-info     { background:var(--b-dim) !important; color:var(--blue) !important; border:1px solid rgba(56,189,248,.25); }
+    .badge.bg-secondary{ background:rgba(0,0,0,.05) !important; color:var(--tx2) !important; border:1px solid var(--bd); }
+    .badge.bg-danger   { background:var(--r-dim) !important; color:var(--red) !important; border:1px solid rgba(221,75,57,.25); }
+    .badge.bg-warning  { background:var(--a-dim) !important; color:var(--amber) !important; border:1px solid rgba(243,156,18,.25); }
+    .badge.bg-info     { background:var(--b-dim) !important; color:var(--blue) !important; border:1px solid rgba(0,115,183,.25); }
     .badge.fs-6 { font-size:12.5px !important; padding:5px 12px !important; }
 
     /* ===========================  TABLES  =========================== */
@@ -496,7 +497,7 @@
     .table thead.table-dark th,
     .table thead.table-light th {
       font-family:'Outfit',sans-serif;
-      background:rgba(255,255,255,.02) !important;
+      background:rgba(0,0,0,.02) !important;
       color:var(--tx3) !important;
       font-weight:600; font-size:10.5px; text-transform:uppercase; letter-spacing:.9px;
       border:none !important; border-bottom:1px solid var(--bd) !important;
@@ -507,7 +508,7 @@
       border-color:var(--bd) !important; color:var(--tx1);
     }
     .table-hover tbody tr { transition:background .15s; }
-    .table-hover tbody tr:hover td { background:rgba(0,232,150,.025) !important; }
+    .table-hover tbody tr:hover td { background:rgba(0,166,90,.04) !important; }
     /* stagger entrance */
     .table tbody tr {
       opacity:0;
@@ -530,13 +531,13 @@
     .table tbody tr:nth-child(15) { animation-delay:.60s; }
     .table-danger,
     .table > :not(caption) > * > .table-danger {
-      background:var(--r-dim) !important; color:var(--tx1) !important;
+      background:var(--r-dim) !important; color:#333333 !important;
     }
 
     /* ===========================  FORMS  =========================== */
     .form-control, .form-select {
       font-family:'Outfit',sans-serif !important;
-      background:rgba(255,255,255,.04) !important;
+      background:#f8f9fa !important;
       border:1px solid var(--bd2) !important;
       border-radius:12px !important;
       padding:11px 14px !important;
@@ -545,9 +546,9 @@
     }
     .form-control::placeholder { color:var(--tx3) !important; }
     .form-control:focus, .form-select:focus {
-      background:rgba(0,232,150,.04) !important;
+      background:rgba(0,166,90,.04) !important;
       border-color:var(--green) !important;
-      box-shadow:0 0 0 3px var(--g-dim), 0 0 22px rgba(0,232,150,.06) !important;
+      box-shadow:0 0 0 3px var(--g-dim), 0 0 22px rgba(0,166,90,.06) !important;
       color:var(--tx1) !important;
     }
     .form-select option { background:var(--bg-1); color:var(--tx1); }
@@ -559,7 +560,7 @@
     }
     .form-text { font-size:12px; color:var(--tx3); }
     .input-group-text {
-      background:rgba(255,255,255,.04) !important;
+      background:#f8f9fa !important;
       border:1px solid var(--bd2) !important;
       color:var(--tx2) !important; border-radius:12px !important;
     }
@@ -571,18 +572,18 @@
       border:1px solid transparent !important;
       backdrop-filter:blur(8px);
     }
-    .alert-info    { background:var(--b-dim) !important; color:var(--blue)   !important; border-color:rgba(56,189,248,.2) !important; }
+    .alert-info    { background:var(--b-dim) !important; color:var(--blue)   !important; border-color:rgba(0,115,183,.2) !important; }
     .alert-success { background:var(--g-dim) !important; color:var(--green)  !important; border-color:var(--bdg) !important; }
-    .alert-danger  { background:var(--r-dim) !important; color:var(--red)    !important; border-color:rgba(248,113,113,.2) !important; }
+    .alert-danger  { background:var(--r-dim) !important; color:var(--red)    !important; border-color:rgba(221,75,57,.2) !important; }
     .alert-primary { background:var(--g-dim) !important; color:var(--green)  !important; border-color:var(--bdg) !important; }
-    .alert-warning { background:var(--a-dim) !important; color:var(--amber)  !important; border-color:rgba(251,191,36,.2) !important; }
+    .alert-warning { background:var(--a-dim) !important; color:var(--amber)  !important; border-color:rgba(243,156,18,.2) !important; }
     .btn-close { filter:invert(1) !important; opacity:.55 !important; }
     .btn-close:hover { opacity:1 !important; }
 
     /* ===========================  MISC  =========================== */
     code {
       font-family:'JetBrains Mono',monospace;
-      background:rgba(0,232,150,.08); color:var(--green);
+      background:rgba(0,166,90,.08); color:var(--green);
       padding:2px 8px; border-radius:6px; font-size:11.5px;
       border:1px solid var(--bdg);
     }
@@ -615,10 +616,6 @@
       }
       .main-content {
         margin-left: 0 !important;
-        padding: 16px !important;
-      }
-      .menu-toggle {
-        display: block;
       }
     }
   </style>
@@ -630,14 +627,12 @@
   <div class="main-content flex-grow-1">
 
     <div class="topbar">
-      <div class="topbar-header">
-        <button class="menu-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
+      <div>
+        <button class="btn btn-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
           <i class="bi bi-list"></i>
         </button>
-        <div>
-          <h2>Add Stock</h2>
-          <p class="topbar-sub d-none d-sm-block">Add a new item to your inventory.</p>
-        </div>
+        <h2 class="d-none d-lg-block">Edit Item</h2>
+        <p class="topbar-sub d-none d-lg-block">Modifying: <strong>${item.name}</strong></p>
       </div>
       <div class="topbar-actions">
         <div class="user-pill">
@@ -650,51 +645,47 @@
       </div>
     </div>
 
-    <%-- Error Alert --%>
     <c:if test="${not empty error}">
       <div class="alert alert-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>${error}</div>
     </c:if>
 
-    <%-- Add Item Form --%>
-    <div class="card" style="animation-delay:.10s">
-      <div class="card-header"><span><i class="bi bi-plus-circle me-2"></i>New Inventory Item</span></div>
+    <div class="card" style="max-width:760px;animation-delay:.05s">
+      <div class="card-header"><span><i class="bi bi-pencil-square me-2"></i>Update Item Details</span></div>
       <div class="card-body">
-        <form action="${pageContext.request.contextPath}/addStock" method="post">
+        <form action="${pageContext.request.contextPath}/editStock" method="post">
+          <input type="hidden" name="id" value="${item.id}">
           <div class="row g-3">
             <div class="col-md-6">
-              <label for="name" class="form-label">Item Name <span style="color:var(--red)">*</span></label>
+              <label for="name" class="form-label">Item Name</label>
               <input type="text" class="form-control" id="name" name="name"
-                     placeholder="e.g. Paracetamol 500mg" required>
+                     value="${item.name}" required>
             </div>
             <div class="col-md-6">
-              <label for="category" class="form-label">Category <span style="color:var(--red)">*</span></label>
+              <label for="category" class="form-label">Category</label>
               <select class="form-select" id="category" name="category" required>
-                <option value="" disabled selected>Select category</option>
-                <option value="Medicine">Medicine</option>
-                <option value="Food">Food</option>
-                <option value="Electronics">Electronics</option>
-                <option value="Clothing">Clothing</option>
-                <option value="Beverages">Beverages</option>
-                <option value="Other">Other</option>
+                <c:forEach var="cat" items="${['Medicine','Food','Electronics','Clothing','Beverages','Other']}">
+                  <option value="${cat}" ${item.category == cat ? 'selected' : ''}>${cat}</option>
+                </c:forEach>
               </select>
             </div>
             <div class="col-md-4">
-              <label for="quantity" class="form-label">Quantity <span style="color:var(--red)">*</span></label>
+              <label for="quantity" class="form-label">Quantity</label>
               <input type="number" class="form-control" id="quantity" name="quantity"
-                     min="1" placeholder="e.g. 100" required>
+                     value="${item.quantity}" min="0" required>
             </div>
             <div class="col-md-4">
-              <label for="price" class="form-label">Unit Price (Rs.) <span style="color:var(--red)">*</span></label>
+              <label for="price" class="form-label">Unit Price (Rs.)</label>
               <input type="number" class="form-control" id="price" name="price"
-                     step="0.01" min="0" placeholder="e.g. 9.99" required>
+                     value="${item.price}" step="0.01" min="0" required>
             </div>
             <div class="col-md-4">
               <label for="expiryDate" class="form-label">Expiry Date <span id="expiry-required" style="color:var(--red); display:none;">*</span></label>
-              <input type="date" class="form-control" id="expiryDate" name="expiryDate">
+              <input type="date" class="form-control" id="expiryDate" name="expiryDate"
+                     value="${item.expiryDate}">
             </div>
             <div class="col-12 mt-3">
               <button type="submit" class="btn btn-primary px-4">
-                <i class="bi bi-plus-circle me-2"></i>Add Item
+                <i class="bi bi-save me-2"></i>Save Changes
               </button>
               <a href="${pageContext.request.contextPath}/viewInventory"
                  class="btn btn-outline-secondary ms-2 mt-2 mt-sm-0">Cancel</a>
@@ -728,8 +719,6 @@
     }
 
     categorySelect.addEventListener('change', toggleExpiryRequirement);
-
-    // Run on page load in case a category is pre-selected
     toggleExpiryRequirement();
     /* ---- Ripple on all .btn ---- */
     document.addEventListener('click',function(e){
