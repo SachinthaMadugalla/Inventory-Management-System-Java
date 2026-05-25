@@ -1,19 +1,21 @@
 package com.inventory.model;
 
 /**
- * OOP Concept: INHERITANCE
- * Admin IS-A User. It inherits all User fields (username, password, role)
- * and adds an admin-specific field: adminCode.
+ * Admin extends User — inherits fullName, username, password, role, email.
+ * Role is always "admin".
  *
- * OOP Concept: ENCAPSULATION
- * The adminCode field is private with a public getter/setter.
+ * CSV format (inherits from User):
+ *   fullName,username,password,admin,email
+ *
+ * The adminCode field is kept for any future admin-specific logic,
+ * but is NOT written to users.txt — admins are identified by role="admin".
  */
 public class Admin extends User {
 
-    // --- Private field specific to Admin (Encapsulation) ---
+    // Optional admin-specific field (not persisted to users.txt)
     private String adminCode;
 
-    // --- Constructors ---
+    // Constructors
     public Admin() {
         super();
         setRole("admin"); // Admins always have role = "admin"
@@ -24,33 +26,42 @@ public class Admin extends User {
         this.adminCode = adminCode;
     }
 
-    // --- Getter & Setter ---
-    public String getAdminCode()             { return adminCode; }
-    public void   setAdminCode(String code)  { this.adminCode = code; }
+    public Admin(String fullName, String username, String password,
+                 String email, String adminCode) {
+        super(username, password, "admin", email);
+        this.adminCode = adminCode;
+    }
+
+    // Getter & Setter
+    public String getAdminCode() { return adminCode; }
+    public void   setAdminCode(String code) { this.adminCode = code; }
 
     /**
-     * Overrides toCsv to include the adminCode.
-     * Format: username,password,role,adminCode
+     * Uses the parent User.toCsv() so the format stays consistent:
+     *   fullName,username,password,admin,email
      */
     @Override
     public String toCsv() {
-        return super.toCsv() + "," + adminCode;
+        return super.toCsv(); // fullName,username,password,role,email
     }
 
     /**
-     * Deserialises a CSV line into an Admin object.
+     * Reads an Admin from the standard 5-field User CSV line.
+     * Falls back gracefully for old 3-field records.
      */
-
     public static Admin fromCsv(String csv) {
-        String[] parts = csv.split(",", -1);
-        if (parts.length < 4) return null;
-        Admin admin = new Admin(parts[0].trim(), parts[1].trim(), parts[3].trim());
+        User u = User.fromCsv(csv);
+        if (u == null) return null;
+        Admin admin = new Admin();
+        admin.setUsername(u.getUsername());
+        admin.setPassword(u.getPassword());
+        admin.setRole("admin");
+        admin.setEmail(u.getEmail());
         return admin;
     }
 
     @Override
     public String toString() {
-        return "Admin{username='" + getUsername() + "', adminCode='" + adminCode + "'}";
+        return "Admin{username='" + getUsername() + "', email='" + getEmail() + "'}";
     }
 }
-

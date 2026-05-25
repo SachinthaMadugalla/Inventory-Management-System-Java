@@ -1,20 +1,13 @@
 package com.inventory.model;
-
-/**
- * OOP Concept: ENCAPSULATION
- * All fields are private; access is controlled through public getters/setters.
- *
- * OOP Concept: INHERITANCE
- * User is the base class. Admin extends User to inherit these fields.
- */
 public class User {
 
-    // --- Private fields (Encapsulation) ---
+    // Private fields (Encapsulation)
     private String username;
     private String password;
-    private String role; // "admin" or "user"
+    private String role;      // "admin" or "user"
+    private String email;     // used for OTP-based password reset (must be unique)
 
-    // --- Constructors ---
+    // Constructors
     public User() {}
 
     public User(String username, String password, String role) {
@@ -23,31 +16,63 @@ public class User {
         this.role     = role;
     }
 
-    // --- Getters & Setters ---
-    public String getUsername()              { return username; }
-    public void   setUsername(String u)      { this.username = u; }
-
-    public String getPassword()              { return password; }
-    public void   setPassword(String p)      { this.password = p; }
-
-    public String getRole()                  { return role; }
-    public void   setRole(String r)          { this.role = r; }
-
-    /**
-     * Serialises the object to a CSV line for file storage.
-     * Format: username,password,role
-     */
-    public String toCsv() {
-        return username + "," + password + "," + role;
+    public User(String username, String password, String role, String email) {
+        this.username = username;
+        this.password = password;
+        this.role     = role;
+        this.email    = email;
     }
 
+    // Getters & Setters
+
+    public String getUsername() { return username; }
+    public void   setUsername(String u) { this.username = u; }
+
+    public String getPassword() { return password; }
+    public void   setPassword(String p) { this.password = p; }
+
+    public String getRole() { return role; }
+    public void   setRole(String r) { this.role = r; }
+
+    public String getEmail() { return email; }
+    public void   setEmail(String e) { this.email = e; }
+
     /**
-     * Deserialises a CSV line back into a User object.
+     * CSV format: username,password,role,email
+     * fullName and email are optional for backward-compatibility with old records.
+     *
+     * Old 3-field records (username,password,role) are still readable via fromCsv().
      */
+    public String toCsv() {
+        String em = (email    != null) ? email    : "";
+        return username + "," + password + "," + role + "," + em;
+    }
+
     public static User fromCsv(String csv) {
         String[] parts = csv.split(",", -1);
         if (parts.length < 3) return null;
-        return new User(parts[0].trim(), parts[1].trim(), parts[2].trim());
+
+        User u = new User();
+
+        if (parts.length == 3) {
+            // Legacy format: username,password,role
+            u.setUsername(parts[0].trim());
+            u.setPassword(parts[1].trim());
+            u.setRole(parts[2].trim());
+        } else if (parts.length == 4) {
+            // Old 4-field format: username,password,role,email
+            u.setUsername(parts[0].trim());
+            u.setPassword(parts[1].trim());
+            u.setRole(parts[2].trim());
+            u.setEmail(parts[3].trim());
+        } else {
+            // New 5-field:format:username,password,role,email
+            u.setUsername(parts[1].trim());
+            u.setPassword(parts[2].trim());
+            u.setRole(parts[3].trim());
+            u.setEmail(parts[4].trim());
+        }
+        return u;
     }
 
     @Override
@@ -55,4 +80,3 @@ public class User {
         return "User{username='" + username + "', role='" + role + "'}";
     }
 }
-
