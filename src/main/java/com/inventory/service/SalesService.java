@@ -103,4 +103,11 @@ public class SalesService {
                 .map(Map.Entry::getKey)              // Extract item name
                 .orElse("N/A");                       // Default if no sales exist
     }
+
+    /**
+     * Deletes a sale by its ID.
+     */
+    public boolean deleteSale(String saleId) {
+        return FileHandler.deleteSale(salesFilePath, saleId);
+    }
 }
