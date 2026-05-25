@@ -1,12 +1,6 @@
 package com.inventory.model;
 
-/**
- * OOP Concept: ENCAPSULATION
- * All fields are private with public getters/setters.
- *
- * Report is a summary object generated from sales data.
- * CSV Format: reportId,generatedDate,totalSales,totalRevenue,topItemName
- */
+
 public class Report {
 
     // --- Private fields (Encapsulation) ---
@@ -44,17 +38,13 @@ public class Report {
     public String getTopItemName()               { return topItemName; }
     public void   setTopItemName(String n)       { this.topItemName = n; }
 
-    /**
-     * Serialises the Report to a CSV line for file storage.
-     */
+
     public String toCsv() {
         return reportId + "," + generatedDate + ","
              + totalSales + "," + totalRevenue + "," + topItemName;
     }
 
-    /**
-     * Deserialises a CSV line back into a Report object.
-     */
+
     public static Report fromCsv(String csv) {
         String[] parts = csv.split(",", -1);
         if (parts.length < 5) return null;
