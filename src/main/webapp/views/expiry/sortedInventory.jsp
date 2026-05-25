@@ -27,6 +27,20 @@
             .sidebar-fixed.show { transform: translateX(0); }
             .main-content { margin-left: 0 !important; padding: 1rem; }
         }
+
+        /* ===  Light-theme sidebar text overrides  === */
+        .sidebar-fixed { background: #222d32 !important; border-right: 1px solid rgba(0,0,0,.2) !important; color: rgba(255,255,255,.85) !important; }
+        .sidebar-fixed .sidebar-brand, .sidebar-fixed .u-name { color: rgba(255,255,255,.85) !important; }
+        .sidebar-fixed .sidebar-brand-text {
+            background: linear-gradient(120deg, #ffffff 40%, #00a65a);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+            background-clip:text;
+        }
+        .sidebar-fixed .sidebar-section-label { color: rgba(255,255,255,.30) !important; }
+        .sidebar-fixed .nav-pills .nav-link { color: rgba(255,255,255,.65) !important; }
+        .sidebar-fixed .nav-pills .nav-link:hover { color: #fff !important; background: rgba(255,255,255,.07) !important; }
+        .sidebar-fixed .nav-pills .nav-link.active { color: #00a65a !important; background: rgba(0,166,90,.15) !important; }
+        .sidebar-fixed .nav-pills .nav-link.active i { color: #00a65a !important; }
     </style>
 </head>
 <body>
