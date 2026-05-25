@@ -14,17 +14,26 @@ import java.util.UUID;
 public class ReportService {
 
     private final String reportsFilePath;
-    private final SalesService salesService;
+    private SalesService salesService;
 
     public ReportService(String reportsFilePath, SalesService salesService) {
         this.reportsFilePath = reportsFilePath;
         this.salesService    = salesService;
     }
 
+    // Overloaded constructor for when only deleting is needed
+    public ReportService(String reportsFilePath) {
+        this.reportsFilePath = reportsFilePath;
+    }
+
     /**
      * Generates a new Report from current sales data and saves it to reports.txt.
      */
     public Report generateReport() {
+        if (salesService == null) {
+            throw new IllegalStateException("SalesService must be initialized to generate a report.");
+        }
+        
         List<?> sales = salesService.getAllSales();
         double revenue = salesService.getTotalRevenue();
         String topItem = salesService.getTopSellingItem();
@@ -46,5 +55,17 @@ public class ReportService {
      */
     public List<Report> getAllReports() {
         return FileHandler.readReports(reportsFilePath);
+    }
+
+    /**
+     * Deletes a report by its ID.
+     */
+    public boolean deleteReport(String reportId) {
+        List<Report> reports = getAllReports();
+        boolean removed = reports.removeIf(r -> r.getReportId().equals(reportId));
+        if (removed) {
+            FileHandler.writeReports(reportsFilePath, reports);
+        }
+        return removed;
     }
 }
