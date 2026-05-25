@@ -46,6 +46,13 @@ public class ViewSalesServlet extends HttpServlet {
             session.removeAttribute("successMsg");
         }
 
+        // Handle error message from session
+        String errorMsg = (String) session.getAttribute("errorMsg");
+        if (errorMsg != null) {
+            req.setAttribute("errorMsg", errorMsg);
+            session.removeAttribute("errorMsg");
+        }
+
         req.getRequestDispatcher("/views/sales/viewSales.jsp").forward(req, resp);
     }
 }

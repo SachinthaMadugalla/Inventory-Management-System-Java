@@ -5,6 +5,7 @@
 <%--@elvariable id="totalRevenue" type="java.lang.Double"--%>
 <%--@elvariable id="sales"        type="java.util.List"--%>
 <%--@elvariable id="successMsg"   type="java.lang.String"--%>
+<%--@elvariable id="errorMsg"     type="java.lang.String"--%>
 
 <c:set var="activePage" value="viewSales" scope="request"/>
 <!DOCTYPE html>
@@ -657,6 +658,13 @@
         <c:if test="${not empty successMsg}">
             <div class="alert alert-success alert-dismissible fade show">
                 <i class="bi bi-check-circle-fill me-2"></i>${successMsg}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </c:if>
+
+        <c:if test="${not empty errorMsg}">
+            <div class="alert alert-danger alert-dismissible fade show">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>${errorMsg}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         </c:if>
