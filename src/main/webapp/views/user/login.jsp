@@ -11,42 +11,29 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* ============================================================
-           Lumenara — Login · Midnight Purple 3D Crystal Field
-           ============================================================ */
         :root {
-            --bg:      #07041A;
-            --green:   #00E896;
-            --violet:  #8B5CF6;
-            --v-deep:  #5B21B6;
-            --g-dim:   rgba(0,232,150,.10);
-            --g-glow:  rgba(0,232,150,.38);
-            --g-soft:  rgba(0,232,150,.18);
-            --v-dim:   rgba(139,92,246,.12);
-            --v-glow:  rgba(139,92,246,.40);
-            --v-soft:  rgba(139,92,246,.20);
-            --tx1:     #EEE8FF;
-            --tx2:     #8878A6;
-            --tx3:     #3A2F5A;
-            --bd:      rgba(255,255,255,.055);
-            --bd2:     rgba(255,255,255,.10);
-            --bdv:     rgba(139,92,246,.25);
-            --bdg:     rgba(0,232,150,.18);
-            --red:     #F87171;
-            --r-dim:   rgba(248,113,113,.10);
+            --green:  #00a65a;
+            --blue:   #0073b7;
+            --red:    #dd4b39;
+            --amber:  #f39c12;
+            --g-dim:  rgba(0,166,90,0.12);
+            --g-glow: rgba(0,166,90,0.35);
+            --g-soft: rgba(0,166,90,0.22);
+            --b-dim:  rgba(0,115,183,0.12);
+            --b-glow: rgba(0,115,183,0.28);
+            --r-dim:  rgba(221,75,57,0.12);
+            --bdg:    rgba(0,166,90,0.22);
+            --tx1: #2d3748;
+            --tx2: #718096;
+            --tx3: #a0aec0;
+            --bd:  rgba(0,0,0,0.08);
+            --bd2: rgba(0,0,0,0.13);
         }
-
         *, *::before, *::after { box-sizing: border-box; }
 
         body {
             font-family: 'Outfit', system-ui, sans-serif;
-            /* midnight purple base */
-            background-color: var(--bg);
-            /* fine dot grid for texture */
-            background-image: radial-gradient(
-                    circle at 1px 1px,
-                    rgba(139,92,246,.06) 1px, transparent 0);
-            background-size: 32px 32px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #e3f2fd 40%, #f0f4ff 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -58,7 +45,7 @@
             margin: 0;
         }
 
-        /* ── canvas fills the background ── */
+        /* canvas fills background */
         #crystal-canvas {
             position: fixed;
             inset: 0;
@@ -68,7 +55,7 @@
             z-index: 1;
         }
 
-        /* ── two large ambient orbs ── */
+        /* soft ambient blobs */
         .orb {
             position: fixed;
             border-radius: 50%;
@@ -76,18 +63,16 @@
             z-index: 0;
         }
         .orb-1 {
-            top: -30%; right: -20%;
-            width: 75vw; height: 75vw;
-            background: radial-gradient(circle,
-            rgba(91,33,182,.10) 0%, transparent 65%);
-            animation: orb-drift 30s ease-in-out infinite;
+            top: -20%; right: -15%;
+            width: 70vw; height: 70vw;
+            background: radial-gradient(circle, rgba(0,166,90,.12) 0%, transparent 65%);
+            animation: orb-drift 28s ease-in-out infinite;
         }
         .orb-2 {
-            bottom: -30%; left: -20%;
-            width: 65vw; height: 65vw;
-            background: radial-gradient(circle,
-            rgba(55,10,120,.12) 0%, transparent 65%);
-            animation: orb-drift 38s ease-in-out infinite reverse;
+            bottom: -25%; left: -15%;
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(0,115,183,.10) 0%, transparent 65%);
+            animation: orb-drift 36s ease-in-out infinite reverse;
         }
         @keyframes orb-drift {
             0%,100% { transform: translate(0,0)       scale(1);    }
@@ -95,74 +80,68 @@
             66%     { transform: translate(-40px,55px) scale(.95);  }
         }
 
-        /* ── auth card ── */
+        /* auth card */
         .auth-card {
             position: relative;
             z-index: 10;
             width: 100%;
             max-width: 420px;
-            background: rgba(7, 4, 22, 0.88);
-            backdrop-filter: blur(28px) saturate(140%);
-            -webkit-backdrop-filter: blur(28px) saturate(140%);
-            border-radius: 26px;
+            background: #ffffff;
+            border-radius: 24px;
             padding: 42px 38px 36px;
-            animation: card-rise .65s cubic-bezier(.16,1,.3,1) both;
-            transition: box-shadow .4s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,.10), 0 4px 20px rgba(0,0,0,.06);
+            border: 1px solid rgba(0,0,0,.07);
+            animation: card-rise .6s cubic-bezier(.16,1,.3,1) both;
         }
-        /* gradient crystal-glass border */
+        /* green accent top bar */
         .auth-card::before {
             content: '';
-            position: absolute; inset: -1px;
-            border-radius: 27px;
-            background: linear-gradient(140deg,
-            rgba(139,92,246,.55),
-            rgba(80,30,180,.35),
-            rgba(0,232,150,.15),
-            rgba(139,92,246,.20));
-            z-index: -1;
+            position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            border-radius: 24px 24px 0 0;
+            background: linear-gradient(90deg, var(--green), var(--blue));
         }
-        /* outer halo breathe */
+        /* subtle glow halo */
         .auth-card::after {
             content: '';
-            position: absolute; inset: -28px;
+            position: absolute; inset: -24px;
             border-radius: 50px;
-            background: radial-gradient(ellipse at 50% 55%,
-            rgba(91,33,182,.08) 0%, transparent 68%);
+            background: radial-gradient(ellipse at 50% 55%, rgba(0,166,90,.06) 0%, transparent 68%);
+            pointer-events: none; z-index: -1;
             animation: halo 5s ease-in-out infinite;
-            pointer-events: none; z-index: -2;
         }
         @keyframes card-rise {
-            from { opacity:0; transform:translateY(30px) scale(.96); filter:blur(5px); }
+            from { opacity:0; transform:translateY(28px) scale(.97); filter:blur(4px); }
             to   { opacity:1; transform:none; filter:none; }
         }
         @keyframes halo {
             0%,100% { opacity:.5; transform:scale(1);    }
-            50%     { opacity:1;  transform:scale(1.05); }
+            50%     { opacity:1;  transform:scale(1.04); }
         }
 
-        /* ── brand ── */
+        /* brand */
         .auth-brand {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 32px;
+            margin-bottom: 30px;
         }
         .brand-icon {
             width: 62px; height: 62px; border-radius: 19px;
-            background: linear-gradient(140deg, var(--green), rgba(0,200,110,.45));
+            background: linear-gradient(140deg, var(--green), rgba(0,180,100,.7));
             display: flex; align-items: center; justify-content: center;
-            font-size: 28px; color: #03100A;
+            font-size: 28px; color: #fff;
             margin-bottom: 16px;
             animation: icon-pulse 3.8s ease-in-out infinite;
+            box-shadow: 0 8px 24px var(--g-glow);
         }
         @keyframes icon-pulse {
-            0%,100% { box-shadow: 0 0 14px var(--g-glow); }
-            50%     { box-shadow: 0 0 32px var(--g-glow), 0 0 64px var(--g-soft); }
+            0%,100% { box-shadow: 0 8px 24px var(--g-glow); }
+            50%     { box-shadow: 0 8px 36px var(--g-glow), 0 0 60px var(--g-soft); }
         }
         .brand-name {
             font-family: 'Syne', sans-serif;
-            font-size: 23px; font-weight: 800; letter-spacing: -.5px;
-            background: linear-gradient(125deg, var(--tx1) 40%, var(--violet));
+            font-size: 24px; font-weight: 800; letter-spacing: -.5px;
+            background: linear-gradient(125deg, #2d3748 40%, var(--green));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -172,7 +151,7 @@
             margin-top: 5px; text-align: center; letter-spacing: .2px;
         }
 
-        /* ── alerts ── */
+        /* alerts */
         .auth-alert {
             display: flex; align-items: flex-start; gap: 10px;
             padding: 12px 14px; border-radius: 12px;
@@ -181,7 +160,7 @@
         }
         .auth-alert.is-error {
             background: var(--r-dim);
-            border: 1px solid rgba(248,113,113,.22);
+            border: 1px solid rgba(221,75,57,.22);
             color: var(--red);
         }
         .auth-alert.is-success {
@@ -197,7 +176,7 @@
         }
         .auth-dismiss:hover { opacity: 1; }
 
-        /* ── form fields ── */
+        /* form fields */
         .field-label {
             display: block;
             font-size: 9.5px; font-weight: 600;
@@ -212,8 +191,8 @@
         }
         .input-field {
             width: 100%;
-            background: rgba(139,92,246,.05);
-            border: 1px solid rgba(139,92,246,.18);
+            background: #f7fafc;
+            border: 1.5px solid rgba(0,0,0,.12);
             border-radius: 12px;
             padding: 11px 38px 11px 38px;
             color: var(--tx1);
@@ -223,9 +202,9 @@
         }
         .input-field::placeholder { color: var(--tx3); }
         .input-field:focus {
-            border-color: var(--violet);
-            background: rgba(139,92,246,.08);
-            box-shadow: 0 0 0 3px var(--v-dim), 0 0 24px rgba(139,92,246,.06);
+            border-color: var(--green);
+            background: rgba(0,166,90,.04);
+            box-shadow: 0 0 0 3px var(--g-dim);
         }
         .pw-toggle {
             position: absolute; right: 12px; top: 50%;
@@ -236,19 +215,19 @@
         }
         .pw-toggle:hover { color: var(--tx1); }
 
-        /* ── submit button ── */
+        /* submit button */
         .btn-login {
             width: 100%; padding: 13px;
             border-radius: 999px; border: none;
-            background: linear-gradient(135deg, var(--green) 0%, rgba(0,200,120,.85) 100%);
-            color: #031510;
+            background: linear-gradient(135deg, var(--green) 0%, rgba(0,180,100,.9) 100%);
+            color: #ffffff;
             font-family: 'Outfit', sans-serif;
             font-size: 14.5px; font-weight: 700;
             letter-spacing: .3px;
             cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 9px;
             margin-top: 10px;
-            box-shadow: 0 4px 24px var(--g-glow);
+            box-shadow: 0 4px 20px var(--g-glow);
             position: relative; overflow: hidden;
             transition: box-shadow .22s, transform .1s;
         }
@@ -256,37 +235,37 @@
             content: '';
             position: absolute; top: 0; left: -80%;
             width: 45%; height: 100%;
-            background: linear-gradient(90deg, transparent,
-            rgba(255,255,255,.20), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
             transform: skewX(-18deg);
             transition: left .45s ease;
         }
         .btn-login:hover::before { left: 130%; }
-        .btn-login:hover  {
-            box-shadow: 0 8px 34px var(--g-glow), 0 0 0 3px var(--g-dim);
+        .btn-login:hover {
+            box-shadow: 0 8px 30px var(--g-glow), 0 0 0 3px var(--g-dim);
+            transform: translateY(-1px);
         }
         .btn-login:active { transform: scale(.98); }
 
         .ripple {
             position: absolute; border-radius: 50%;
-            background: rgba(255,255,255,.22);
+            background: rgba(255,255,255,.25);
             transform: scale(0);
             animation: ripple-pop .52s linear;
             pointer-events: none;
         }
         @keyframes ripple-pop { to { transform: scale(3.5); opacity: 0; } }
 
-        /* ── divider & footer ── */
+        /* divider & footer */
         .or-divider { display: flex; align-items: center; gap: 12px; margin: 22px 0 18px; }
         .or-line {
             flex: 1; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(139,92,246,.22), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0,166,90,.25), transparent);
         }
         .or-text { font-size: 10px; color: var(--tx3); letter-spacing: .9px; font-weight: 600; }
 
         .auth-foot { text-align: center; font-size: 13px; color: var(--tx2); }
         .auth-foot a {
-            color: var(--violet); text-decoration: none;
+            color: var(--green); text-decoration: none;
             font-weight: 600; transition: opacity .15s;
         }
         .auth-foot a:hover { opacity: .75; }
@@ -369,12 +348,12 @@
             <label style="display:flex; align-items:center; gap:7px; cursor:pointer;
                            font-size:12.5px; color:var(--tx2); user-select:none;">
                 <input type="checkbox" name="rememberMe" id="rememberMe"
-                       style="width:14px; height:14px; accent-color:var(--violet); cursor:pointer;">
+                       style="width:14px; height:14px; accent-color:var(--green); cursor:pointer;">
                 Remember me
             </label>
             <a href="${pageContext.request.contextPath}/forgotPassword"
                style="font-size:12px; color:var(--tx2); text-decoration:none; transition:color .15s;"
-               onmouseover="this.style.color='var(--violet)'"
+               onmouseover="this.style.color='var(--green)'"
                onmouseout="this.style.color='var(--tx2)'">
                 <i class="bi bi-question-circle" style="margin-right:3px;"></i>Forgot password?
             </a>
@@ -574,9 +553,9 @@
 
             /* ── 1 · soft radial background glow (purple atmosphere) ── */
             var bg = ctx.createRadialGradient(W * 0.5, H * 0.48, 0, W * 0.5, H * 0.48, W * 0.72);
-            bg.addColorStop(0,   'rgba(55, 18, 130, 0.28)');
-            bg.addColorStop(0.45,'rgba(30,  8,  80, 0.20)');
-            bg.addColorStop(1,   'rgba(6,   2,  18, 0.10)');
+            bg.addColorStop(0,   'rgba(210, 240, 225, 0.40)');
+            bg.addColorStop(0.45,'rgba(195, 225, 245, 0.25)');
+            bg.addColorStop(1,   'rgba(240, 244, 255, 0.05)');
             ctx.globalAlpha = 1;
             ctx.fillStyle   = bg;
             ctx.fillRect(0, 0, W, H);
@@ -615,7 +594,7 @@
                     if (dist > 195) continue;
                     var lineA = (1 - dist / 195) * 0.10 * pa.dfac * pb.dfac;
                     ctx.globalAlpha = lineA;
-                    ctx.strokeStyle = 'rgba(130, 80, 240, 1)';
+                    ctx.strokeStyle = 'rgba(0, 115, 183, 1)';
                     ctx.beginPath();
                     ctx.moveTo(pa.x, pa.y);
                     ctx.lineTo(pb.x, pb.y);
@@ -628,7 +607,7 @@
             for (var qi = 0; qi < projPts.length; qi++) {
                 var pp2 = projPts[qi];
                 if (pp2.r < 0.5) continue;
-                var col = pp2.iv ? [139, 92, 246] : [0, 232, 150];
+                var col = pp2.iv ? [0, 115, 183] : [0, 166, 90];
                 ctx.save();
                 ctx.globalAlpha  = pp2.dfac * 0.72;
                 ctx.fillStyle    = 'rgb(' + col[0] + ',' + col[1] + ',' + col[2] + ')';
@@ -685,9 +664,9 @@
                 tmpFaces.sort(function (a, b) { return b.avgZ - a.avgZ; }); /* back-to-front */
 
                 /* colors */
-                var edgeCol  = cr.isViolet ? '#8B5CF6' : '#00E896';
-                var fillFront= cr.isViolet ? 'rgba(90,30,200,1)' : 'rgba(0,140,80,1)';
-                var fillBack = cr.isViolet ? 'rgba(45,12,110,1)' : 'rgba(0,70,45,1)';
+                var edgeCol  = cr.isViolet ? '#0073b7' : '#00a65a';
+                var fillFront= cr.isViolet ? 'rgba(0,90,180,1)' : 'rgba(0,140,80,1)';
+                var fillBack = cr.isViolet ? 'rgba(0,45,110,1)' : 'rgba(0,70,45,1)';
 
                 /* draw faces */
                 for (var si2 = 0; si2 < tmpFaces.length; si2++) {
@@ -712,7 +691,7 @@
                 }
 
                 /* glowing vertex dots */
-                var vcol = cr.isViolet ? [139, 92, 246] : [0, 232, 150];
+                var vcol = cr.isViolet ? [0, 115, 183] : [0, 166, 90];
                 for (var vgi = 0; vgi < wv.length; vgi++) {
                     var sp  = sv2d[vgi];
                     var vdf = Math.max(0, 1 - wv[vgi][2] / 600);
