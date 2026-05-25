@@ -620,6 +620,10 @@
             .menu-toggle {
                 display: block;
             }
+            /* Hide non-essential topbar elements on very small screens */
+            .topbar-actions a.btn {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -662,6 +666,13 @@
             </div>
         </c:if>
 
+        <c:if test="${not empty errorMsg}">
+            <div class="alert alert-danger alert-dismissible fade show">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>${errorMsg}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </c:if>
+
         <%-- Reports Table --%>
         <div class="card" style="animation-delay:.05s">
             <div class="card-header">
@@ -673,6 +684,9 @@
                         <thead class="table-dark"><tr>
                             <th>Report ID</th><th>Generated Date</th>
                             <th>Total Sales</th><th>Total Revenue</th><th>Top Item</th>
+                            <c:if test="${sessionScope.role == 'admin'}">
+                                <th class="text-center">Action</th>
+                            </c:if>
                         </tr></thead>
                         <tbody>
                         <c:forEach var="report" items="${reports}">
@@ -682,11 +696,22 @@
                                 <td><span class="badge bg-primary">${report.totalSales}</span></td>
                                 <td style="color:var(--green);font-weight:600;">Rs.<fmt:formatNumber value="${report.totalRevenue}" maxFractionDigits="2"/></td>
                                 <td><span class="badge bg-warning text-dark"><i class="bi bi-trophy me-1"></i>${report.topItemName}</span></td>
+                                <c:if test="${sessionScope.role == 'admin'}">
+                                    <td class="text-center">
+                                        <form action="${pageContext.request.contextPath}/deleteReport" method="post" class="d-inline"
+                                              onsubmit="return confirm('Are you sure you want to delete report ${report.reportId}?');">
+                                            <input type="hidden" name="reportId" value="${report.reportId}">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Report">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </c:if>
                             </tr>
                         </c:forEach>
                         <c:if test="${empty reports}">
                             <tr>
-                                <td colspan="5" class="text-center py-5" style="color:var(--tx3);">
+                                <td colspan="6" class="text-center py-5" style="color:var(--tx3);">
                                     <i class="bi bi-file-earmark-x fs-2 d-block mb-2"></i>
                                     No reports generated yet. Click "Generate New Report" above.
                                 </td>
