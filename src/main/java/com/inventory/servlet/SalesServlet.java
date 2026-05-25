@@ -14,17 +14,20 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-/** * SalesServlet — Handles sales form display (GET) and sale processing (POST).
- * * Validates stock availability, creates sale record, and decrements inventory.
- * * OOP: ABSTRACTION (delegates sale processing to SalesService). */
+/**
+ * SalesServlet — Display sales form (GET) and process sales transactions (POST).
+ * Validates stock, creates sale record with unique ID, delegates to SalesService for persistence.
+ * OOP: ABSTRACTION (business logic delegated to SalesService).
+ */
 @WebServlet("/processSale")
 public class SalesServlet extends HttpServlet {
 
     @Override
-    // GET: Display from with available items
+    // GET: Load and display sales form with available items
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
+        // Verify user is logged in
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("loggedInUser") == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
@@ -35,21 +38,24 @@ public class SalesServlet extends HttpServlet {
         InventoryService inventoryService = new InventoryService(itemsPath);
         List<Item> items = inventoryService.getAllItems();
 
+        // Pass items to JSP view
         req.setAttribute("items", items);
         req.getRequestDispatcher("/views/sales/addSale.jsp").forward(req, resp);
     }
 
     @Override
-    // POST: Process sale, validate stock, create sale record, decrement inventory
+    // POST: Validate input, create sale record, process via SalesService
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
+        // Verify user is logged in
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("loggedInUser") == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
+        // Extract form parameters
         String itemId  = req.getParameter("itemId");
         String qtyStr  = req.getParameter("quantity");
 
@@ -59,7 +65,7 @@ public class SalesServlet extends HttpServlet {
         InventoryService inventoryService = new InventoryService(itemsPath);
         SalesService salesService = new SalesService(salesPath, itemsPath);
 
-        // Find the item to get its name and price
+        // Find item details (name, price) for sale record
         Item selectedItem = null;
         for (Item item : inventoryService.getAllItems()) {
             if (item.getId().equals(itemId)) {
@@ -68,13 +74,14 @@ public class SalesServlet extends HttpServlet {
             }
         }
 
+        // Validate: item exists
         if (selectedItem == null) {
             req.setAttribute("error", "Selected item not found.");
             doGet(req, resp);
             return;
         }
 
-        // validate quantity input
+        // Validate: quantity is valid positive integer
         int qty;
         try {
             qty = Integer.parseInt(qtyStr.trim());
@@ -89,11 +96,11 @@ public class SalesServlet extends HttpServlet {
         double totalPrice = selectedItem.getPrice() * qty;
         String saleId = "SLE-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
-        // Create Sale object
+        // Create Sale object with current date
         Sale sale = new Sale(saleId, itemId, selectedItem.getName(),
                 qty, totalPrice, LocalDate.now().toString());
 
-        // Delegate to service — handles stock decrement + sale persistence
+        // Delegate to service: validates stock, decrements inventory, records sale
         String error = salesService.processSale(sale);
         if (error != null) {
             req.setAttribute("error", error);
@@ -101,7 +108,6 @@ public class SalesServlet extends HttpServlet {
             return;
         }
 
-        // Success: set message and redirect to sales list
         session.setAttribute("successMsg", "Sale recorded successfully! Total: Rs." + totalPrice);
         resp.sendRedirect(req.getContextPath() + "/viewSales");
     }

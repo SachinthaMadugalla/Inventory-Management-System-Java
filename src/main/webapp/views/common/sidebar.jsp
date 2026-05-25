@@ -82,6 +82,24 @@
             </c:if>
         </ul>
 
+        <div class="sidebar-section-label">Account</div>
+        <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/editProfile"
+                   class="nav-link ${activePage == 'editProfile' ? 'active' : ''}">
+                    <i class="bi bi-person-circle"></i>Edit Profile
+                </a>
+            </li>
+            <c:if test="${sessionScope.role == 'admin'}">
+                <li class="nav-item">
+                    <a href="${pageContext.request.contextPath}/userManagement"
+                       class="nav-link ${activePage == 'userManagement' ? 'active' : ''}">
+                        <i class="bi bi-people-fill"></i>User Management
+                    </a>
+                </li>
+            </c:if>
+        </ul>
+
         <div class="mt-auto">
             <div class="sidebar-section-label">System</div>
             <a href="${pageContext.request.contextPath}/logout"

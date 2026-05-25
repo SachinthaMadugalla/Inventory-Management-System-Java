@@ -387,9 +387,12 @@
         .is-amber  .stat-icon-badge { background:var(--a-dim); color:var(--amber);  }
         .stat-number {
             font-family:'Syne',sans-serif;
-            font-size:28px; font-weight:800; line-height:1;
-            letter-spacing:-1.5px; color:var(--tx1);
+            font-size:28px; font-weight:800; line-height:1.05;
+            letter-spacing:-.3px; color:var(--tx1);
             margin-bottom:7px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
         }
         .stat-label { font-size:13px; color:var(--tx2); font-weight:500; margin-bottom:12px; }
         .stat-chip {
@@ -679,13 +682,10 @@
             </div>
             <div class="col-md-3 col-sm-6">
                 <div class="card stat-card is-blue p-3" style="animation-delay:.15s">
-                    <div class="d-flex align-items-center">
-                        <div class="stat-icon-badge me-3"><i class="bi bi-currency-dollar"></i></div>
-                        <div>
-                            <div class="stat-number" data-count="${totalRevenue}" data-prefix="Rs." style="font-size: 28px;">Rs.0</div>
-                            <div class="stat-label mb-0">Total Revenue</div>
-                        </div>
-                    </div>
+                    <div class="stat-icon-badge"><i class="bi bi-currency-dollar"></i></div>
+                    <div class="stat-number" data-count="${totalRevenue}" data-prefix="Rs.">Rs.0</div>
+                    <div class="stat-label">Total Revenue</div>
+                    <span class="stat-chip" style="background:var(--b-dim);color:var(--blue);"><i class="bi bi-cash-coin"></i> Earnings</span>
                 </div>
             </div>
             <div class="col-md-3 col-sm-6">
@@ -780,13 +780,19 @@
 
         /* ---- Animated stat counters ---- */
         function easeOut(t){return 1-Math.pow(1-t,3);}
+        function formatNum(n,isFloat){
+            if(isFloat){
+                return n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+            }
+            return Math.round(n).toLocaleString();
+        }
         document.querySelectorAll('[data-count]').forEach(function(el){
             var raw=el.dataset.count, end=parseFloat(raw)||0;
             if(!end)return;
             var isF=raw.indexOf('.')!==-1, pre=el.dataset.prefix||'', dur=1500, t0=performance.now();
             function step(now){
                 var p=Math.min((now-t0)/dur,1),v=end*easeOut(p);
-                el.textContent=pre+(isF?v.toFixed(2):Math.round(v));
+                el.textContent=pre+formatNum(v,isF);
                 if(p<1)requestAnimationFrame(step);
             }
             requestAnimationFrame(step);

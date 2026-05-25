@@ -614,7 +614,7 @@
                     <i class="bi bi-list"></i>
                 </button>
                 <h2 class="d-none d-lg-block">Edit Item</h2>
-                <p class="topbar-sub d-none d-lg-block">Modifying: <strong>${item.name}</strong> — uses Read-Modify-Overwrite pattern.</p>
+                <p class="topbar-sub d-none d-lg-block">Modifying: <strong>${item.name}</strong></p>
             </div>
             <div class="topbar-actions">
                 <div class="user-pill">
@@ -677,11 +677,6 @@
             </div>
         </div>
 
-        <div class="alert alert-info mt-4" style="max-width:760px;">
-            <strong><i class="bi bi-info-circle me-2"></i>File Integrity:</strong>
-            The update reads the entire <code>items.txt</code> into memory, replaces this item's record,
-            then overwrites the file — ensuring no data corruption (Read-Modify-Overwrite pattern).
-        </div>
     </div>
 </div>
 <!--suppress HtmlUnknownTarget -->

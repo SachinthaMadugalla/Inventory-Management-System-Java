@@ -305,13 +305,13 @@
     .user-pill-name { font-size:13px; font-weight:600; color:var(--tx1); line-height:1.2; }
     .user-pill-role { font-size:10px; color:var(--green); line-height:1.2; font-weight:600; letter-spacing:.4px; text-transform:uppercase; }
     .menu-toggle {
-        display: none;
-        background: transparent;
-        border: none;
-        color: var(--tx1);
-        font-size: 24px;
-        cursor: pointer;
-        padding: 0;
+      display: none;
+      background: transparent;
+      border: none;
+      color: var(--tx1);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
     }
 
     /* ===========================  CARDS  =========================== */
@@ -609,22 +609,22 @@
     }
 
     @media (max-width: 992px) {
-        .sidebar-fixed {
-            transform: translateX(-100%);
-        }
-        .sidebar-fixed.show {
-            transform: translateX(0);
-        }
-        .main-content {
-            margin-left: 0 !important;
-            padding: 16px !important;
-        }
-        .menu-toggle {
-            display: block;
-        }
-        .topbar-actions a.btn {
-            display: none;
-        }
+      .sidebar-fixed {
+        transform: translateX(-100%);
+      }
+      .sidebar-fixed.show {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-left: 0 !important;
+        padding: 16px !important;
+      }
+      .menu-toggle {
+        display: block;
+      }
+      .topbar-actions a.btn {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -641,7 +641,7 @@
         </button>
         <div>
           <h2>Inventory</h2>
-          <p class="topbar-sub d-none d-sm-block">Component 01 — All stock items</p>
+          <p class="topbar-sub d-none d-sm-block">All stock items in your inventory.</p>
         </div>
       </div>
       <div class="topbar-actions">
@@ -668,31 +668,30 @@
       </div>
     </c:if>
 
-    <%-- Stack Status (admin only) --%>
+    <%-- Recent Activity (admin only) --%>
     <c:if test="${sessionScope.role == 'admin'}">
       <div class="card mb-4" style="border-left:3px solid var(--amber)!important;animation-delay:.05s">
         <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
           <div>
-            <h6 class="fw-semibold mb-2" style="color:var(--amber);font-family:'Syne',sans-serif;"><i class="bi bi-stack me-2"></i>Stack (LIFO) Status</h6>
+            <h6 class="fw-semibold mb-2" style="color:var(--amber);font-family:'Syne',sans-serif;"><i class="bi bi-clock-history me-2"></i>Recent Activity</h6>
             <p class="mb-0 small" style="color:var(--tx2);">
-              Items in stack: <strong style="color:var(--tx1);font-size:14px;">${stackSize}</strong> &nbsp;|&nbsp;
+              Total items: <strong style="color:var(--tx1);font-size:14px;">${stackSize}</strong> &nbsp;|&nbsp;
               <c:choose>
                 <c:when test="${not empty stackTop}">
-                  <span>Top item:</span>
+                  <span>Most recently added:</span>
                   <span class="badge bg-danger ms-2">${stackTop.name}</span>
                   <code class="ms-1">${stackTop.id}</code>
                 </c:when>
-                <c:otherwise><span style="color:var(--tx3);">Stack is empty</span></c:otherwise>
+                <c:otherwise><span style="color:var(--tx3);">No items yet</span></c:otherwise>
               </c:choose>
             </p>
           </div>
-            <%-- LIFO Delete button — calls stack.pop() --%>
           <form action="${pageContext.request.contextPath}/deleteStock" method="post"
-                onsubmit="return confirm('Delete the most recently added item (LIFO pop)?');">
+                onsubmit="return confirm('Delete the most recently added item?');">
             <input type="hidden" name="mode" value="last">
             <button type="submit" class="btn btn-danger btn-sm"
               ${empty stackTop ? 'disabled' : ''}>
-              <i class="bi bi-stack-overflow me-1"></i>Delete Last Added (Stack Pop)
+              <i class="bi bi-trash me-1"></i>Delete Last Added
             </button>
           </form>
         </div>

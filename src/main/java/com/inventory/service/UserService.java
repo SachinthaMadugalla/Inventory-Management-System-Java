@@ -97,4 +97,15 @@ public class UserService {
         }
         return false;
     }
+
+    public void updateUser(User updatedUser) {
+        List<User> users = FileHandler.readUsers(filePath);
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getUsername().equals(updatedUser.getUsername())) {
+                users.set(i, updatedUser);
+                break;
+            }
+        }
+        FileHandler.writeUsers(filePath, users);
+    }
 }

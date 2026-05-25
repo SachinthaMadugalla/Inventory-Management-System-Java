@@ -303,13 +303,13 @@
     .user-pill-name { font-size:13px; font-weight:600; color:var(--tx1); line-height:1.2; }
     .user-pill-role { font-size:10px; color:var(--green); line-height:1.2; font-weight:600; letter-spacing:.4px; text-transform:uppercase; }
     .menu-toggle {
-        display: none;
-        background: transparent;
-        border: none;
-        color: var(--tx1);
-        font-size: 24px;
-        cursor: pointer;
-        padding: 0;
+      display: none;
+      background: transparent;
+      border: none;
+      color: var(--tx1);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
     }
 
     /* ===========================  CARDS  =========================== */
@@ -607,19 +607,19 @@
     }
 
     @media (max-width: 992px) {
-        .sidebar-fixed {
-            transform: translateX(-100%);
-        }
-        .sidebar-fixed.show {
-            transform: translateX(0);
-        }
-        .main-content {
-            margin-left: 0 !important;
-            padding: 16px !important;
-        }
-        .menu-toggle {
-            display: block;
-        }
+      .sidebar-fixed {
+        transform: translateX(-100%);
+      }
+      .sidebar-fixed.show {
+        transform: translateX(0);
+      }
+      .main-content {
+        margin-left: 0 !important;
+        padding: 16px !important;
+      }
+      .menu-toggle {
+        display: block;
+      }
     }
   </style>
 </head>
@@ -636,7 +636,7 @@
         </button>
         <div>
           <h2>Add Stock</h2>
-          <p class="topbar-sub d-none d-sm-block">Component 01 — New items are pushed onto the LIFO Stack.</p>
+          <p class="topbar-sub d-none d-sm-block">Add a new item to your inventory.</p>
         </div>
       </div>
       <div class="topbar-actions">
@@ -647,25 +647,6 @@
             <div class="user-pill-role">${sessionScope.role}</div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <%-- Stack Status Card --%>
-    <div class="card mb-4" style="border-left:3px solid var(--green)!important;animation-delay:.05s">
-      <div class="card-body">
-        <h6 class="fw-semibold mb-2" style="color:var(--green);font-family:'Syne',sans-serif;"><i class="bi bi-stack me-2"></i>Stack Status (LIFO)</h6>
-        <p class="mb-1" style="color:var(--tx2);">Items in stack: <strong style="color:var(--tx1);">${stackSize}</strong></p>
-        <c:choose>
-          <c:when test="${not empty stackTop}">
-            <p class="mb-0" style="color:var(--tx2);">Top of stack (next to be deleted):
-              <span class="badge bg-danger fs-6">${stackTop.name}</span>
-              <code class="ms-2">${stackTop.id}</code>
-            </p>
-          </c:when>
-          <c:otherwise>
-            <p class="mb-0" style="color:var(--tx3);">Stack is empty.</p>
-          </c:otherwise>
-        </c:choose>
       </div>
     </div>
 
@@ -713,7 +694,7 @@
             </div>
             <div class="col-12 mt-3">
               <button type="submit" class="btn btn-primary px-4">
-                <i class="bi bi-plus-circle me-2"></i>Add Item (Push to Stack)
+                <i class="bi bi-plus-circle me-2"></i>Add Item
               </button>
               <a href="${pageContext.request.contextPath}/viewInventory"
                  class="btn btn-outline-secondary ms-2 mt-2 mt-sm-0">Cancel</a>
@@ -723,15 +704,6 @@
       </div>
     </div>
 
-    <%-- OOP Info Box --%>
-    <div class="alert alert-info mt-4">
-      <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>OOP Concepts in Action</h6>
-      <ul class="mb-0 small">
-        <li><strong>Encapsulation:</strong> Item fields are private; accessed via getters/setters.</li>
-        <li><strong>Abstraction:</strong> AddStockServlet delegates to InventoryService which hides Stack &amp; FileHandler details.</li>
-        <li><strong>Stack (LIFO):</strong> Each submission calls <code>stack.push(item)</code> — the item is placed on top of the stack.</li>
-      </ul>
-    </div>
   </div>
 </div>
 <!--suppress HtmlUnknownTarget -->
