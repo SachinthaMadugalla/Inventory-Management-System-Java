@@ -182,6 +182,17 @@ public class FileHandler {
         appendLine(filePath, sale.toCsv());
     }
 
+    /**
+     * Deletes a Sale by its ID.
+     * Read-Modify-Overwrite pattern.
+     */
+    public static boolean deleteSale(String filePath, String saleId) {
+        List<Sale> sales = readSales(filePath);
+        boolean removed = sales.removeIf(s -> s.getSaleId().equals(saleId));
+        if (removed) writeSales(filePath, sales);
+        return removed;
+    }
+
     // -----------------------------------------------------------------------
     // User CRUD operations
     // -----------------------------------------------------------------------
