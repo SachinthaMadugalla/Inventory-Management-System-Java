@@ -6,3 +6,4 @@ Madugalla,Sootin0599,user,sachinthanipun03@gmail.com
 Kaveenth,Kaveenth@0617,admin,kaveenthshanker@gmail.com
 Shehara,sheha@2005,admin,shehaedirisinghe5348@gmail.com
 Dasun,Dasun16857,admin,dasunpalamakumbura@gmail.com
+Dasuni,Kaveenth@0617,user,dasuni@gmail.com
