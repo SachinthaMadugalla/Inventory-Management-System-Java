@@ -184,7 +184,12 @@ public class FileHandler {
 
     /**
      * Deletes a Sale by its ID.
-     * Read-Modify-Overwrite pattern.
+     * 
+     * VIVA NOTE: READ-MODIFY-OVERWRITE PATTERN
+     * To ensure data integrity, we don't try to manipulate the raw text file directly.
+     * 1. READ: Load all data into a Java List in memory (readSales).
+     * 2. MODIFY: Find and remove the specific target object from the List.
+     * 3. OVERWRITE: Wipe the old file and write the entirely new List back to disk (writeSales).
      */
     public static boolean deleteSale(String filePath, String saleId) {
         List<Sale> sales = readSales(filePath);
