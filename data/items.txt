@@ -1,5 +1,6 @@
 ITM-039821C8,test,Medicine,1,100.0,2026-05-28,ActiveITM-10C227AB
-ITM-74B72DD5,Samsung S24 ultra,Electronics,100,500000.0,N/A,ActiveITM-3BF7F0FD,Prima Noodles,Food,250,640.0,2026-05-25,Active
+ITM-74B72DD5,Samsung S24 ultra,Electronics,55,500000.0,N/A,ActiveITM-3BF7F0FD
 ITM-BB16E0DE,Prima Noodles,Food,150,640.0,2026-05-25,Active
 ITM-7AB7398C,Moose Bottom (L),Clothing,500,2400.0,N/A,Active
 ITM-4EB539D3,Amoxcilline,Medicine,600,120.0,2026-05-27,Active
+ITM-0F1450E7,Cake,Food,20,1500.0,2026-05-16,Active
