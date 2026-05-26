@@ -9,58 +9,68 @@ import com.inventory.model.Expiry;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FileHandler {
 
-    public static synchronized List<String> readLines(String filePath) {
+    private static List<String> readLines(String filePath) {
         List<String> lines = new ArrayList<>();
         File file = new File(filePath);
-        if (!file.exists()) return lines;
-
+        if (!file.exists()) {
+            return lines;
+        }
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (!line.trim().isEmpty()) {
-                    lines.add(line.trim());
-                }
-            }
+            lines = br.lines().filter(line -> line != null && !line.trim().isEmpty()).collect(Collectors.toList());
         } catch (IOException e) {
-            System.err.println("[FileHandler] Error reading " + filePath + ": " + e.getMessage());
+            System.err.println("Error reading file: " + filePath);
+            e.printStackTrace();
         }
         return lines;
     }
 
-    public static synchronized void writeLines(String filePath, List<String> lines) {
+    private static void writeLines(String filePath, List<String> lines) {
         File file = new File(filePath);
-        if (file.getParentFile() != null) {
-            file.getParentFile().mkdirs();
+        try {
+            if (file.getParentFile() != null) {
+                file.getParentFile().mkdirs();
+            }
+        } catch (Exception e) {
+            System.err.println("Error creating directory for: " + filePath);
+            e.printStackTrace();
         }
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, false))) {
-            for (String line : lines) {
-                bw.write(line);
-                bw.newLine();
+            for (int i = 0; i < lines.size(); i++) {
+                bw.write(lines.get(i));
+                if (i < lines.size() - 1) {
+                    bw.newLine();
+                }
             }
         } catch (IOException e) {
-            System.err.println("[FileHandler] Error writing " + filePath + ": " + e.getMessage());
-            throw new RuntimeException("Failed to write to file: " + filePath, e);
+            System.err.println("Error writing to file: " + filePath);
+            e.printStackTrace();
         }
     }
 
-    public static synchronized void appendLine(String filePath, String line) {
+    private static void appendLine(String filePath, String line) {
         File file = new File(filePath);
-        if (file.getParentFile() != null) {
-            file.getParentFile().mkdirs();
+        try {
+            if (file.getParentFile() != null) {
+                file.getParentFile().mkdirs();
+            }
+        } catch (Exception e) {
+            System.err.println("Error creating directory for: " + filePath);
+            e.printStackTrace();
         }
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
             bw.write(line);
             bw.newLine();
         } catch (IOException e) {
-            System.err.println("[FileHandler] Error appending to " + filePath + ": " + e.getMessage());
-            throw new RuntimeException("Failed to append to file: " + filePath, e);
+            System.err.println("Error appending to file: " + filePath);
+            e.printStackTrace();
         }
     }
 
-    public static List<Item> readItems(String filePath) {
+    public static synchronized List<Item> readItems(String filePath) {
         List<Item> items = new ArrayList<>();
         for (String line : readLines(filePath)) {
             Item item = Item.fromCsv(line);
@@ -69,40 +79,41 @@ public class FileHandler {
         return items;
     }
 
-    public static void writeItems(String filePath, List<Item> items) {
-        List<String> lines = new ArrayList<>();
-        for (Item item : items) {
-            lines.add(item.toCsv());
-        }
+    public static synchronized void writeItems(String filePath, List<Item> items) {
+        List<String> lines = items.stream().map(Item::toCsv).collect(Collectors.toList());
         writeLines(filePath, lines);
     }
 
-    public static void addItem(String filePath, Item item) {
+    public static synchronized void addItem(String filePath, Item item) {
         appendLine(filePath, item.toCsv());
     }
 
-    public static boolean updateItem(String filePath, Item updated) {
+    public static synchronized boolean updateItem(String filePath, Item updatedItem) {
         List<Item> items = readItems(filePath);
         boolean found = false;
         for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).getId().equals(updated.getId())) {
-                items.set(i, updated);
+            if (items.get(i).getId().equals(updatedItem.getId())) {
+                items.set(i, updatedItem);
                 found = true;
                 break;
             }
         }
-        if (found) writeItems(filePath, items);
+        if (found) {
+            writeItems(filePath, items);
+        }
         return found;
     }
 
-    public static boolean deleteItem(String filePath, String itemId) {
+    public static synchronized boolean deleteItem(String filePath, String itemId) {
         List<Item> items = readItems(filePath);
-        boolean removed = items.removeIf(i -> i.getId().equals(itemId));
-        if (removed) writeItems(filePath, items);
+        boolean removed = items.removeIf(item -> item.getId().equals(itemId));
+        if (removed) {
+            writeItems(filePath, items);
+        }
         return removed;
     }
 
-    public static List<Sale> readSales(String filePath) {
+    public static synchronized List<Sale> readSales(String filePath) {
         List<Sale> sales = new ArrayList<>();
         for (String line : readLines(filePath)) {
             Sale sale = Sale.fromCsv(line);
@@ -111,26 +122,25 @@ public class FileHandler {
         return sales;
     }
 
-    public static void writeSales(String filePath, List<Sale> sales) {
-        List<String> lines = new ArrayList<>();
-        for (Sale sale : sales) {
-            lines.add(sale.toCsv());
-        }
+    public static synchronized void writeSales(String filePath, List<Sale> sales) {
+        List<String> lines = sales.stream().map(Sale::toCsv).collect(Collectors.toList());
         writeLines(filePath, lines);
     }
 
-    public static void addSale(String filePath, Sale sale) {
+    public static synchronized void addSale(String filePath, Sale sale) {
         appendLine(filePath, sale.toCsv());
     }
 
-    public static boolean deleteSale(String filePath, String saleId) {
+    public static synchronized boolean deleteSale(String filePath, String saleId) {
         List<Sale> sales = readSales(filePath);
         boolean removed = sales.removeIf(s -> s.getSaleId().equals(saleId));
-        if (removed) writeSales(filePath, sales);
+        if (removed) {
+            writeSales(filePath, sales);
+        }
         return removed;
     }
 
-    public static List<User> readUsers(String filePath) {
+    public static synchronized List<User> readUsers(String filePath) {
         List<User> users = new ArrayList<>();
         for (String line : readLines(filePath)) {
             User user = User.fromCsv(line);
@@ -139,19 +149,16 @@ public class FileHandler {
         return users;
     }
 
-    public static void writeUsers(String filePath, List<User> users) {
-        List<String> lines = new ArrayList<>();
-        for (User user : users) {
-            lines.add(user.toCsv());
-        }
+    public static synchronized void writeUsers(String filePath, List<User> users) {
+        List<String> lines = users.stream().map(User::toCsv).collect(Collectors.toList());
         writeLines(filePath, lines);
     }
 
-    public static void addUser(String filePath, User user) {
+    public static synchronized void addUser(String filePath, User user) {
         appendLine(filePath, user.toCsv());
     }
 
-    public static List<Report> readReports(String filePath) {
+    public static synchronized List<Report> readReports(String filePath) {
         List<Report> reports = new ArrayList<>();
         for (String line : readLines(filePath)) {
             Report report = Report.fromCsv(line);
@@ -160,19 +167,16 @@ public class FileHandler {
         return reports;
     }
 
-    public static void addReport(String filePath, Report report) {
+    public static synchronized void addReport(String filePath, Report report) {
         appendLine(filePath, report.toCsv());
     }
 
-    public static void writeReports(String filePath, List<Report> reports) {
-        List<String> lines = new ArrayList<>();
-        for (Report r : reports) {
-            lines.add(r.toCsv());
-        }
+    public static synchronized void writeReports(String filePath, List<Report> reports) {
+        List<String> lines = reports.stream().map(Report::toCsv).collect(Collectors.toList());
         writeLines(filePath, lines);
     }
     
-    public static List<Expiry> readExpiryItems(String filePath) {
+    public static synchronized List<Expiry> readExpiryItems(String filePath) {
         List<Expiry> expiryItems = new ArrayList<>();
         for (String line : readLines(filePath)) {
             Expiry expiry = Expiry.fromCsv(line);
@@ -181,11 +185,8 @@ public class FileHandler {
         return expiryItems;
     }
 
-    public static void writeExpiryItems(String filePath, List<Expiry> expiryItems) {
-        List<String> lines = new ArrayList<>();
-        for (Expiry expiry : expiryItems) {
-            lines.add(expiry.toCsv());
-        }
+    public static synchronized void writeExpiryItems(String filePath, List<Expiry> expiryItems) {
+        List<String> lines = expiryItems.stream().map(Expiry::toCsv).collect(Collectors.toList());
         writeLines(filePath, lines);
     }
 }
