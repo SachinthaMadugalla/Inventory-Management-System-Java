@@ -95,14 +95,13 @@ public class AddStockServlet extends HttpServlet {
 
         // --- Build the Item ---
         String itemId = "ITM-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
-        // New items are created with "Active" status
         Item newItem = new Item(itemId, name.trim(), category.trim(),
                 quantity, price, expiryDate.trim(), "Active");
 
         // --- Persist via service (which also calls stack.push()) ---
         String itemsPath = FilePath.getItemsPath(getServletContext());
         InventoryService service = new InventoryService(itemsPath);
-        service.addItem(newItem); // ← stack.push() happens inside here
+        service.addItem(newItem);
 
         req.getSession().setAttribute("successMsg", "Item '" + name + "' added successfully!");
         resp.sendRedirect(req.getContextPath() + "/viewInventory");
