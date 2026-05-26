@@ -2,13 +2,11 @@ package com.inventory.model;
 
 public class User {
 
-    //Encapsulation
     private String username;
     private String password;
-    private String role;      //for admin or user
+    private String role;
     private String email;
 
-    //Constructors
     public User() {}
 
     public User(String username, String password, String role) {
@@ -24,7 +22,6 @@ public class User {
         this.email    = email;
     }
 
-    //Getters & Setters
     public String getUsername() { return username; }
     public void   setUsername(String u) { this.username = u; }
 
@@ -37,42 +34,32 @@ public class User {
     public String getEmail() { return email; }
     public void   setEmail(String e) { this.email = e; }
 
-    /**
-     * CSV format: username,password,role,email
-     * fullName and email are optional for backward-compatibility with old records.
-     *
-     * Old 3-field records (username,password,role) are still readable via fromCsv().
-     */
     public String toCsv() {
-        String em = (email    != null) ? email    : "";
+        String em = (email != null) ? email : "";
         return username + "," + password + "," + role + "," + em;
     }
 
     public static User fromCsv(String csv) {
-        String[] parts = csv.split(",", -1);
-        if (parts.length < 3) return null;
-
-        User u = new User();
-
-        if (parts.length == 3) {
-            // Legacy format: username,password,role
-            u.setUsername(parts[0].trim());
-            u.setPassword(parts[1].trim());
-            u.setRole(parts[2].trim());
-        } else if (parts.length == 4) {
-            // Old 4-field format: username,password,role,email
-            u.setUsername(parts[0].trim());
-            u.setPassword(parts[1].trim());
-            u.setRole(parts[2].trim());
-            u.setEmail(parts[3].trim());
-        } else {
-            // New 5-field:format:username,password,role,email
-            u.setUsername(parts[1].trim());
-            u.setPassword(parts[2].trim());
-            u.setRole(parts[3].trim());
-            u.setEmail(parts[4].trim());
+        if (csv == null || csv.trim().isEmpty()) {
+            return null;
         }
-        return u;
+        String[] parts = csv.split(",", -1);
+
+        // A valid user record must have at least 3 parts (user, pass, role)
+        if (parts.length < 3) {
+            return null;
+        }
+
+        String username = parts[0].trim();
+        String password = parts[1].trim();
+        String role = parts[2].trim();
+        String email = (parts.length > 3) ? parts[3].trim() : "";
+
+        if (username.isEmpty() || password.isEmpty() || role.isEmpty()) {
+            return null; // Core fields cannot be empty
+        }
+
+        return new User(username, password, role, email);
     }
 
     @Override
