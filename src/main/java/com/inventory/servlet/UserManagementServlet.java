@@ -26,7 +26,7 @@ public class UserManagementServlet extends HttpServlet {
             return;
         }
 
-        // Verify admin role
+        //Verify admin role
         String role = (String) session.getAttribute("role");
         if (!"admin".equals(role)) {
             resp.sendRedirect(req.getContextPath() + "/dashboard"); // Or an error page

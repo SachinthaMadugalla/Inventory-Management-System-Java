@@ -6,9 +6,7 @@ import javax.servlet.http.*;
 
 import java.io.IOException;
 
-/**
- * LogoutServlet — invalidates the session and redirects to the login page.
- */
+//LogoutServlet — invalidates the session and redirects to the login page
 @WebServlet("/logout")
 public class LogoutServlet extends HttpServlet {
 

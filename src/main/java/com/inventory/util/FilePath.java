@@ -3,10 +3,8 @@ package com.inventory.util;
 import javax.servlet.ServletContext;
 import java.io.File;
 
-/*
- * Default location (auto-created on first run):
- *   Windows: C:\Users\<you>\inventory-app\data\
- */
+//Default location (auto-created on first run):
+//Windows: C:\Users\<you>\inventory-app\data\
 public class FilePath {
 
     private static final String DATA_DIR = resolveDataDir();

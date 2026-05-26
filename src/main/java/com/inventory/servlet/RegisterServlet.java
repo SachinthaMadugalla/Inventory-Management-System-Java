@@ -9,12 +9,9 @@ import javax.servlet.http.*;
 
 import java.io.IOException;
 
-/**
- * RegisterServlet — allows new users to create an account.
- *
- * GET  /register → shows the registration form.
- * POST /register → validates and saves the new user.
- */
+//RegisterServlet — allows new users to create an account
+//GET register - shows the registration form
+//POST register - validates and saves the new user
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
 
@@ -34,7 +31,7 @@ public class RegisterServlet extends HttpServlet {
         String confirmPassword = req.getParameter("confirmPassword");
         String role            = req.getParameter("role");
 
-        // ── Validate required fields ──────────────────────────────────────────
+        //Validate required fields
         if (username == null || username.trim().isEmpty()) {
             req.setAttribute("error", "Username is required.");
             preserveInput(req, username, email, role);
@@ -49,7 +46,7 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        // Basic email format check
+        //Basic email format check
         if (!email.trim().matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
             req.setAttribute("error", "Please enter a valid email address.");
             preserveInput(req, username, email, role);
@@ -80,7 +77,7 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        // Default role to "user" if not provided or invalid
+        //Default role to "user" if not provided or invalid
         if (!"admin".equalsIgnoreCase(role) && !"user".equalsIgnoreCase(role)) {
             role = "user";
         }
@@ -116,7 +113,7 @@ public class RegisterServlet extends HttpServlet {
         }
     }
 
-    /** Re-populates form fields after a validation error so the user doesn't retype everything. */
+    //Repopulates form fields after a validation error
     private void preserveInput(HttpServletRequest req, String username,
                                String email, String role) {
         req.setAttribute("prevUsername", username  != null ? username.trim()  : "");
