@@ -10,9 +10,6 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
-/** * ViewSalesServlet — Displays all sales records with total revenue.
- *  * Validates user session, fetches sales from SalesService, and forwards to JSP view.
- *  * OOP: ABSTRACTION (delegates business logic to service layer). */
 @WebServlet("/viewSales")
 public class ViewSalesServlet extends HttpServlet {
 
@@ -26,7 +23,6 @@ public class ViewSalesServlet extends HttpServlet {
             return;
         }
 
-        // Get sales data from service layer
         String salesPath = FilePath.getSalesPath(getServletContext());
         String itemsPath = FilePath.getItemsPath(getServletContext());
         SalesService salesService = new SalesService(salesPath, itemsPath);
@@ -34,19 +30,15 @@ public class ViewSalesServlet extends HttpServlet {
         List<Sale> sales = salesService.getAllSales();
         double totalRevenue = salesService.getTotalRevenue();
 
-        // Pass data to JSP view
         req.setAttribute("sales",        sales);
         req.setAttribute("totalRevenue", totalRevenue);
 
-
-        // Handle success message from session
         String successMsg = (String) session.getAttribute("successMsg");
         if (successMsg != null) {
             req.setAttribute("successMsg", successMsg);
             session.removeAttribute("successMsg");
         }
 
-        // Handle error message from session
         String errorMsg = (String) session.getAttribute("errorMsg");
         if (errorMsg != null) {
             req.setAttribute("errorMsg", errorMsg);

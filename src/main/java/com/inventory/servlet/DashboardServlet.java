@@ -11,12 +11,6 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * DashboardServlet — aggregates summary statistics for the admin dashboard.
- *
- * OOP Concept: ABSTRACTION
- * Delegates data retrieval to InventoryService and SalesService.
- */
 @WebServlet("/dashboard")
 public class DashboardServlet extends HttpServlet {
 
@@ -24,7 +18,6 @@ public class DashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        // Session guard — redirect to login if not authenticated
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("loggedInUser") == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
@@ -39,7 +32,6 @@ public class DashboardServlet extends HttpServlet {
 
         List<Item> items = inventoryService.getAllItems();
 
-        // Compute low-stock count (quantity < 10)
         long lowStockCount = items.stream().filter(i -> i.getQuantity() < 10).count();
 
         req.setAttribute("totalItems",    items.size());

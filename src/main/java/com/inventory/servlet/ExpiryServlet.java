@@ -21,17 +21,12 @@ public class ExpiryServlet extends HttpServlet {
 
     private ExpiryService expiryService;
     private InventoryService inventoryService;
-    private String itemsPath;
-    private String expiryItemsPath;
 
     @Override
     public void init() throws ServletException {
         super.init();
-        // Initialize file paths
-        itemsPath = FilePath.getItemsPath(getServletContext());
-        expiryItemsPath = getServletContext().getRealPath("/data/expiry_items.csv");
-
-        // Initialize services
+        String itemsPath = FilePath.getItemsPath(getServletContext());
+        String expiryItemsPath = FilePath.getExpiryItemsPath(getServletContext());
         this.expiryService = new ExpiryService(itemsPath, expiryItemsPath);
         this.inventoryService = new InventoryService(itemsPath);
     }
@@ -46,7 +41,6 @@ public class ExpiryServlet extends HttpServlet {
             return;
         }
 
-        // Existing Item-related expiry data
         List<Item> sortedItems = inventoryService.getItemsSortedByExpiry();
         List<Item> expired = expiryService.getExpiredItems();
         List<Item> expiringSoon = expiryService.getExpiringSoonItems();
@@ -55,7 +49,6 @@ public class ExpiryServlet extends HttpServlet {
         req.setAttribute("expiringSoon", expiringSoon);
         req.setAttribute("expired", expired);
 
-        // New Expiry object CRUD data
         List<Expiry> expiryItems = expiryService.getAllExpiryItems();
         req.setAttribute("expiryItems", expiryItems);
 

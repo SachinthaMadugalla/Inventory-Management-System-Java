@@ -82,6 +82,18 @@
             </c:if>
         </ul>
 
+        <div class="sidebar-section-label">System Data</div>
+        <ul class="nav nav-pills flex-column">
+             <c:if test="${sessionScope.role == 'admin'}">
+                <li class="nav-item">
+                    <a href="${pageContext.request.contextPath}/viewFiles"
+                       class="nav-link ${activePage == 'viewFiles' ? 'active' : ''}">
+                        <i class="bi bi-file-earmark-text"></i>View Text Files
+                    </a>
+                </li>
+            </c:if>
+        </ul>
+
         <div class="sidebar-section-label">Account</div>
         <ul class="nav nav-pills flex-column">
             <li class="nav-item">

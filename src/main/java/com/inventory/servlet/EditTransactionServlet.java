@@ -11,10 +11,6 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
-/** * EditTransactionServlet — Component 03: Edit Sales Transaction * Handles GET (load form) and POST (save changes) requests *
- * GET /editTransaction?id=XXX  → Load sale record & display edit form * POST /editTransaction        → Save updated transaction *
- * OOP: ABSTRACTION — SalesService handles business logic; servlet only manages HTTP flow * OOP: ENCAPSULATION — Sale fields are private;
- * accessed via getters/setters */
 @WebServlet("/editTransaction")
 public class EditTransactionServlet extends HttpServlet {
 
@@ -82,7 +78,6 @@ public class EditTransactionServlet extends HttpServlet {
         String itemsPath = FilePath.getItemsPath(getServletContext());
         SalesService service = new SalesService(salesPath, itemsPath);
 
-        // Read-Modify-Overwrite
         List<Sale> sales = service.getAllSales();
         boolean updated = false;
         for (Sale sale : sales) {

@@ -9,10 +9,6 @@ import javax.servlet.http.*;
 
 import java.io.IOException;
 
-/*
- * DeleteStockServlet — Component 01: Delete Stock
- * OOP Concept: ABSTRACTION
- */
 @WebServlet("/deleteStock")
 public class DeleteStockServlet extends HttpServlet {
 
@@ -20,7 +16,6 @@ public class DeleteStockServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        // Session guard — only admins can delete
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("loggedInUser") == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
@@ -30,12 +25,11 @@ public class DeleteStockServlet extends HttpServlet {
         String itemsPath = FilePath.getItemsPath(getServletContext());
         InventoryService service = new InventoryService(itemsPath);
 
-        String mode   = req.getParameter("mode");   // "last" or "byId"
+        String mode   = req.getParameter("mode");
         String itemId = req.getParameter("itemId");
 
         if ("last".equals(mode)) {
-            // --- LIFO Delete: stack.pop() ---
-            Item removed = service.deleteLastAdded(); // calls stack.pop() internally
+            Item removed = service.deleteLastAdded();
             if (removed != null) {
                 session.setAttribute("successMsg",
                         "LIFO Delete: Removed '" + removed.getName() + "' (last added).");
@@ -43,7 +37,6 @@ public class DeleteStockServlet extends HttpServlet {
                 session.setAttribute("successMsg", "Stack is empty — nothing to delete.");
             }
         } else if ("byId".equals(mode) && itemId != null && !itemId.isEmpty()) {
-            // --- Targeted Delete by ID ---
             boolean deleted = service.deleteItemById(itemId);
             session.setAttribute("successMsg",
                     deleted ? "Item deleted successfully." : "Item not found.");

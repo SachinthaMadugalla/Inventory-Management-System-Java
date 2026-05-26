@@ -1,16 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%--@elvariable id="item"  type="com.inventory.model.Item"--%>
 <%--@elvariable id="error" type="java.lang.String"--%>
 
-<c:set var="activePage" value="inventory" scope="request"/>
+<c:set var="activePage" value="addStock" scope="request"/>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit Item — Lumenara</title>
+  <title>Add Stock — Lumenara</title>
   <!--suppress HtmlUnknownTarget -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <!--suppress HtmlUnknownTarget -->
@@ -18,8 +17,6 @@
   <style>
     /* ============================================================
        Lumenara — Midnight Ops Theme
-       Palette : Dark Navy + Electric Forest Green + Deep Violet
-       Fonts   : Syne (display) · Outfit (body) · JetBrains Mono
        ============================================================ */
 
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -130,10 +127,6 @@
     }
     @keyframes rippleGrow {
       to { transform: scale(3.5); opacity:0; }
-    }
-    @keyframes statusPulse {
-      0%,100% { opacity:1; }
-      50%     { opacity:0.35; }
     }
     @keyframes scanLine {
       0%   { transform: translateY(-100%); opacity:0;   }
@@ -337,10 +330,6 @@
       box-shadow:0 14px 44px rgba(0,0,0,.10), 0 0 0 1px var(--bdg) !important;
       border-color:var(--bdg) !important;
     }
-    .card:nth-child(2) { animation-delay:.07s; }
-    .card:nth-child(3) { animation-delay:.12s; }
-    .card:nth-child(4) { animation-delay:.17s; }
-    .card:nth-child(5) { animation-delay:.22s; }
     .card-header {
       font-family:'Syne',sans-serif;
       background:transparent !important;
@@ -351,58 +340,6 @@
       display:flex; align-items:center; justify-content:space-between;
     }
     .card-body { padding:22px !important; }
-    .card-body.p-0 { padding:0 !important; }
-
-    /* ===========================  STAT CARDS  =========================== */
-    .stat-card {
-      background:var(--card) !important;
-      backdrop-filter:blur(20px) !important;
-      border:1px solid var(--bd) !important;
-      border-radius:18px !important;
-      box-shadow:0 4px 24px rgba(0,0,0,.07) !important;
-      color:var(--tx1) !important;
-      position:relative; overflow:hidden;
-      transition:transform .25s ease, box-shadow .25s ease;
-    }
-    .stat-card::after {
-      content:''; position:absolute;
-      bottom:0; left:0; right:0; height:3px;
-      border-radius:0 0 18px 18px;
-    }
-    .stat-card:hover {
-      transform:translateY(-4px) scale(1.01);
-      box-shadow:0 18px 48px rgba(0,0,0,.12) !important;
-    }
-    .stat-card.is-green { background:rgba(0,166,90,.06) !important; border-color:var(--bdg) !important; }
-    .stat-card.is-green::after { background:linear-gradient(90deg,var(--green),rgba(0,166,90,.2)); }
-    .stat-card.is-violet { background:rgba(96,92,168,.06) !important; border-color:var(--bdv) !important; }
-    .stat-card.is-violet::after { background:linear-gradient(90deg,var(--violet),rgba(96,92,168,.2)); }
-    .stat-card.is-blue { background:rgba(0,115,183,.06) !important; border-color:rgba(0,115,183,.2) !important; }
-    .stat-card.is-blue::after { background:linear-gradient(90deg,var(--blue),rgba(0,115,183,.2)); }
-    .stat-card.is-amber { background:rgba(243,156,18,.06) !important; border-color:rgba(243,156,18,.2) !important; }
-    .stat-card.is-amber::after { background:linear-gradient(90deg,var(--amber),rgba(243,156,18,.2)); }
-    .stat-icon-badge {
-      width:46px; height:46px; border-radius:13px;
-      display:flex; align-items:center; justify-content:center;
-      font-size:20px; margin-bottom:14px;
-    }
-    .is-green  .stat-icon-badge { background:var(--g-dim); color:var(--green); box-shadow:0 0 14px var(--g-soft); }
-    .is-violet .stat-icon-badge { background:var(--v-dim); color:var(--violet); }
-    .is-blue   .stat-icon-badge { background:var(--b-dim); color:var(--blue);   }
-    .is-amber  .stat-icon-badge { background:var(--a-dim); color:var(--amber);  }
-    .stat-number {
-      font-family:'Syne',sans-serif;
-      font-size:38px; font-weight:800; line-height:1;
-      letter-spacing:-1.5px; color:var(--tx1);
-      margin-bottom:7px;
-    }
-    .stat-label { font-size:13px; color:var(--tx2); font-weight:500; margin-bottom:12px; }
-    .stat-chip {
-      display:inline-flex; align-items:center; gap:5px;
-      font-size:11px; font-weight:600;
-      padding:4px 10px; border-radius:999px;
-      background:var(--g-dim); color:var(--green);
-    }
 
     /* ===========================  BUTTONS  =========================== */
     .btn {
@@ -414,7 +351,6 @@
       transition:all .2s ease !important;
       letter-spacing:.1px;
     }
-    .btn-sm { padding:6px 14px !important; font-size:12px !important; }
     .btn::before {
       content:'';
       position:absolute; top:0; width:45%; height:100%;
@@ -423,115 +359,25 @@
       left:-80%; transition:left .45s ease;
     }
     .btn:hover::before { left:130%; }
-    .btn-primary, .btn-success {
+    .btn-primary {
       background:var(--green) !important; border-color:var(--green) !important;
       color:#ffffff !important; font-weight:700 !important;
       box-shadow:0 4px 18px var(--g-glow) !important;
     }
-    .btn-primary:hover,.btn-success:hover {
+    .btn-primary:hover {
       transform:translateY(-1px);
       box-shadow:0 8px 28px var(--g-glow),0 0 0 3px var(--g-dim) !important;
     }
-    .btn-warning {
-      background:var(--amber) !important; border-color:var(--amber) !important;
-      color:#ffffff !important; box-shadow:0 4px 18px var(--a-glow) !important;
-    }
-    .btn-warning:hover { transform:translateY(-1px); box-shadow:0 8px 28px var(--a-glow) !important; }
-    .btn-danger {
-      background:var(--red) !important; border-color:var(--red) !important;
-      color:#ffffff !important; box-shadow:0 4px 18px var(--r-glow) !important;
-    }
-    .btn-danger:hover { transform:translateY(-1px); box-shadow:0 8px 28px var(--r-glow) !important; }
-    .btn-info {
-      background:var(--blue) !important; border-color:var(--blue) !important;
-      color:#ffffff !important; box-shadow:0 4px 18px var(--b-glow) !important;
-    }
-    .btn-info:hover, .btn-info.text-white:hover { transform:translateY(-1px); box-shadow:0 8px 28px var(--b-glow) !important; }
-    .btn-info.text-white { color:#ffffff !important; }
     .btn-outline-secondary {
       background:transparent !important; border:1px solid var(--bd2) !important;
       color:var(--tx2) !important;
     }
     .btn-outline-secondary:hover { background:#f8f9fa !important; color:var(--tx1) !important; }
-    .btn-outline-primary {
-      background:transparent !important; border:1px solid var(--green) !important;
-      color:var(--green) !important;
-    }
-    .btn-outline-primary:hover { background:var(--g-dim) !important; box-shadow:0 0 14px var(--g-soft) !important; }
-    .btn-outline-warning {
-      background:transparent !important; border:1px solid var(--amber) !important;
-      color:var(--amber) !important;
-    }
-    .btn-outline-warning:hover { background:var(--a-dim) !important; }
-    .btn-outline-danger {
-      background:transparent !important; border:1px solid rgba(221,75,57,.3) !important;
-      color:var(--red) !important;
-    }
-    .btn-outline-danger:hover { background:var(--r-dim) !important; }
-    .btn:active { transform:scale(.97) !important; }
     .ripple {
       position:absolute; border-radius:50%;
       background:rgba(255,255,255,.18);
       transform:scale(0); animation:rippleGrow .5s linear;
       pointer-events:none;
-    }
-
-    /* ===========================  BADGES  =========================== */
-    .badge {
-      font-family:'Outfit',sans-serif !important;
-      font-weight:600 !important; font-size:10.5px !important;
-      padding:4px 10px !important; border-radius:999px !important;
-      letter-spacing:.2px;
-    }
-    .badge.bg-primary { background:var(--g-dim) !important; color:var(--green) !important; border:1px solid var(--bdg); }
-    .badge.bg-success  { background:var(--g-dim) !important; color:var(--green) !important; border:1px solid var(--bdg); }
-    .badge.bg-secondary{ background:rgba(0,0,0,.05) !important; color:var(--tx2) !important; border:1px solid var(--bd); }
-    .badge.bg-danger   { background:var(--r-dim) !important; color:var(--red) !important; border:1px solid rgba(221,75,57,.25); }
-    .badge.bg-warning  { background:var(--a-dim) !important; color:var(--amber) !important; border:1px solid rgba(243,156,18,.25); }
-    .badge.bg-info     { background:var(--b-dim) !important; color:var(--blue) !important; border:1px solid rgba(0,115,183,.25); }
-    .badge.fs-6 { font-size:12.5px !important; padding:5px 12px !important; }
-
-    /* ===========================  TABLES  =========================== */
-    .table { font-size:13.5px; }
-    .table thead th,
-    .table thead.table-dark th,
-    .table thead.table-light th {
-      font-family:'Outfit',sans-serif;
-      background:rgba(0,0,0,.02) !important;
-      color:var(--tx3) !important;
-      font-weight:600; font-size:10.5px; text-transform:uppercase; letter-spacing:.9px;
-      border:none !important; border-bottom:1px solid var(--bd) !important;
-      padding:13px 20px !important;
-    }
-    .table tbody td {
-      padding:13px 20px !important; vertical-align:middle;
-      border-color:var(--bd) !important; color:var(--tx1);
-    }
-    .table-hover tbody tr { transition:background .15s; }
-    .table-hover tbody tr:hover td { background:rgba(0,166,90,.04) !important; }
-    /* stagger entrance */
-    .table tbody tr {
-      opacity:0;
-      animation:fadeUp .35s ease forwards;
-    }
-    .table tbody tr:nth-child(1)  { animation-delay:.04s; }
-    .table tbody tr:nth-child(2)  { animation-delay:.08s; }
-    .table tbody tr:nth-child(3)  { animation-delay:.12s; }
-    .table tbody tr:nth-child(4)  { animation-delay:.16s; }
-    .table tbody tr:nth-child(5)  { animation-delay:.20s; }
-    .table tbody tr:nth-child(6)  { animation-delay:.24s; }
-    .table tbody tr:nth-child(7)  { animation-delay:.28s; }
-    .table tbody tr:nth-child(8)  { animation-delay:.32s; }
-    .table tbody tr:nth-child(9)  { animation-delay:.36s; }
-    .table tbody tr:nth-child(10) { animation-delay:.40s; }
-    .table tbody tr:nth-child(11) { animation-delay:.44s; }
-    .table tbody tr:nth-child(12) { animation-delay:.48s; }
-    .table tbody tr:nth-child(13) { animation-delay:.52s; }
-    .table tbody tr:nth-child(14) { animation-delay:.56s; }
-    .table tbody tr:nth-child(15) { animation-delay:.60s; }
-    .table-danger,
-    .table > :not(caption) > * > .table-danger {
-      background:var(--r-dim) !important; color:#333333 !important;
     }
 
     /* ===========================  FORMS  =========================== */
@@ -551,18 +397,11 @@
       box-shadow:0 0 0 3px var(--g-dim), 0 0 22px rgba(0,166,90,.06) !important;
       color:var(--tx1) !important;
     }
-    .form-select option { background:var(--bg-1); color:var(--tx1); }
     .form-label {
       font-family:'Outfit',sans-serif !important;
       font-weight:600 !important; font-size:11px !important;
       text-transform:uppercase; letter-spacing:.7px;
       color:var(--tx2) !important; margin-bottom:7px;
-    }
-    .form-text { font-size:12px; color:var(--tx3); }
-    .input-group-text {
-      background:#f8f9fa !important;
-      border:1px solid var(--bd2) !important;
-      color:var(--tx2) !important; border-radius:12px !important;
     }
 
     /* ===========================  ALERTS  =========================== */
@@ -572,40 +411,7 @@
       border:1px solid transparent !important;
       backdrop-filter:blur(8px);
     }
-    .alert-info    { background:var(--b-dim) !important; color:var(--blue)   !important; border-color:rgba(0,115,183,.2) !important; }
-    .alert-success { background:var(--g-dim) !important; color:var(--green)  !important; border-color:var(--bdg) !important; }
     .alert-danger  { background:var(--r-dim) !important; color:var(--red)    !important; border-color:rgba(221,75,57,.2) !important; }
-    .alert-primary { background:var(--g-dim) !important; color:var(--green)  !important; border-color:var(--bdg) !important; }
-    .alert-warning { background:var(--a-dim) !important; color:var(--amber)  !important; border-color:rgba(243,156,18,.2) !important; }
-    .btn-close { filter:invert(1) !important; opacity:.55 !important; }
-    .btn-close:hover { opacity:1 !important; }
-
-    /* ===========================  MISC  =========================== */
-    code {
-      font-family:'JetBrains Mono',monospace;
-      background:rgba(0,166,90,.08); color:var(--green);
-      padding:2px 8px; border-radius:6px; font-size:11.5px;
-      border:1px solid var(--bdg);
-    }
-    .text-muted   { color:var(--tx2) !important; }
-    .text-primary { color:var(--green) !important; }
-    .text-success { color:var(--green) !important; }
-    .text-danger  { color:var(--red) !important; }
-    .text-warning { color:var(--amber) !important; }
-    .text-info    { color:var(--blue) !important; }
-    hr { border-color:var(--bd) !important; opacity:1; }
-    h1,h2,h3,h4,h5,h6 { font-family:'Syne',sans-serif; letter-spacing:-.3px; color:var(--tx1); }
-    .fw-bold, .fw-semibold { font-family:'Syne',sans-serif !important; }
-
-    .gradient-text {
-      background:linear-gradient(120deg,var(--tx1) 40%,var(--green));
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-      background-clip:text;
-    }
-    .glow-divider {
-      height:1px; border:none; margin:18px 0;
-      background:linear-gradient(90deg,transparent,var(--bdg),transparent);
-    }
 
     @media (max-width: 992px) {
       .sidebar-fixed {
@@ -631,8 +437,8 @@
         <button class="btn btn-primary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
           <i class="bi bi-list"></i>
         </button>
-        <h2 class="d-none d-lg-block">Edit Item</h2>
-        <p class="topbar-sub d-none d-lg-block">Modifying: <strong>${item.name}</strong></p>
+        <h2 class="d-none d-lg-block">Add New Stock</h2>
+        <p class="topbar-sub d-none d-lg-block">Enter details for the new inventory item.</p>
       </div>
       <div class="topbar-actions">
         <div class="user-pill">
@@ -650,42 +456,37 @@
     </c:if>
 
     <div class="card" style="max-width:760px;animation-delay:.05s">
-      <div class="card-header"><span><i class="bi bi-pencil-square me-2"></i>Update Item Details</span></div>
+      <div class="card-header"><span><i class="bi bi-plus-circle me-2"></i>New Item Details</span></div>
       <div class="card-body">
-        <form action="${pageContext.request.contextPath}/editStock" method="post">
-          <input type="hidden" name="id" value="${item.id}">
+        <form action="${pageContext.request.contextPath}/addStock" method="post">
           <div class="row g-3">
             <div class="col-md-6">
               <label for="name" class="form-label">Item Name</label>
-              <input type="text" class="form-control" id="name" name="name"
-                     value="${item.name}" required>
+              <input type="text" class="form-control" id="name" name="name" required>
             </div>
             <div class="col-md-6">
               <label for="category" class="form-label">Category</label>
               <select class="form-select" id="category" name="category" required>
                 <c:forEach var="cat" items="${['Medicine','Food','Electronics','Clothing','Beverages','Other']}">
-                  <option value="${cat}" ${item.category == cat ? 'selected' : ''}>${cat}</option>
+                  <option value="${cat}">${cat}</option>
                 </c:forEach>
               </select>
             </div>
             <div class="col-md-4">
               <label for="quantity" class="form-label">Quantity</label>
-              <input type="number" class="form-control" id="quantity" name="quantity"
-                     value="${item.quantity}" min="0" required>
+              <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
             </div>
             <div class="col-md-4">
               <label for="price" class="form-label">Unit Price (Rs.)</label>
-              <input type="number" class="form-control" id="price" name="price"
-                     value="${item.price}" step="0.01" min="0" required>
+              <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
             </div>
             <div class="col-md-4">
               <label for="expiryDate" class="form-label">Expiry Date <span id="expiry-required" style="color:var(--red); display:none;">*</span></label>
-              <input type="date" class="form-control" id="expiryDate" name="expiryDate"
-                     value="${item.expiryDate}">
+              <input type="date" class="form-control" id="expiryDate" name="expiryDate">
             </div>
             <div class="col-12 mt-3">
               <button type="submit" class="btn btn-primary px-4">
-                <i class="bi bi-save me-2"></i>Save Changes
+                <i class="bi bi-plus-circle me-2"></i>Add Stock
               </button>
               <a href="${pageContext.request.contextPath}/viewInventory"
                  class="btn btn-outline-secondary ms-2 mt-2 mt-sm-0">Cancel</a>
@@ -731,32 +532,6 @@
       r.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+(e.clientX-rect.left-sz/2)+'px;top:'+(e.clientY-rect.top-sz/2)+'px;';
       b.appendChild(r);
       setTimeout(function(){r.parentNode&&r.remove();},550);
-    });
-
-    /* ---- Animated stat counters ---- */
-    function easeOut(t){return 1-Math.pow(1-t,3);}
-    document.querySelectorAll('[data-count]').forEach(function(el){
-      var raw=el.dataset.count, end=parseFloat(raw)||0;
-      if(!end)return;
-      var isF=raw.indexOf('.')!==-1, pre=el.dataset.prefix||'', dur=1500, t0=performance.now();
-      function step(now){
-        var p=Math.min((now-t0)/dur,1),v=end*easeOut(p);
-        el.textContent=pre+(isF?v.toFixed(2):Math.round(v));
-        if(p<1)requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    });
-
-    /* ---- Auth-page btn-auth ripple ---- */
-    document.querySelectorAll('.btn-auth').forEach(function(b){
-      b.addEventListener('click',function(e){
-        var r=document.createElement('span');
-        r.className='ripple';
-        var rect=b.getBoundingClientRect(),sz=Math.max(rect.width,rect.height);
-        r.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+(e.clientX-rect.left-sz/2)+'px;top:'+(e.clientY-rect.top-sz/2)+'px;';
-        b.appendChild(r);
-        setTimeout(function(){r.parentNode&&r.remove();},550);
-      });
     });
   })();
 </script></body>

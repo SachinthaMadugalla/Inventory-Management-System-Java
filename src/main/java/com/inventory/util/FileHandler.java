@@ -10,30 +10,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * OOP Concept: ABSTRACTION
- * FileHandler hides all file I/O complexity behind clean, high-level methods.
- * Callers never deal with BufferedReader/Writer directly — they just call
- * readItems(), writeItems(), etc.
- *
- * File Integrity Strategy:
- * All "update" and "delete" operations follow the Read-Modify-Overwrite pattern:
- *   1. Read the entire file into a List in memory.
- *   2. Modify the List (add / remove / update the target object).
- *   3. Overwrite the file with the updated List.
- * This guarantees the file is always in a consistent state.
- */
 public class FileHandler {
 
-    // -----------------------------------------------------------------------
-    // Generic low-level helpers
-    // -----------------------------------------------------------------------
-
-    /**
-     * Reads every non-blank line from a file and returns them as a List.
-     * OOP Concept: ABSTRACTION — callers don't know how the file is opened.
-     */
-    public static List<String> readLines(String filePath) {
+    public static synchronized List<String> readLines(String filePath) {
         List<String> lines = new ArrayList<>();
         File file = new File(filePath);
         if (!file.exists()) return lines;
@@ -51,13 +30,8 @@ public class FileHandler {
         return lines;
     }
 
-    /**
-     * Overwrites a file with the given list of lines.
-     * Each element becomes one line in the file.
-     */
-    public static void writeLines(String filePath, List<String> lines) {
+    public static synchronized void writeLines(String filePath, List<String> lines) {
         File file = new File(filePath);
-        // Ensure parent directories exist
         if (file.getParentFile() != null) {
             file.getParentFile().mkdirs();
         }
@@ -68,14 +42,11 @@ public class FileHandler {
             }
         } catch (IOException e) {
             System.err.println("[FileHandler] Error writing " + filePath + ": " + e.getMessage());
+            throw new RuntimeException("Failed to write to file: " + filePath, e);
         }
     }
 
-    /**
-     * Appends a single line to a file without reading the whole file.
-     * Used for simple append operations (e.g., adding a new sale).
-     */
-    public static void appendLine(String filePath, String line) {
+    public static synchronized void appendLine(String filePath, String line) {
         File file = new File(filePath);
         if (file.getParentFile() != null) {
             file.getParentFile().mkdirs();
@@ -85,14 +56,10 @@ public class FileHandler {
             bw.newLine();
         } catch (IOException e) {
             System.err.println("[FileHandler] Error appending to " + filePath + ": " + e.getMessage());
+            throw new RuntimeException("Failed to append to file: " + filePath, e);
         }
     }
 
-    // -----------------------------------------------------------------------
-    // Item CRUD operations
-    // -----------------------------------------------------------------------
-
-    /** Reads all Items from items.txt. */
     public static List<Item> readItems(String filePath) {
         List<Item> items = new ArrayList<>();
         for (String line : readLines(filePath)) {
@@ -102,10 +69,6 @@ public class FileHandler {
         return items;
     }
 
-    /**
-     * Overwrites items.txt with the provided list.
-     * Used after any add / update / delete operation (Read-Modify-Overwrite).
-     */
     public static void writeItems(String filePath, List<Item> items) {
         List<String> lines = new ArrayList<>();
         for (Item item : items) {
@@ -114,19 +77,10 @@ public class FileHandler {
         writeLines(filePath, lines);
     }
 
-    /**
-     * Adds a new Item by appending its CSV line.
-     * For the Stack-based add, the caller pushes to the Stack first,
-     * then calls this method to persist.
-     */
     public static void addItem(String filePath, Item item) {
         appendLine(filePath, item.toCsv());
     }
 
-    /**
-     * Updates an existing Item identified by its ID.
-     * Read-Modify-Overwrite pattern.
-     */
     public static boolean updateItem(String filePath, Item updated) {
         List<Item> items = readItems(filePath);
         boolean found = false;
@@ -141,12 +95,6 @@ public class FileHandler {
         return found;
     }
 
-    /**
-     * Deletes an Item by ID.
-     * Read-Modify-Overwrite pattern.
-     * NOTE: The servlet layer also calls stack.pop() before calling this,
-     * ensuring the LIFO Stack invariant is maintained.
-     */
     public static boolean deleteItem(String filePath, String itemId) {
         List<Item> items = readItems(filePath);
         boolean removed = items.removeIf(i -> i.getId().equals(itemId));
@@ -154,11 +102,6 @@ public class FileHandler {
         return removed;
     }
 
-    // -----------------------------------------------------------------------
-    // Sale CRUD operations
-    // -----------------------------------------------------------------------
-
-    /** Reads all Sales from sales.txt. */
     public static List<Sale> readSales(String filePath) {
         List<Sale> sales = new ArrayList<>();
         for (String line : readLines(filePath)) {
@@ -168,7 +111,6 @@ public class FileHandler {
         return sales;
     }
 
-    /** Overwrites sales.txt with the provided list. */
     public static void writeSales(String filePath, List<Sale> sales) {
         List<String> lines = new ArrayList<>();
         for (Sale sale : sales) {
@@ -177,20 +119,10 @@ public class FileHandler {
         writeLines(filePath, lines);
     }
 
-    /** Appends a new Sale record. */
     public static void addSale(String filePath, Sale sale) {
         appendLine(filePath, sale.toCsv());
     }
 
-    /**
-     * Deletes a Sale by its ID.
-     * 
-     * VIVA NOTE: READ-MODIFY-OVERWRITE PATTERN
-     * To ensure data integrity, we don't try to manipulate the raw text file directly.
-     * 1. READ: Load all data into a Java List in memory (readSales).
-     * 2. MODIFY: Find and remove the specific target object from the List.
-     * 3. OVERWRITE: Wipe the old file and write the entirely new List back to disk (writeSales).
-     */
     public static boolean deleteSale(String filePath, String saleId) {
         List<Sale> sales = readSales(filePath);
         boolean removed = sales.removeIf(s -> s.getSaleId().equals(saleId));
@@ -198,11 +130,6 @@ public class FileHandler {
         return removed;
     }
 
-    // -----------------------------------------------------------------------
-    // User CRUD operations
-    // -----------------------------------------------------------------------
-
-    /** Reads all Users from users.txt. */
     public static List<User> readUsers(String filePath) {
         List<User> users = new ArrayList<>();
         for (String line : readLines(filePath)) {
@@ -212,7 +139,6 @@ public class FileHandler {
         return users;
     }
 
-    /** Overwrites users.txt with the provided list. */
     public static void writeUsers(String filePath, List<User> users) {
         List<String> lines = new ArrayList<>();
         for (User user : users) {
@@ -221,16 +147,10 @@ public class FileHandler {
         writeLines(filePath, lines);
     }
 
-    /** Appends a new User record. */
     public static void addUser(String filePath, User user) {
         appendLine(filePath, user.toCsv());
     }
 
-    // -----------------------------------------------------------------------
-    // Report CRUD operations
-    // -----------------------------------------------------------------------
-
-    /** Reads all Reports from reports.txt. */
     public static List<Report> readReports(String filePath) {
         List<Report> reports = new ArrayList<>();
         for (String line : readLines(filePath)) {
@@ -240,12 +160,10 @@ public class FileHandler {
         return reports;
     }
 
-    /** Appends a new Report record. */
     public static void addReport(String filePath, Report report) {
         appendLine(filePath, report.toCsv());
     }
 
-    /** Overwrites reports.txt with the provided list. */
     public static void writeReports(String filePath, List<Report> reports) {
         List<String> lines = new ArrayList<>();
         for (Report r : reports) {
@@ -254,11 +172,6 @@ public class FileHandler {
         writeLines(filePath, lines);
     }
     
-    // -----------------------------------------------------------------------
-    // Expiry CRUD operations
-    // -----------------------------------------------------------------------
-
-    /** Reads all Expiry from expiry_items.csv. */
     public static List<Expiry> readExpiryItems(String filePath) {
         List<Expiry> expiryItems = new ArrayList<>();
         for (String line : readLines(filePath)) {
@@ -268,7 +181,6 @@ public class FileHandler {
         return expiryItems;
     }
 
-    /** Overwrites expiry_items.csv with the provided list. */
     public static void writeExpiryItems(String filePath, List<Expiry> expiryItems) {
         List<String> lines = new ArrayList<>();
         for (Expiry expiry : expiryItems) {

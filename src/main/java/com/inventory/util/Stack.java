@@ -46,6 +46,11 @@ public class Stack {
         return storage.size();
     }
 
+    /** Clears the stack. */
+    public void clear() {
+        storage.clear();
+    }
+
     /** Returns all items in LIFO order (most recently added first). */
     public List<Item> toList() {
         List<Item> result = new ArrayList<>(storage);

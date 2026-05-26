@@ -8,31 +8,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * SalesService — Handles all sales business logic (Component 03).
- * 
- * VIVA NOTE - OOP PRINCIPLES:
- * 1. SINGLE RESPONSIBILITY PRINCIPLE (SRP): This class is solely responsible for Sales business rules.
- * 2. ABSTRACTION: It hides file I/O complexity from the Servlets (Servlets just call high-level methods).
- */
 public class SalesService {
 
-    private final String salesFilePath;   // Path to sales.txt
-    private final String itemsFilePath;   // Path to items.txt
+    private final String salesFilePath;
+    private final String itemsFilePath;
 
     public SalesService(String salesFilePath, String itemsFilePath) {
         this.salesFilePath = salesFilePath;
         this.itemsFilePath = itemsFilePath;
     }
 
-    /**
-     * Process a sale: validate stock → decrement inventory → record sale.
-     */
     public String processSale(Sale sale) {
-        // Read all items from file
         List<Item> items = FileHandler.readItems(itemsFilePath);
 
-        // Find the item being sold
         Item target = null;
         for (Item item : items) {
             if (item.getId().equals(sale.getItemId())) {
@@ -41,23 +29,19 @@ public class SalesService {
             }
         }
 
-        // Validate: item exists
         if (target == null) {
             return "Item not found: " + sale.getItemId();
         }
 
-        // Validate: sufficient stock available
         if (target.getQuantity() < sale.getQuantitySold()) {
             return "Insufficient stock. Available: " + target.getQuantity();
         }
 
-        // Decrement stock and persist to items.txt
         target.setQuantity(target.getQuantity() - sale.getQuantitySold());
         FileHandler.updateItem(itemsFilePath, target);
 
-        // Record the sale in sales.txt
         FileHandler.addSale(salesFilePath, sale);
-        return null; // null indicates success
+        return null;
     }
 
     public List<Sale> getAllSales() {
@@ -88,13 +72,6 @@ public class SalesService {
                 .orElse("N/A");
     }
 
-    /**
-     * Deletes a sale by its ID.
-     * 
-     * VIVA NOTE: ABSTRACTION
-     * The SalesService doesn't deal with FileReader/FileWriter. It abstracts that 
-     * responsibility to the FileHandler, creating a clean Separation of Concerns.
-     */
     public boolean deleteSale(String saleId) {
         return FileHandler.deleteSale(salesFilePath, saleId);
     }

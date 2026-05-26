@@ -9,11 +9,8 @@ import javax.servlet.http.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
-/*
- * ViewInventoryServlet — Component 01: View Inventory
- * OOP Concept: ABSTRACTION
- */
 @WebServlet("/viewInventory")
 public class ViewInventoryServlet extends HttpServlet {
 
@@ -21,7 +18,6 @@ public class ViewInventoryServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        // Session guard
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("loggedInUser") == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
@@ -33,12 +29,13 @@ public class ViewInventoryServlet extends HttpServlet {
 
         List<Item> items = service.getAllItems();
 
-        // Pass stack metadata so the UI can show the "Delete Last Added" button
-        req.setAttribute("items",     items);
-        req.setAttribute("stackTop",  service.peekStack());
-        req.setAttribute("stackSize", service.stackSize());
+        Map<String, List<Item>> itemsByCategory = service.getItemsByCategory();
 
-        // Carry over any flash messages from redirects
+        req.setAttribute("items",           items);
+        req.setAttribute("itemsByCategory", itemsByCategory);
+        req.setAttribute("stackTop",        service.peekStack());
+        req.setAttribute("stackSize",       service.stackSize());
+
         String successMsg = (String) session.getAttribute("successMsg");
         if (successMsg != null) {
             req.setAttribute("successMsg", successMsg);

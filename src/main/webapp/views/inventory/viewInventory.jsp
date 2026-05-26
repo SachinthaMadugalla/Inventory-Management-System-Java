@@ -717,123 +717,135 @@
     </c:if>
 
     <%-- Inventory Table --%>
-    <div class="card" style="animation-delay:.10s">
-      <div class="card-header">
-        <span><i class="bi bi-table me-2"></i>Stock Items (${items.size()} total)</span>
-        <a href="${pageContext.request.contextPath}/expiryManagement" class="btn btn-sm btn-outline-warning">
-          <i class="bi bi-sort-numeric-up me-1"></i>Sort by Expiry
-        </a>
-      </div>
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-dark"><tr>
-              <th>ID</th><th>Name</th><th>Category</th>
-              <th>Quantity</th><th>Unit Price</th><th>Expiry Date</th>
-              <c:if test="${sessionScope.role == 'admin'}">
-                <th class="text-center">Actions</th>
-              </c:if>
-            </tr></thead>
-            <tbody>
-            <c:forEach var="item" items="${items}">
-              <tr>
-                <td><code>${item.id}</code></td>
-                <td class="fw-semibold">${item.name}</td>
-                <td><span class="badge bg-secondary">${item.category}</span></td>
-                <td>
-                  <c:choose>
-                    <c:when test="${item.quantity < 10}">
-                      <span class="badge bg-danger">${item.quantity} &#9888; Low</span>
-                    </c:when>
-                    <c:when test="${item.quantity < 30}">
-                      <span class="badge bg-warning text-dark">${item.quantity}</span>
-                    </c:when>
-                    <c:otherwise>
-                      <span class="badge bg-success">${item.quantity}</span>
-                    </c:otherwise>
-                  </c:choose>
-                </td>
-                <td>Rs.<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
-                <td style="color:var(--tx2);"><i class="bi bi-calendar3 me-2 small"></i>${item.expiryDate}</td>
-                <c:if test="${sessionScope.role == 'admin'}">
-                  <td class="text-center">
-                    <div class="d-flex justify-content-center gap-2">
-                      <a href="${pageContext.request.contextPath}/editStock?id=${item.id}"
-                         class="btn btn-action btn-outline-primary" title="Edit">
-                        <i class="bi bi-pencil"></i>
-                      </a>
-                      <form action="${pageContext.request.contextPath}/deleteStock"
-                            method="post" class="d-inline"
-                            onsubmit="return confirm('Delete ${item.name}?');">
-                        <input type="hidden" name="mode"   value="byId">
-                        <input type="hidden" name="itemId" value="${item.id}">
-                        <button type="submit" class="btn btn-action btn-outline-danger" title="Delete">
-                          <i class="bi bi-trash"></i>
-                        </button>
-                      </form>
-                    </div>
-                  </td>
-                </c:if>
-              </tr>
-            </c:forEach>
-            <c:if test="${empty items}">
-              <tr>
-                <td colspan="7" class="text-center py-5" style="color:var(--tx3);">
-                  <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-                  No items in inventory.
-                  <a href="${pageContext.request.contextPath}/addStock" style="color:var(--green);">Add some stock</a>.
-                </td>
-              </tr>
-            </c:if>
-            </tbody>
-          </table>
+    <%-- ====== Category-grouped LIFO inventory tables ====== --%>
+    <c:choose>
+      <c:when test="${not empty itemsByCategory}">
+        <%-- Loop over each category entry; items within each are in LIFO order --%>
+        <c:forEach var="categoryEntry" items="${itemsByCategory}" varStatus="catStatus">
+          <div class="card mb-4" style="animation-delay:${catStatus.index * 0.07 + 0.10}s">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <span>
+                <i class="bi bi-tag me-2"></i>
+                <strong>${categoryEntry.key}</strong>
+                <span class="badge bg-secondary ms-2">${categoryEntry.value.size()} item(s)</span>
+                <span class="badge bg-info ms-1" title="Last-In-First-Out order within category">LIFO</span>
+              </span>
+              <a href="${pageContext.request.contextPath}/expiryManagement" class="btn btn-sm btn-outline-warning">
+                <i class="bi bi-sort-numeric-up me-1"></i>Sort by Expiry
+              </a>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-dark"><tr>
+                    <th>ID</th><th>Name</th><th>Category</th>
+                    <th>Quantity</th><th>Unit Price</th><th>Expiry Date</th>
+                    <c:if test="${sessionScope.role == 'admin'}">
+                      <th class="text-center">Actions</th>
+                    </c:if>
+                  </tr></thead>
+                  <tbody>
+                  <c:forEach var="item" items="${categoryEntry.value}">
+                    <tr>
+                      <td><code>${item.id}</code></td>
+                      <td class="fw-semibold">${item.name}</td>
+                      <td><span class="badge bg-secondary">${item.category}</span></td>
+                      <td>
+                        <c:choose>
+                          <c:when test="${item.quantity < 10}">
+                            <span class="badge bg-danger">${item.quantity} &#9888; Low</span>
+                          </c:when>
+                          <c:when test="${item.quantity < 30}">
+                            <span class="badge bg-warning text-dark">${item.quantity}</span>
+                          </c:when>
+                          <c:otherwise>
+                            <span class="badge bg-success">${item.quantity}</span>
+                          </c:otherwise>
+                        </c:choose>
+                      </td>
+                      <td>Rs.<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
+                      <td style="color:var(--tx2);"><i class="bi bi-calendar3 me-2 small"></i>${item.expiryDate}</td>
+                      <c:if test="${sessionScope.role == 'admin'}">
+                        <td class="text-center">
+                          <div class="d-flex justify-content-center gap-2">
+                            <a href="${pageContext.request.contextPath}/editStock?id=${item.id}"
+                               class="btn btn-action btn-outline-primary" title="Edit">
+                              <i class="bi bi-pencil"></i>
+                            </a>
+                            <form action="${pageContext.request.contextPath}/deleteStock"
+                                  method="post" class="d-inline"
+                                  onsubmit="return confirm('Delete ${item.name}?');">
+                              <input type="hidden" name="mode"   value="byId">
+                              <input type="hidden" name="itemId" value="${item.id}">
+                              <button type="submit" class="btn btn-action btn-outline-danger" title="Delete">
+                                <i class="bi bi-trash"></i>
+                              </button>
+                            </form>
+                          </div>
+                        </td>
+                      </c:if>
+                    </tr>
+                  </c:forEach>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </c:forEach>
+      </c:when>
+      <c:otherwise>
+        <div class="card" style="animation-delay:.10s">
+          <div class="card-body text-center py-5" style="color:var(--tx3);">
+            <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+            No items in inventory.
+            <a href="${pageContext.request.contextPath}/addStock" style="color:var(--green);">Add some stock</a>.
+          </div>
         </div>
-      </div>
-    </div>
+      </c:otherwise>
+    </c:choose>
   </div>
-</div>
-<!--suppress HtmlUnknownTarget -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  (function(){
-    /* ---- Ripple on all .btn ---- */
-    document.addEventListener('click',function(e){
-      const b=e.target.closest('.btn');
-      if(!b)return;
-      const r=document.createElement('span');
-      r.className='ripple';
-      const rect=b.getBoundingClientRect();
-      const sz=Math.max(rect.width,rect.height);
-      r.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+(e.clientX-rect.left-sz/2)+'px;top:'+(e.clientY-rect.top-sz/2)+'px;';
-      b.appendChild(r);
-      setTimeout(function(){r.parentNode&&r.remove();},550);
-    });
-
-    /* ---- Animated stat counters ---- */
-    function easeOut(t){return 1-Math.pow(1-t,3);}
-    document.querySelectorAll('[data-count]').forEach(function(el){
-      var raw=el.dataset.count, end=parseFloat(raw)||0;
-      if(!end)return;
-      var isF=raw.indexOf('.')!==-1, pre=el.dataset.prefix||'', dur=1500, t0=performance.now();
-      function step(now){
-        var p=Math.min((now-t0)/dur,1),v=end*easeOut(p);
-        el.textContent=pre+(isF?v.toFixed(2):Math.round(v));
-        if(p<1)requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    });
-
-    /* ---- Auth-page btn-auth ripple ---- */
-    document.querySelectorAll('.btn-auth').forEach(function(b){
-      b.addEventListener('click',function(e){
-        var r=document.createElement('span');
+  <!--suppress HtmlUnknownTarget -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function(){
+      /* ---- Ripple on all .btn ---- */
+      document.addEventListener('click',function(e){
+        const b=e.target.closest('.btn');
+        if(!b)return;
+        const r=document.createElement('span');
         r.className='ripple';
-        var rect=b.getBoundingClientRect(),sz=Math.max(rect.width,rect.height);
+        const rect=b.getBoundingClientRect();
+        const sz=Math.max(rect.width,rect.height);
         r.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+(e.clientX-rect.left-sz/2)+'px;top:'+(e.clientY-rect.top-sz/2)+'px;';
         b.appendChild(r);
         setTimeout(function(){r.parentNode&&r.remove();},550);
       });
-    });
-  })();
-</script></body>
+
+      /* ---- Animated stat counters ---- */
+      function easeOut(t){return 1-Math.pow(1-t,3);}
+      document.querySelectorAll('[data-count]').forEach(function(el){
+        var raw=el.dataset.count, end=parseFloat(raw)||0;
+        if(!end)return;
+        var isF=raw.indexOf('.')!==-1, pre=el.dataset.prefix||'', dur=1500, t0=performance.now();
+        function step(now){
+          var p=Math.min((now-t0)/dur,1),v=end*easeOut(p);
+          el.textContent=pre+(isF?v.toFixed(2):Math.round(v));
+          if(p<1)requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
+
+      /* ---- Auth-page btn-auth ripple ---- */
+      document.querySelectorAll('.btn-auth').forEach(function(b){
+        b.addEventListener('click',function(e){
+          var r=document.createElement('span');
+          r.className='ripple';
+          var rect=b.getBoundingClientRect(),sz=Math.max(rect.width,rect.height);
+          r.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+(e.clientX-rect.left-sz/2)+'px;top:'+(e.clientY-rect.top-sz/2)+'px;';
+          b.appendChild(r);
+          setTimeout(function(){r.parentNode&&r.remove();},550);
+        });
+      });
+    })();
+  </script></body>
 </html>

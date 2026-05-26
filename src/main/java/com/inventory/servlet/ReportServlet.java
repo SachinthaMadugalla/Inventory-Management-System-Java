@@ -11,12 +11,6 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * ReportServlet — generates and displays reports.
- *
- * GET  /reports → shows all past reports.
- * POST /reports → generates a new report from current sales data.
- */
 @WebServlet("/reports")
 public class ReportServlet extends HttpServlet {
 
@@ -40,7 +34,6 @@ public class ReportServlet extends HttpServlet {
         List<Report> reports = reportService.getAllReports();
         req.setAttribute("reports", reports);
 
-        // Flash message
         String successMsg = (String) session.getAttribute("successMsg");
         if (successMsg != null) {
             req.setAttribute("successMsg", successMsg);
