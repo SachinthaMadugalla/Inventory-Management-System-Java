@@ -716,102 +716,80 @@
       </div>
     </c:if>
 
-    <%-- Inventory grouped by Category --%>
-    <c:choose>
-      <c:when test="${empty categoryGroups}">
-        <div class="card" style="animation-delay:.10s">
-          <div class="card-body text-center py-5" style="color:var(--tx3);">
-            <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-            No items in inventory.
-            <a href="${pageContext.request.contextPath}/addStock" style="color:var(--green);">Add some stock</a>.
-          </div>
+    <%-- Inventory Table --%>
+    <div class="card" style="animation-delay:.10s">
+      <div class="card-header">
+        <span><i class="bi bi-table me-2"></i>Stock Items (${items.size()} total)</span>
+        <a href="${pageContext.request.contextPath}/expiryManagement" class="btn btn-sm btn-outline-warning">
+          <i class="bi bi-sort-numeric-up me-1"></i>Sort by Expiry
+        </a>
+      </div>
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark"><tr>
+              <th>ID</th><th>Name</th><th>Category</th>
+              <th>Quantity</th><th>Unit Price</th><th>Expiry Date</th>
+              <c:if test="${sessionScope.role == 'admin'}">
+                <th class="text-center">Actions</th>
+              </c:if>
+            </tr></thead>
+            <tbody>
+            <c:forEach var="item" items="${items}">
+              <tr>
+                <td><code>${item.id}</code></td>
+                <td class="fw-semibold">${item.name}</td>
+                <td><span class="badge bg-secondary">${item.category}</span></td>
+                <td>
+                  <c:choose>
+                    <c:when test="${item.quantity < 10}">
+                      <span class="badge bg-danger">${item.quantity} &#9888; Low</span>
+                    </c:when>
+                    <c:when test="${item.quantity < 30}">
+                      <span class="badge bg-warning text-dark">${item.quantity}</span>
+                    </c:when>
+                    <c:otherwise>
+                      <span class="badge bg-success">${item.quantity}</span>
+                    </c:otherwise>
+                  </c:choose>
+                </td>
+                <td>Rs.<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
+                <td style="color:var(--tx2);"><i class="bi bi-calendar3 me-2 small"></i>${item.expiryDate}</td>
+                <c:if test="${sessionScope.role == 'admin'}">
+                  <td class="text-center">
+                    <div class="d-flex justify-content-center gap-2">
+                      <a href="${pageContext.request.contextPath}/editStock?id=${item.id}"
+                         class="btn btn-action btn-outline-primary" title="Edit">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <form action="${pageContext.request.contextPath}/deleteStock"
+                            method="post" class="d-inline"
+                            onsubmit="return confirm('Delete ${item.name}?');">
+                        <input type="hidden" name="mode"   value="byId">
+                        <input type="hidden" name="itemId" value="${item.id}">
+                        <button type="submit" class="btn btn-action btn-outline-danger" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </form>
+                    </div>
+                  </td>
+                </c:if>
+              </tr>
+            </c:forEach>
+            <c:if test="${empty items}">
+              <tr>
+                <td colspan="7" class="text-center py-5" style="color:var(--tx3);">
+                  <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                  No items in inventory.
+                  <a href="${pageContext.request.contextPath}/addStock" style="color:var(--green);">Add some stock</a>.
+                </td>
+              </tr>
+            </c:if>
+            </tbody>
+          </table>
         </div>
-      </c:when>
-      <c:otherwise>
-        <c:forEach var="entry" items="${categoryGroups}">
-          <div class="card" style="animation-delay:.10s; margin-bottom:1rem;">
-            <div class="card-header d-flex justify-content-between align-items-center">
-              <span>
-                <i class="bi bi-tag me-2"></i>
-                <strong>${entry.key}</strong>
-                <span class="badge rounded-pill ms-2" style="background:var(--green-dim);color:var(--green);font-size:11px;">
-                  ${entry.value.size()} item(s)
-                </span>
-                <span class="badge rounded-pill ms-1" style="background:rgba(99,179,237,.15);color:#63b3ed;font-size:11px;">LIFO</span>
-              </span>
-              <a href="${pageContext.request.contextPath}/expiryManagement" class="btn btn-sm btn-outline-warning">
-                <i class="bi bi-sort-numeric-up me-1"></i>Sort by Expiry
-              </a>
-            </div>
-            <div class="card-body p-0">
-              <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                  <thead class="table-dark"><tr>
-                    <th>ID</th><th>NAME</th><th>CATEGORY</th>
-                    <th>QUANTITY</th><th>UNIT PRICE</th><th>EXPIRY DATE</th>
-                    <c:if test="${sessionScope.role == 'admin'}">
-                      <th class="text-center">ACTIONS</th>
-                    </c:if>
-                  </tr></thead>
-                  <tbody>
-                  <c:forEach var="item" items="${entry.value}">
-                    <tr>
-                      <td><code style="color:var(--green);">${item.id}</code></td>
-                      <td class="fw-semibold">${item.name}</td>
-                      <td><span class="badge bg-secondary">${item.category}</span></td>
-                      <td>
-                        <c:choose>
-                          <c:when test="${item.quantity < 10}">
-                            <span class="badge bg-danger">${item.quantity} &#9888; Low</span>
-                          </c:when>
-                          <c:when test="${item.quantity < 30}">
-                            <span class="badge bg-warning text-dark">${item.quantity}</span>
-                          </c:when>
-                          <c:otherwise>
-                            <span class="badge bg-success">${item.quantity}</span>
-                          </c:otherwise>
-                        </c:choose>
-                      </td>
-                      <td>Rs.<fmt:formatNumber value="${item.price}" maxFractionDigits="2"/></td>
-                      <td style="color:var(--tx2);">
-                        <c:choose>
-                          <c:when test="${item.expiryDate == 'N/A'}">
-                            N/A
-                          </c:when>
-                          <c:otherwise>
-                            <i class="bi bi-calendar3 me-2 small"></i>${item.expiryDate}
-                          </c:otherwise>
-                        </c:choose>
-                      </td>
-                      <c:if test="${sessionScope.role == 'admin'}">
-                        <td class="text-center">
-                          <div class="d-flex justify-content-center gap-2">
-                            <a href="${pageContext.request.contextPath}/editStock?id=${item.id}"
-                               class="btn btn-action btn-outline-primary" title="Edit">
-                              <i class="bi bi-pencil"></i>
-                            </a>
-                            <form action="${pageContext.request.contextPath}/deleteStock"
-                                  method="post" class="d-inline"
-                                  onsubmit="return confirm('Delete ${item.name}?');">
-                              <input type="hidden" name="mode"   value="byId">
-                              <input type="hidden" name="itemId" value="${item.id}">
-                              <button type="submit" class="btn btn-action btn-outline-danger" title="Delete">
-                                <i class="bi bi-trash"></i>
-                              </button>
-                            </form>
-                          </div>
-                        </td>
-                      </c:if>
-                    </tr>
-                  </c:forEach>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </c:forEach>
-      </c:otherwise>
-    </c:choose>
+      </div>
+    </div>
   </div>
 </div>
 <!--suppress HtmlUnknownTarget -->
