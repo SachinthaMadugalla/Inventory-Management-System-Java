@@ -13,10 +13,9 @@ public class UserService {
         this.filePath = filePath;
     }
 
-    /**
-     * Authenticates a user by matching username OR email with the password.
-     * Returns the matching User object, or null if credentials are invalid.
-     */
+
+    //Authenticates a user by matching username OR email with the password.
+    // Returns the matching User object, or null if credentials are invalid.
     public User authenticate(String usernameOrEmail, String password) {
         if (usernameOrEmail == null || password == null) return null;
         List<User> users = FileHandler.readUsers(filePath);
@@ -28,16 +27,10 @@ public class UserService {
                 return user;
             }
         }
-        return null; // Authentication failed
+        return null; //Authentication failed
     }
 
-    /**
-     * Registers a new user if neither the username nor the email is already taken.
-     * Returns:
-     *   "ok"              — success
-     *   "username_taken"  — username already exists
-     *   "email_taken"     — email already registered
-     */
+    //Registers a new user if neither the username nor the email is already taken
     public String register(User newUser) {
         List<User> users = FileHandler.readUsers(filePath);
         for (User u : users) {
@@ -53,12 +46,12 @@ public class UserService {
         return "ok";
     }
 
-    // Returns all registered users.
+    //Returns all registered users.
     public List<User> getAllUsers() {
         return FileHandler.readUsers(filePath);
     }
 
-    // Deletes a user by username.
+    //Deletes a user by username.
     public boolean deleteUser(String username) {
         List<User> users = FileHandler.readUsers(filePath);
         boolean removed = users.removeIf(u -> u.getUsername().equals(username));
@@ -81,11 +74,7 @@ public class UserService {
         return null;
     }
 
-    /**
-     * Resets the password for the given username.
-     * OTP verification is handled in the servlet (stored in session).
-     * Returns true on success, false if the username is not found.
-     */
+    //Resets the password for the given username.
     public boolean resetPassword(String username, String newPassword) {
         List<User> users = FileHandler.readUsers(filePath);
         for (User u : users) {

@@ -1,21 +1,11 @@
 package com.inventory.model;
 
-/**
- * Admin extends User — inherits fullName, username, password, role, email.
- * Role is always "admin".
- *
- * CSV format (inherits from User):
- *   fullName,username,password,admin,email
- *
- * The adminCode field is kept for any future admin-specific logic,
- * but is NOT written to users.txt — admins are identified by role="admin".
- */
 public class Admin extends User {
 
-    // Optional admin-specific field (not persisted to users.txt)
+    //Optional admin specific field
     private String adminCode;
 
-    // Constructors
+    //Constructors
     public Admin() {
         super();
         setRole("admin"); // Admins always have role = "admin"
@@ -32,23 +22,19 @@ public class Admin extends User {
         this.adminCode = adminCode;
     }
 
-    // Getter & Setter
+    //Getter & Setter
     public String getAdminCode() { return adminCode; }
     public void   setAdminCode(String code) { this.adminCode = code; }
 
-    /**
-     * Uses the parent User.toCsv() so the format stays consistent:
-     *   fullName,username,password,admin,email
-     */
+    //Uses the parent User.toCsv() so the format stays consistent:
     @Override
     public String toCsv() {
-        return super.toCsv(); // fullName,username,password,role,email
+        return super.toCsv(); //username,password,role,email
     }
 
-    /**
-     * Reads an Admin from the standard 5-field User CSV line.
-     * Falls back gracefully for old 3-field records.
-     */
+
+    //Reads an Admin from the standard 5-field User CSV line.
+    // Falls back gracefully for old 3-field records.
     public static Admin fromCsv(String csv) {
         User u = User.fromCsv(csv);
         if (u == null) return null;

@@ -44,12 +44,12 @@ public class EditProfileServlet extends HttpServlet {
 
         UserService userService = new UserService(FilePath.getUsersPath(getServletContext()));
 
-        // Update email
+        //Update email
         if (email != null && !email.trim().isEmpty() && !email.trim().equalsIgnoreCase(currentUser.getEmail())) {
             currentUser.setEmail(email.trim());
         }
 
-        // Update password
+        //update password
         if (newPassword != null && !newPassword.trim().isEmpty()) {
             if (!newPassword.equals(confirmPassword)) {
                 req.setAttribute("error", "Passwords do not match.");

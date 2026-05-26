@@ -12,30 +12,20 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.time.Instant;
 
-/**
- * ForgotPasswordServlet — three-step OTP-based password reset.
- *
- * Step 1  GET  /forgotPassword       → show "enter your email" form
- * Step 1  POST action=sendOtp        → look up email, generate OTP, send email,
- *                                      store OTP + expiry + username in session
- * Step 2  POST action=verifyOtp      → verify OTP (with 10-min expiry check),
- *                                      mark session as verified
- * Step 3  POST action=resetPassword  → validate password strength + match,
- *                                      update password, clear session data
- */
+// ForgotPasswordServlet — three-step OTP-based password reset.
 @WebServlet("/forgotPassword")
 public class ForgotPasswordServlet extends HttpServlet {
 
-    // OTP is valid for 10 minutes
+    //OTP is valid for 10 minutes
     private static final long OTP_VALIDITY_SECONDS = 10 * 60;
 
-    // Minimum password strength: 8+ chars, at least one letter and one digit
+    //Minimum password strength: 8+ chars, at least one letter and one digit
     private static final String PASSWORD_PATTERN = "^(?=.*[A-Za-z])(?=.*\\d).{8,}$";
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        // Always start fresh — clear any leftover reset session data
+        //Always start fresh — clear any leftover reset session data
         HttpSession session = req.getSession(false);
         if (session != null) {
             session.removeAttribute("resetOtp");
@@ -82,7 +72,7 @@ public class ForgotPasswordServlet extends HttpServlet {
                 return;
             }
 
-            // Generate OTP and store it in the session
+            //Generate OTP and store it in the session
             String otp    = emailService.generateOtp();
             long   expiry = Instant.now().getEpochSecond() + OTP_VALIDITY_SECONDS;
 
@@ -92,7 +82,7 @@ public class ForgotPasswordServlet extends HttpServlet {
             session.setAttribute("resetUsername",  user.getUsername());
             session.setAttribute("otpVerified",    false);
 
-            // Send the OTP email
+            //Send the OTP email
             try {
                 emailService.sendOtpEmail(email.trim(), otp);
             } catch (MessagingException e) {
@@ -215,11 +205,11 @@ public class ForgotPasswordServlet extends HttpServlet {
             return;
         }
 
-        // Unknown action — go back to start
+        //Unknown action — go back to start
         resp.sendRedirect(req.getContextPath() + "/forgotPassword");
     }
 
-    /** Masks an email for display: "sachini@gmail.com" → "sa****@gmail.com" */
+    //Masks an email for display:
     private String maskEmail(String email) {
         int at = email.indexOf('@');
         if (at <= 2) return email;

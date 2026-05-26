@@ -44,7 +44,6 @@ public class DeleteUserServlet extends HttpServlet {
         } else {
             session.setAttribute("errorMsg", "You cannot delete your own account.");
         }
-
         resp.sendRedirect(req.getContextPath() + "/userManagement");
     }
 }

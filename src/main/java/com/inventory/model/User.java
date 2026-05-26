@@ -1,13 +1,14 @@
 package com.inventory.model;
+
 public class User {
 
-    // Private fields (Encapsulation)
+    //Encapsulation
     private String username;
     private String password;
-    private String role;      // "admin" or "user"
-    private String email;     // used for OTP-based password reset (must be unique)
+    private String role;      //for admin or user
+    private String email;
 
-    // Constructors
+    //Constructors
     public User() {}
 
     public User(String username, String password, String role) {
@@ -23,8 +24,7 @@ public class User {
         this.email    = email;
     }
 
-    // Getters & Setters
-
+    //Getters & Setters
     public String getUsername() { return username; }
     public void   setUsername(String u) { this.username = u; }
 
