@@ -10,8 +10,10 @@ import java.util.Map;
 
 /**
  * SalesService — Handles all sales business logic (Component 03).
- * Processes sales, manages inventory deduction, calculates revenue, and generates reports.
- * OOP: ABSTRACTION (hides file I/O complexity; servlets only call high-level methods).
+ * 
+ * VIVA NOTE - OOP PRINCIPLES:
+ * 1. SINGLE RESPONSIBILITY PRINCIPLE (SRP): This class is solely responsible for Sales business rules.
+ * 2. ABSTRACTION: It hides file I/O complexity from the Servlets (Servlets just call high-level methods).
  */
 public class SalesService {
 
@@ -25,8 +27,6 @@ public class SalesService {
 
     /**
      * Process a sale: validate stock → decrement inventory → record sale.
-     * Returns null on success, error message on failure.
-     * Uses Read-Modify-Overwrite pattern for data consistency.
      */
     public String processSale(Sale sale) {
         // Read all items from file
@@ -60,17 +60,10 @@ public class SalesService {
         return null; // null indicates success
     }
 
-    /**
-     * Retrieve all sales records from file.
-     */
     public List<Sale> getAllSales() {
         return FileHandler.readSales(salesFilePath);
     }
 
-    /**
-     * Calculate total revenue (sum of all totalPrice values).
-     * Used for dashboard reports.
-     */
     public double getTotalRevenue() {
         double total = 0;
         for (Sale sale : FileHandler.readSales(salesFilePath)) {
@@ -79,33 +72,28 @@ public class SalesService {
         return total;
     }
 
-    /**
-     * Map item names to total quantity sold (for analytics).
-     * Example: {"Milk": 50, "Bread": 35} → Milk is top seller
-     */
     public Map<String, Integer> getSalesByItem() {
         Map<String, Integer> map = new HashMap<>();
         for (Sale sale : FileHandler.readSales(salesFilePath)) {
-            // Accumulate quantities for each item
             map.merge(sale.getItemName(), sale.getQuantitySold(), Integer::sum);
         }
         return map;
     }
 
-    /**
-     * Find the best-selling item (highest total quantity sold).
-     * Used in Component 05 (Reports) for top-selling analysis.
-     */
     public String getTopSellingItem() {
         Map<String, Integer> map = getSalesByItem();
         return map.entrySet().stream()
-                .max(Map.Entry.comparingByValue())  // Find entry with max value
-                .map(Map.Entry::getKey)              // Extract item name
-                .orElse("N/A");                       // Default if no sales exist
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse("N/A");
     }
 
     /**
      * Deletes a sale by its ID.
+     * 
+     * VIVA NOTE: ABSTRACTION
+     * The SalesService doesn't deal with FileReader/FileWriter. It abstracts that 
+     * responsibility to the FileHandler, creating a clean Separation of Concerns.
      */
     public boolean deleteSale(String saleId) {
         return FileHandler.deleteSale(salesFilePath, saleId);

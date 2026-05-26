@@ -13,7 +13,10 @@ import java.io.IOException;
 
 /**
  * DeleteSaleServlet - Deletes a sale transaction.
- * Requires admin role.
+ * 
+ * VIVA NOTE: SINGLE RESPONSIBILITY PRINCIPLE (SRP)
+ * This servlet has only ONE job: Handle the HTTP POST request to delete a sale.
+ * It extracts data, checks security, and delegates the heavy lifting to the Service Layer.
  */
 @WebServlet("/deleteSale")
 public class DeleteSaleServlet extends HttpServlet {
@@ -26,20 +29,29 @@ public class DeleteSaleServlet extends HttpServlet {
             return;
         }
 
-        // Verify admin role
+        // Security/Business Rule - Only 'admin' users can delete sales.
         String role = (String) session.getAttribute("role");
         if (role == null || !role.equals("admin")) {
             resp.sendRedirect(req.getContextPath() + "/dashboard");
             return;
         }
 
+        // Extracting the target ID passed from the viewSales.jsp form
         String saleId = req.getParameter("saleId");
+        
         if (saleId != null && !saleId.trim().isEmpty()) {
             String salesPath = FilePath.getSalesPath(getServletContext());
             String itemsPath = FilePath.getItemsPath(getServletContext());
+            
+            //  ABSTRACTION IN ACTION
+            // The Servlet doesn't know HOW the data is deleted (e.g., text files, databases).
+            // It relies entirely on the SalesService abstraction.
             SalesService salesService = new SalesService(salesPath, itemsPath);
 
+            // Delegation. The Servlet asks the Service Layer to do the work.
             boolean deleted = salesService.deleteSale(saleId);
+            
+            // State management. Setting a message to show on the View later.
             if (deleted) {
                 session.setAttribute("successMsg", "Transaction " + saleId + " deleted successfully.");
             } else {
@@ -47,6 +59,7 @@ public class DeleteSaleServlet extends HttpServlet {
             }
         }
         
+        // Redirect back to the View controller to reload the page.
         resp.sendRedirect(req.getContextPath() + "/viewSales");
     }
 }
