@@ -9,10 +9,13 @@ public class FilePath {
 
     private static String resolveDataDir() {
         if (DATA_DIR == null) {
-            // Point directly to the project's data folder to prevent data loss 
-            // from Tomcat deploying to a temporary directory.
-            String basePath = "C:/Users/USER/Desktop/OOP Project/Inventory-Management-System-Java/data";
-            File dataDir = new File(basePath);
+            // Use the project's root directory as the base for the data folder.
+            // This ensures that the data files are always located inside the project
+            // and are visible within the IDE (e.g., IntelliJ).
+            // System.getProperty("user.dir") reliably points to the project root
+            // when running from most IDEs or via Maven.
+            String projectRoot = System.getProperty("user.dir");
+            File dataDir = new File(projectRoot, "data");
 
             if (!dataDir.exists()) {
                 dataDir.mkdirs(); 
