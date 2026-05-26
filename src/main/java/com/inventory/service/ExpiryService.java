@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class ExpiryService {
+public class ExpiryService {                        // ABSTRACTION
 
     private final String itemsPath;
     private final String expiryItemsPath;
@@ -20,7 +20,6 @@ public class ExpiryService {
         this.expiryItemsPath = expiryItemsPath;
     }
     
-    // Fallback constructor for backward compatibility in other parts of the app
     public ExpiryService(String itemsPath) {
         this.itemsPath = itemsPath;
         this.expiryItemsPath = itemsPath.replace("items.txt", "expiry_items.csv"); // Default assumption
@@ -75,6 +74,7 @@ public class ExpiryService {
     }
 
     // --- New dedicated Expiry object CRUD operations ---
+          //READ
 
     public List<Expiry> getAllExpiryItems() {
         List<Expiry> expiryItems = new ArrayList<>();
@@ -109,6 +109,7 @@ public class ExpiryService {
             System.err.println("Error writing " + expiryItemsPath + ": " + e.getMessage());
         }
     }
+      //CREATE
 
     public void addExpiryItem(Expiry expiry) {
         if (expiry.getId() == null || expiry.getId().isEmpty()) {
@@ -125,6 +126,7 @@ public class ExpiryService {
             System.err.println("Error appending to " + expiryItemsPath + ": " + e.getMessage());
         }
     }
+         //UPDATE
 
     public boolean updateExpiryItem(Expiry updated) {
         List<Expiry> expiryItems = getAllExpiryItems();
@@ -141,6 +143,7 @@ public class ExpiryService {
         }
         return found;
     }
+        //DELETE
 
     public boolean deleteExpiryItem(String id) {
         List<Expiry> expiryItems = getAllExpiryItems();

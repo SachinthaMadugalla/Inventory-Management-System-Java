@@ -1,11 +1,12 @@
-package com.inventory.model;
+package com.inventory.model;    //ENCAPSULATION
+
 public class Expiry {
     private String id;
     private String itemId;
     private String expiryDate;
     private boolean disposed;
 
-    public Expiry() {
+    public Expiry() {       //  no-arg constructor
     }
 
     public Expiry(String id, String itemId, String expiryDate, boolean disposed) {
@@ -33,7 +34,7 @@ public class Expiry {
 
     public String getExpiryDate() {
         return expiryDate;
-    }
+    }         // setters ,getters
 
     public void setExpiryDate(String expiryDate) {
         this.expiryDate = expiryDate;
